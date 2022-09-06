@@ -20,12 +20,12 @@
 - `release` : 배포를 위해 master 브랜치로 보내기 전에 먼저 QA(품질검사)를 하기위한 브랜치
 - `hotfix` : 배포 후 급한 수정사항을 반영 하기위한 브랜치
 
-1. master_v2 브랜치에서 merge_v2 브랜치를 분기합니다.
-2. 개발자들은 merge_v2 브랜치에 자유롭게 커밋을 합니다.
-3. 기능 구현이 있는 경우 merge_v2 브랜치에서 feature-* 브랜치를 분기합니다.
-4. 배포를 준비하기 위해 merge_v2 브랜치에서 release-* 브랜치를 분기합니다.
+1. master 브랜치에서 develop 브랜치를 분기합니다.
+2. 개발자들은 develop 브랜치에 자유롭게 커밋을 합니다.
+3. 기능 구현이 있는 경우 develop 브랜치에서 feature-* 브랜치를 분기합니다.
+4. 배포를 준비하기 위해 develop 브랜치에서 release-* 브랜치를 분기합니다.
 5. 테스트를 진행하면서 발생하는 버그 수정은 release-* 브랜치에 직접 반영합니다.
-6. 테스트가 완료되면 release 브랜치를 master_v2와 merge_v2 병합합니다.
+6. 테스트가 완료되면 release 브랜치를 master와 develop 병합합니다.
 
 ## Git Convention
 1. commit
