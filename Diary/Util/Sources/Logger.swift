@@ -39,7 +39,7 @@ func print(_ object: Any) {
     #endif
 }
 
-class Log {
+public class Log {
     
     static var dateFormat = "yyyy-MM-dd hh:mm:ssSSS"
     static var dateFormatter: DateFormatter {
@@ -69,7 +69,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func e( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func e( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.e.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
@@ -83,7 +83,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func i ( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func i ( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.i.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
@@ -100,7 +100,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func d( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func d( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.d.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
@@ -114,7 +114,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func v( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func v( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.v.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
@@ -128,7 +128,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func w( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func w( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.w.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }
@@ -142,7 +142,7 @@ class Log {
     ///   - line: Line number in file from where the logging is done
     ///   - column: Column number of the log message
     ///   - funcName: Name of the function from where the logging is done
-    class func s( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
+    public class func s( _ object: Any, filename: String = #file, line: Int = #line, column: Int = #column, funcName: String = #function) {
         if isLoggingEnabled {
             print("\(Date().toString()) \(LogEvent.s.rawValue)[\(sourceFileName(filePath: filename))]:\(line) \(column) \(funcName) -> \(object)")
         }

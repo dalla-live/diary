@@ -4,7 +4,7 @@
 //
 //  Created by cheonsong on 2022/09/13.
 //
-
+import Foundation
 import Moya
 
 protocol BaseTargetType: TargetType {
