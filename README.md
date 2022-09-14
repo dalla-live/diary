@@ -35,3 +35,6 @@
 Feat: 소셜 로그인 추가
 - 구글 로그인 기능을 추가했습니다.
 ```
+
+<a href="https://www.flaticon.com/kr/free-icons/" title="타락 아이콘">타락 아이콘  제작자: Anggre Tionanda - Flaticon</a>
+
