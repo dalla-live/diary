@@ -10,22 +10,26 @@ import RealmSwift
 
 struct DBManager<Q: Object> {
 
-    private var realm = try! Realm()
+    private var realm: Realm?
+    
+    init() {
+        self.realm = try! Realm()
+    }
 
     public func add(_ object: Q) {
-        try! realm.write {
-            realm.add(object)
+        try! realm?.write {
+            realm?.add(object)
         }
     }
 
     public func delete(_ object: Q) {
-        try! realm.write {
-            realm.delete(object)
+        try! realm?.write {
+            realm?.delete(object)
         }
     }
 
     public func read()-> Results<Q> {
-        let objects = realm.objects(Q.self)
+        let objects = realm!.objects(Q.self)
 
         return objects
     }
