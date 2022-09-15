@@ -14,24 +14,15 @@ struct TranslationAPI: Networkable {
     // Target 을 지정해줘야 합니다
     typealias Target = TranslationTargetType
     
-    static func requestTraslation(request: TranslationDTO, completion: @escaping (_ succeed: String?, _ failed: Error?) -> Void) {
+    static func requestTraslation(request: TranslationDTO, completion: @escaping (Result<String,Error>) -> Void) {
         // JSON형태로 디코딩
         makeProvider().request(.requestTranslation(request)) { (result) in
             switch ResponseData<JSON>.processJSONResponse(result) {
             case .success(let model):
-                return completion(model["message"]["result"]["translatedText"].string, nil)
+                return completion(.success(model["message"]["result"]["translatedText"].stringValue))
             case .failure(let error):
-                return completion(nil, error)
+                return completion(.failure(error))
             }
         }
-        // 데이터모델로 디코딩
-//        makeProvider().request(.requestTranslation(request)) { (result) in
-//            switch ResponseData<TranslationModel>.processModelResponse(result) {
-//            case .success(let model):
-//                return completion(model, nil)
-//            case .failure(let error):
-//                return completion(nil, error)
-//            }
-//        }
     }
 }
