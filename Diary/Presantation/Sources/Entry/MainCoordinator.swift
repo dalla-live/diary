@@ -54,8 +54,16 @@ public class MainCoordinator: Coordinator {
             mapCoordinator.coordinator = self
         let diaryCoordinator    = DiaryCoordinator(navigation: vc3)
         
+        var image: (deselected: UIImage?, selected: UIImage?) {
+            if #available(iOS 15.0, *) {
+                return (UIImage(systemName: "location.north.circle"), UIImage(systemName: "location.north.circle.fill"))
+            } else {
+                return (UIImage(systemName: "location.north"), UIImage(systemName: "location.north.fill"))
+            }
+        }
+        
         vc1.tabBarItem = UITabBarItem(title: TabMenu.bookMark.title, image: UIImage(systemName: "bookmark"), selectedImage: UIImage(systemName: "bookmark.fill"))
-        vc2.tabBarItem = UITabBarItem(title: TabMenu.map.title, image: UIImage(systemName: "location.north.circle"), selectedImage: UIImage(systemName: "location.north.circle.fill"))
+        vc2.tabBarItem = UITabBarItem(title: TabMenu.map.title, image: image.deselected, selectedImage: image.selected)
         vc3.tabBarItem = UITabBarItem(title: TabMenu.diary.title, image: UIImage(systemName: "pencil.circle"), selectedImage: UIImage(systemName: "pencil.circle.fill"))
         
         

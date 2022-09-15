@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct Bookmark {
+struct Bookmark: Equatable, Identifiable {
     typealias Identifier = String
     
     let id: Identifier
@@ -22,4 +22,8 @@ struct Bookmark {
         return CLLocationCoordinate2D(latitude: CLLocationDegrees(self.latitude) ?? .zero,
                                       longitude: CLLocationDegrees(self.longtitude) ?? .zero)
     }
+}
+
+struct BookmarkList: Equatable {
+    let bookmarks: [Bookmark]
 }
