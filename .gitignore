@@ -66,5 +66,8 @@ DerivedData/
 graph.dot
 Derived/
 
+### CocoaPods
+Pods/*
+
 ### Tuist managed dependencies ###
 Tuist/Dependencies

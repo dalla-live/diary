@@ -1,0 +1,6 @@
+framework module Pods_Presantation {
+  umbrella header "Pods-Presantation-umbrella.h"
+
+  export *
+  module * { export * }
+}
