@@ -14,7 +14,7 @@ public class BookmarkCoordinator: Coordinator {
     
     public init(navigation: UINavigationController) {
         navigationController = navigation
-        navigation.view.backgroundColor = .red
+        navigation.view.backgroundColor = .white
     }
     
     public func start() {
