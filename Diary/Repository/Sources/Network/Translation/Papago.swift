@@ -8,9 +8,6 @@
 import Foundation
 
 struct Papago {
-    // Naver Client ID
-    static let clientID = "3lbxmOH9ULv_yXxcd7Ix"
-    static let clientSecret = "iEmQSS23O4"
     
     enum Code: String {
         /// 한국어

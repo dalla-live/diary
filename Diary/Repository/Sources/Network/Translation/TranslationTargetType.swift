@@ -66,8 +66,8 @@ extension TranslationTargetType: BaseTargetType {
         switch self {
         case .requestTranslation(let translationDTO):
             return ["Content-Type": "application/x-www-form-urlencoded",
-                    "X-Naver-Client-Id": Papago.clientID,
-                    "X-Naver-Client-Secret": Papago.clientSecret,
+                    "X-Naver-Client-Id": AppKey.naverClientID,
+                    "X-Naver-Client-Secret": AppKey.naverClientSecret,
                     "Content-length" : "\(translationDTO.text.count)"]
         }
         
