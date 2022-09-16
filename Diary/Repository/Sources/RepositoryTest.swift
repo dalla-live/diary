@@ -12,14 +12,14 @@ import RealmSwift
 public class RepositoryTest {
     public init() {
         // MARK: LocalNameAPITestCode
-        LocalAPI.requestLocalName(request: LocalDTO(lat: 37.541, lon: 126.980, limit: 1), completion: { (result) in
-            switch result {
-            case .success(let model):
-                break
-            case .failure(let error):
-                break
-            }
-        })
+//        LocalAPI.requestLocalName(request: LocalDTO(lat: 37.541, lon: 126.980, limit: 1), completion: { (result) in
+//            switch result {
+//            case .success(let model):
+//                break
+//            case .failure(let error):
+//                break
+//            }
+//        })
         
         // MARK: TranslationAPITestCode
 //        TranslationAPI.requestTraslation(request: TranslationDTO(text: "안녕하세요", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue), completion: { (result) in

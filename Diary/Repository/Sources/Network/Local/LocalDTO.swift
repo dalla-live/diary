@@ -11,5 +11,5 @@ public struct LocalDTO: Codable {
     var lat: Double
     var lon: Double
     var limit: Int
-    var appID: String = "7a30119259b375a62188ecebaf47d51b"
+    var appID: String = AppKey.openWeatherMapAppKey
 }

@@ -17,7 +17,7 @@ public enum LocalTargetType {
 
 extension LocalTargetType: BaseTargetType {
     public var baseURL: URL {
-        return URL(string: NetworkURL.localUrl)!
+        return URL(string: NetworkURL.openWeatherMapUrl)!
     }
     
     public var path: String {
