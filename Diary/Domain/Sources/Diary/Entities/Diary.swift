@@ -27,3 +27,7 @@ class Diary: Object {
         return "id"
     }
 }
+
+struct DiaryList {
+    let diaries: [Diary]
+}
