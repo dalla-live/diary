@@ -22,7 +22,18 @@ class BookmarkViewController: UIViewController {
         
         bookmarker.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.size.equalTo(300)
+            $0.width.equalTo(30)
+            $0.height.equalTo(50)
         }
+        
+        bookmarker.rx.panGesture()
+            .bind { [unowned self] in handlingBookmarker(sender: $0) }
+            .disposed(by: disposeBag)
+    }
+    
+    private func handlingBookmarker(sender: UIPanGestureRecognizer) {
+        let location = sender.location(in: view)
+        print(location)
+        
     }
 }
