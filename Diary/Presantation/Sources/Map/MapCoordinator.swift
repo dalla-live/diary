@@ -22,16 +22,25 @@ class MapCoordinator: Coordinator {
     }
     
     func start() {
-        let mapVc = MapViewController()
+        let mapVc = MapViewController(dependency: getMapViewModel())
             mapVc.coordinator = self
         self.navigationController.pushViewController(mapVc, animated: false)
-        mapVc.view.backgroundColor = .darkGray
-        print(#file)
+
     }
+    
+    func getMapViewModel() -> MapViewModel{
+//        MapLayoutModel()
+//        MapRepository()
+        MapViewModel()
+    }
+    
+    
     
     deinit {
         print(#file)
     }
+    
+    
 }
 
 extension MapCoordinator: MapViewDelegate {
@@ -46,44 +55,3 @@ public protocol MapViewDelegate: AnyObject {
     func openWindow()
 }
 
-public class MapViewController: UIViewController {
-    weak var coordinator: MapViewDelegate?
-    
-    var disposeBag: DisposeBag = .init()
-    
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        let btn = UIView()
-        let text = UILabel()
-        
-        btn.addSubview(text)
-        text.text = "누르면 전체 뷰"
-        view.addSubview(btn)
-        text.snp.makeConstraints{
-            $0.width.equalToSuperview()
-            $0.center.equalToSuperview()
-        }
-        
-        btn.snp.makeConstraints{
-            $0.width.height.equalTo(100)
-            $0.center.equalToSuperview()
-        }
-        
-        
-        btn.rx.tapGesture()
-            .when(.recognized)
-            .subscribe(onNext: { [weak self] _ in
-                
-            self?.coordinator?.openWindow()
-                
-        }).disposed(by: disposeBag)
-
-    }
-    
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
-    
-    
-}
