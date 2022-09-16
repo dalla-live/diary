@@ -19,6 +19,8 @@ final class DefaultFetchDiaryUseCase: FetchDiaryUseCase {
     }
     
     func execute(completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
-        diaryRepository.fetchDiaryList(completion: {})
+        diaryRepository.fetchDiaryList { result in
+            completion(result)
+        }
     }
 }
