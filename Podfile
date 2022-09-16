@@ -14,51 +14,57 @@ project 'Diary/Repository.xcodeproj'
 project 'Diary/Service.xcodeproj'
 project 'Diary/Util.xcodeproj'
 
+
+
+def pods
+  pod 'RealmSwift'
+  pod 'GoogleMaps'
+  
+end
+
 target 'App' do
   project 'Diary/App/App.xcodeproj'
 
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Domain' do
   project 'Diary/Domain/Domain.xcodeproj'
 
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Design' do
   project 'Diary/Design/Design.xcodeproj'
 
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Presantation' do
   project 'Diary/Presantation/Presantation.xcodeproj'
 
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Repository' do
   project 'Diary/Repository/Repository.xcodeproj'
 
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Service' do
   project 'Diary/Service/Service.xcodeproj'
-
-  pod 'RealmSwift'
+  pods
 
 end
 
 target 'Util' do
   project 'Diary/Util/Util.xcodeproj'
-
-  pod 'RealmSwift'
+  pods
 
 end
