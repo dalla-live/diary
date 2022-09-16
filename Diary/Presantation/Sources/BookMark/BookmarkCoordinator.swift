@@ -18,6 +18,10 @@ public class BookmarkCoordinator: Coordinator {
     }
     
     public func start() {
+        let bookmarVC = BookmarkViewController()
+        bookmarVC.coordinator = self
+        
+        self.navigationController.pushViewController(bookmarVC, animated: false)
         print(#file)
     }
     

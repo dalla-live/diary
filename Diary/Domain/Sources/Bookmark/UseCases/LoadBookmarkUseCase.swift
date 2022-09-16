@@ -9,8 +9,7 @@ import Foundation
 import CoreLocation
 
 protocol LoadBookmarkUseCase {
-    func excute(coordinate: CLLocationCoordinate2D,
-                completion: @escaping ((Result<BookmarkList, Error>) -> Void))
+    func excute(completion: @escaping ((Result<BookmarkList, Error>) -> Void))
     
 }
 
@@ -21,9 +20,7 @@ final class DefaultLoadBookmarkUseCase: LoadBookmarkUseCase {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(coordinate: CLLocationCoordinate2D, completion: @escaping ((Result<BookmarkList, Error>) -> Void)) {
-        bookmarkRepository.fetchBookmarkList(coordinate: coordinate) { result in
-            completion(result)
-        }
+    func excute(completion: @escaping ((Result<BookmarkList, Error>) -> Void)) {
+        bookmarkRepository.fetchBookmarkList { completion($0) }
     }
 }

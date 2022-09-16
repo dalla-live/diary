@@ -9,8 +9,7 @@ import Foundation
 import CoreLocation
 
 protocol BookmarkRepository {
-    func fetchBookmarkList(coordinate: CLLocationCoordinate2D,
-                           completion: @escaping (Result<BookmarkList, Error>) -> Void)
+    func fetchBookmarkList(completion: @escaping (Result<BookmarkList, Error>) -> Void)
     
     func addBookmark(bookmark: Bookmark,
                      completion: @escaping (Result<BookmarkList, Error>) -> Void)
