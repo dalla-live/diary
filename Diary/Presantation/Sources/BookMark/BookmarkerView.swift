@@ -12,28 +12,21 @@ import Then
 import Util
 
 class BookmarkerView: ProgrammaticallyView {
+    
     let imageView = UIImageView().then {
-        $0.image = UIImage(named: "checkmark.rectangle")
+        $0.image = UIImage(systemName: "checkmark")
         $0.backgroundColor = .black
         $0.tintColor = .white
     }
-    
-    let testLabel = UILabel().then {
-        $0.text = "Test 입니다."
-        $0.textColor = .white
-    }
-    
+        
     override func addComponent() {
-        [imageView, testLabel].forEach(addSubview)
+        fileName = #file.fileName
+        [imageView].forEach(addSubview)
     }
     
     override func setConstraints() {
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-        }
-        
-        testLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
         }
     }
     
@@ -45,10 +38,10 @@ class BookmarkerView: ProgrammaticallyView {
     }
     
     override func moreAction() {
-        
+//        <#code#>
     }
     
-    deinit {
-        print("deinit Bookmarker")
+    override func deinitAction() {
+//        <#code#>
     }
 }
