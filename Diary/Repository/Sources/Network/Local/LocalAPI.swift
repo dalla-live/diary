@@ -16,7 +16,7 @@ struct LocalAPI: Networkable {
         makeProvider().request(.requestLocalName(request)) { (result) in
             switch ResponseData<JSON>.processJSONResponse(result) {
             case.success(let model):
-                return completion(.success(""))
+                return completion(.success(model.arrayValue.first!["name"].stringValue))
                 
             case .failure(let error):
                 return completion(.failure(error))
