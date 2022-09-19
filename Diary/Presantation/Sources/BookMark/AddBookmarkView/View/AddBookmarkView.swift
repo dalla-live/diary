@@ -21,6 +21,7 @@ class AddBookmarkView: ProgrammaticallyView {
     let contentView = UIView().then {
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 16
+        $0.addShadow(location: .bottom)
     }
     
     let titleLabel = UILabel().then {
@@ -214,12 +215,5 @@ extension AddBookmarkView {
             case .store: return "저장하기"
             }
         }
-    }
-}
-
-extension UIView {
-    func addBorder(width: CGFloat, color: UIColor) {
-        self.layer.borderWidth = width
-        self.layer.borderColor = color.cgColor
     }
 }
