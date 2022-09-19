@@ -13,7 +13,7 @@ import Util
 extension CalendarView {
     
     func binds() {
-        viewModel = CalendarViewModel(CalendarViewModel.Input(date: date.asObservable()))
+        viewModel = CalendarGridViewModel(CalendarGridViewModel.Input(date: date.asObservable()))
         date.onNext(visibleDateInfo)
         
         viewModel.output?.monthStruct.bind(to: collectionView.rx.items(cellIdentifier: CalendarCollectionViewCell.identifier, cellType: CalendarCollectionViewCell.self)) { [weak self] row, data , cell in

@@ -32,6 +32,7 @@ class CalendarMarkView : ProgrammaticallyView , UITableViewDelegate{
     }
     
     weak var delegate : DiaryViewDelegate?
+    var viewModel : CalendarMarkViewModel!
     
     override func addComponent() {
         fileName = #file.fileName

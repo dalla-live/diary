@@ -53,7 +53,7 @@ class CalendarView : ProgrammaticallyView {
     }()
     
     
-    var viewModel : CalendarViewModel!
+    var viewModel : CalendarGridViewModel!
     weak var delegate : DiaryViewDelegate?
     
     var visibleDateInfo : Date = Date()
