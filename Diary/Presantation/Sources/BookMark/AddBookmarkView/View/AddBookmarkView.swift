@@ -18,7 +18,7 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.backgroundColor = Const.Custom.background.color
     }
     
-    let contentView = UIView().then {
+    let contentView = VibrationView().then {
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 16
         $0.addShadow(location: .bottom)
@@ -187,7 +187,11 @@ class AddBookmarkView: ProgrammaticallyView {
             .disposed(by: disposeBag)
         
         cancelButton.rx.tap
-            .bind { [unowned self] in print("취소 \(date.string(from: Date()))") }
+            .bind { [unowned self] in
+                print("취소 \(date.string(from: Date()))")
+                // 오류 있을 때 Shake And Show Toast
+                contentView.shakeAnimation()
+            }
             .disposed(by: disposeBag)
     }
 }
