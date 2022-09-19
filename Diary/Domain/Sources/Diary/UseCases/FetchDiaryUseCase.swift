@@ -7,19 +7,26 @@
 
 import Foundation
 
-protocol FetchDiaryUseCase {
+public protocol FetchDiaryUseCase {
     func execute(completion: @escaping ((Result<DiaryList, Error>) -> Void))
+    func getListByDate(_ query : String , completion : @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-final class DefaultFetchDiaryUseCase: FetchDiaryUseCase {
+public final class DefaultFetchDiaryUseCase: FetchDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
-    init(diaryRepository: DiaryRepository){
+    public init(diaryRepository: DiaryRepository){
         self.diaryRepository = diaryRepository
     }
     
-    func execute(completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
+    public func execute(completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
         diaryRepository.fetchDiaryList { result in
+            completion(result)
+        }
+    }
+    
+    public func getListByDate(_ query: String, completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
+        diaryRepository.fetchListByDate(query){ result in
             completion(result)
         }
     }

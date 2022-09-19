@@ -8,8 +8,8 @@
 import Foundation
 import RealmSwift
 
-class Diary: Object {
-    typealias Identifier = Int
+public class Diary: Object {
+    public typealias Identifier = Int
     
     @objc dynamic var id: Identifier = 0
     @objc dynamic var contents: String = ""
@@ -23,11 +23,11 @@ class Diary: Object {
     }
     
     // 기본키 설정
-    override class func primaryKey() -> String? {
+    public override class func primaryKey() -> String? {
         return "id"
     }
 }
 
-struct DiaryList {
+public struct DiaryList {
     let diaries: [Diary]
 }

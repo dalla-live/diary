@@ -7,18 +7,18 @@
 
 import Foundation
 
-protocol AddDiaryUseCase {
+public protocol AddDiaryUseCase {
     func execute(diary: Diary, completion: @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-final class defaultAddDiaryUseCase: AddDiaryUseCase {
+public final class defaultAddDiaryUseCase: AddDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
     init(diaryRepository:DiaryRepository){
         self.diaryRepository = diaryRepository
     }
     
-    func execute(diary: Diary, completion: @escaping ((Result<DiaryList, Error>) -> Void)){
+    public func execute(diary: Diary, completion: @escaping ((Result<DiaryList, Error>) -> Void)){
         diaryRepository.addDiary(diary: diary){ result in
             completion(result)
         }

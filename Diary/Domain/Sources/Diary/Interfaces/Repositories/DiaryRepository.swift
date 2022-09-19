@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol DiaryRepository{
+public protocol DiaryRepository{
     // TODO: 조건별 Fetch 추가
     func fetchDiaryList(completion: @escaping (Result<DiaryList, Error>) -> Void)
     
@@ -16,4 +16,6 @@ protocol DiaryRepository{
     func deleteDiary(id: Diary.Identifier, completion: @escaping(Result<DiaryList, Error>) -> Void)
     
     func updateDiary(diary: Diary, completion: @escaping(Result<DiaryList, Error>) -> Void)
+    
+    func fetchListByDate(_ date: String, completion: @escaping(Result<DiaryList, Error>) -> Void)
 }

@@ -7,18 +7,18 @@
 
 import Foundation
 
-protocol DeleteDiaryUseCase {
+public protocol DeleteDiaryUseCase {
     func execute(id: Diary.Identifier, completion: @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-final class DefaultDeleteDiaryUseCase: DeleteDiaryUseCase {
+public final class DefaultDeleteDiaryUseCase: DeleteDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
-    init(diaryRepository: DiaryRepository){
+    public init(diaryRepository: DiaryRepository){
         self.diaryRepository = diaryRepository
     }
     
-    func execute(id: Diary.Identifier, completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
+    public func execute(id: Diary.Identifier, completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
         diaryRepository.deleteDiary(id: id) { result in
             completion(result)
         }
