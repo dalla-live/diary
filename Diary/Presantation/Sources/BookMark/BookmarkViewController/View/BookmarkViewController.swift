@@ -59,15 +59,19 @@ public final class BookmarkViewController: UIViewController {
             
         case .ended:
             print("panGesture ended")
-            let addBookmarkView = AddBookmarkView()
-            
-            view.addSubview(addBookmarkView)
-            
-            addBookmarkView.snp.makeConstraints {
-                $0.edges.equalToSuperview()
-            }
+            makeAddBookmarkView()
             
         case _: break
+        }
+    }
+    
+    private func makeAddBookmarkView() {
+        let addBookmarkView = AddBookmarkView()
+        
+        view.addSubview(addBookmarkView)
+        
+        addBookmarkView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
     }
 }
