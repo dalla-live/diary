@@ -11,7 +11,7 @@ import UIKit
 public protocol Vibratable {
     var vibrator: UINotificationFeedbackGenerator? { get set }
     func setupGenerator()
-    func vibration()
+    func vibrate(_ type: UINotificationFeedbackGenerator.FeedbackType)
     func shakeAnimation(shouldVibrate: Bool, completion: (() -> ())?)
 }
 
