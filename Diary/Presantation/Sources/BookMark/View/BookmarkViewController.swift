@@ -37,13 +37,37 @@ public final class BookmarkViewController: UIViewController {
         }
         
         bookmarker.rx.panGesture()
-            .bind { [unowned self] in handlingBookmarker(sender: $0) }
+            .bind { [unowned self] in handlingBookmarker($0) }
             .disposed(by: disposeBag)
     }
     
-    private func handlingBookmarker(sender: UIPanGestureRecognizer) {
+    private func handlingBookmarker(_ sender: UIPanGestureRecognizer) {
+        guard let bookmarkerView = sender.view else { return }
         let location = sender.location(in: view)
-        print(location)
-        
+        switch sender.state {
+        case .began:
+            bookmarkerView.snp.remakeConstraints {
+                $0.center.equalTo(location)
+                $0.width.equalTo(30)
+                $0.height.equalTo(50)
+            }
+            
+        case .changed:
+            bookmarkerView.snp.updateConstraints {
+                $0.center.equalTo(location)
+            }
+            
+        case .ended:
+            print("panGesture ended")
+            let addBookmarkView = AddBookmarkView()
+            
+            view.addSubview(addBookmarkView)
+            
+            addBookmarkView.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
+            
+        case _: break
+        }
     }
 }
