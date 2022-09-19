@@ -25,8 +25,10 @@ open class VibrationView: UIView, Vibratable {
         self.vibrator?.prepare()
     }
     
-    public func vibration() {
-        self.vibrator?.notificationOccurred(.error)
+    /// There's a haptic sound on the iPhone.
+    /// - Parameter type: Type is kinds of `success`, `warning`And `error`, defualt value is error.
+    public func vibrate(_ type: UINotificationFeedbackGenerator.FeedbackType = .error) {
+        self.vibrator?.notificationOccurred(type)
     }
     
     /// ShakeAnimation
@@ -41,7 +43,7 @@ open class VibrationView: UIView, Vibratable {
         layer.add(animation, forKey: "shake")
         
         if shouldVibrate {
-            self.vibration()
+            self.vibrate()
         }
         
         completion?()
