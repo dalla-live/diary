@@ -15,7 +15,7 @@ import CoreTelephony
 class AddBookmarkView: ProgrammaticallyView {
     
     let backgroundView = UIView().then {
-        $0.backgroundColor = UIColor(white: 0.8, alpha: 0.2)
+        $0.backgroundColor = Const.Custom.background.color
     }
     
     let contentView = UIView().then {
@@ -25,17 +25,17 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     let titleLabel = UILabel().then {
-        $0.text = ToBeLocalized.addBookmark.text
+        $0.text = Const.ToBeLocalized.addBookmark.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 20, weight: .bold)
     }
     
     let titleLine = UIView().then {
-        $0.backgroundColor = UIColor(white: 0.4, alpha: 0.5)
+        $0.backgroundColor = Const.Custom.line.color
     }
     
     let locationLabel = UILabel().then {
-        $0.text = ToBeLocalized.location.text
+        $0.text = Const.ToBeLocalized.location.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
@@ -46,24 +46,24 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 5.0
         $0.layer.borderWidth = 1.0
-        $0.layer.borderColor = UIColor(white: 0.8, alpha: 0.8).cgColor
+        $0.layer.borderColor = Const.Custom.line.color?.cgColor
     }
     
     let roadNameLabel = UILabel().then {
-        $0.text = ToBeLocalized.loadNameExample.text
+        $0.text = Const.ToBeLocalized.loadNameExample.text
         $0.textColor = .darkGray
         $0.font = .systemFont(ofSize: 14, weight: .light)
     }
 
     
     let weatherLabel = UILabel().then {
-        $0.text = ToBeLocalized.weather.text
+        $0.text = Const.ToBeLocalized.weather.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
     
     let moodLabel = UILabel().then {
-        $0.text = ToBeLocalized.mood.text
+        $0.text = Const.ToBeLocalized.mood.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
@@ -74,16 +74,16 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     let cancelButton = UIButton().then {
-        $0.setTitle(ToBeLocalized.cancel.text, for: .normal)
-        $0.setTitleColor(UIColor.red, for: .normal)
-        $0.addBorder(width: 1, color: UIColor(white: 0.3, alpha: 0.5))
+        $0.setTitle(Const.ToBeLocalized.cancel.text, for: .normal)
+        $0.setTitleColor(Const.Custom.cancle.color, for: .normal)
+        $0.addBorder(width: 1, color: Const.Custom.line.color ?? UIColor())
         $0.layer.cornerRadius = 8
     }
     
     let storeButton = UIButton().then {
-        $0.setTitle(ToBeLocalized.store.text, for: .normal)
-        $0.setTitleColor(UIColor.blue, for: .normal)
-        $0.addBorder(width: 1, color: UIColor(white: 0.3, alpha: 0.5))
+        $0.setTitle(Const.ToBeLocalized.store.text, for: .normal)
+        $0.setTitleColor(Const.Custom.store.color, for: .normal)
+        $0.addBorder(width: 1, color: Const.Custom.line.color ?? UIColor())
         $0.layer.cornerRadius = 8
     }
     
@@ -124,12 +124,12 @@ class AddBookmarkView: ProgrammaticallyView {
         }
         
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(halfSpacing)
+            $0.top.equalToSuperview().inset(14.0)
             $0.centerX.equalToSuperview()
         }
         
         titleLine.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(halfSpacing)
+            $0.top.equalToSuperview().inset(50)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1)
         }
@@ -189,31 +189,5 @@ class AddBookmarkView: ProgrammaticallyView {
         cancelButton.rx.tap
             .bind { [unowned self] in print("취소 \(date.string(from: Date()))") }
             .disposed(by: disposeBag)
-    }
-}
-
-extension AddBookmarkView {
-    enum ToBeLocalized {
-        case addBookmark
-        case location
-        case weather
-        case mood
-        case loadNameExample
-        
-        // ButtonTitle
-        case cancel
-        case store
-        
-        var text: String {
-            switch self {
-            case .addBookmark: return "북마크 추가하기"
-            case .location: return "위치"
-            case .weather: return "날씨"
-            case .mood: return "기분이 조크등요"
-            case .loadNameExample: return "광주 세정아울렛"
-            case .cancel: return "취소하기"
-            case .store: return "저장하기"
-            }
-        }
     }
 }
