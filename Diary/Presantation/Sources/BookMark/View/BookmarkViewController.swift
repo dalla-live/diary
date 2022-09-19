@@ -9,12 +9,22 @@ import Foundation
 import UIKit
 import RxSwift
 
-class BookmarkViewController: UIViewController {
+public final class BookmarkViewController: UIViewController {
     weak var coordinator: BookmarkCoordinator?
+    
+    private var viewModel: BookmarkViewModel!
     
     let disposeBag = DisposeBag()
     
-    override func viewDidLoad() {
+    /// ViewController 의존성 주입을 위한 Create 함수
+    public static func create(with viewModel: BookmarkViewModel)-> BookmarkViewController {
+        let vc = BookmarkViewController()
+        vc.viewModel = viewModel
+        
+        return vc
+    }
+    
+    public override func viewDidLoad() {
         super.viewDidLoad()
         let bookmarker = BookmarkerView()
         
