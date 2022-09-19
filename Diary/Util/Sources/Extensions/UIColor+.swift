@@ -13,4 +13,11 @@ extension UIColor {
         let rgb = rgb / 255.0
         self.init(red: rgb, green: rgb, blue: rgb, alpha:a)
     }
+    
+    public convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat = 1.0) {
+        let red = r / 255,
+            green = g / 255,
+            blue = b / 255
+        self.init(red: red, green: green, blue: blue, alpha:a)
+    }
 }
