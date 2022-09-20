@@ -6,20 +6,37 @@
 //
 
 import Foundation
-import Repository
+import CoreLocation
+
+//
+//protocol SearchLocationUseCase {
+//    func execute(requestValue: SearchLocationRequestValue, completion: @escaping (Result<Location, Error>) -> Void)
+//}
+//
+//
+//class SearchLocationUseCaseProvider: SearchLocationUseCase {
+//    func execute(requestValue: SearchLocationRequestValue, completion: @escaping (Result<Location, Error>) -> Void) {
+//
+//    }
+//}
 
 
-struct SearchLocationRequestValue {
+public struct SearchLocationRequestModel {
     
 }
-
-protocol SearchLocationUseCase {
-    func execute(requestValue: SearchLocationRequestValue, completion: @escaping (Result<Location, Error>) -> Void)
+public protocol LocationUseCase {
+    func execute(model: SearchLocationRequestModel)
 }
 
 
-class SearchLocationUseCaseProvider: SearchLocationUseCase {
-    func execute(requestValue: SearchLocationRequestValue, completion: @escaping (Result<Location, Error>) -> Void) {
+
+public class LocationUseCaseProvider : LocationUseCase {
+
+    
+    public init() {
+    }
+    
+    public func execute(model: SearchLocationRequestModel) {
         
     }
 }

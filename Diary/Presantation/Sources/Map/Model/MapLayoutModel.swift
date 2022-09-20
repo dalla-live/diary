@@ -8,29 +8,46 @@
 import UIKit
 import Then
 struct MapLayoutModel {
+    let _MAP_CONTAINER            = UIView(frame: .zero).then{
+        $0.backgroundColor = .clear
+    }
+    
+    let _BUTTON_CONTAINER            = UIView(frame: .zero).then{
+        $0.backgroundColor = .clear
+        $0.isUserInteractionEnabled = false
+    }
+    
     let _SUBMENU_MAP            = UIView(frame: .zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     let _SUBMENU_LIST           = UIView(frame: .zero).then{
         $0.backgroundColor = .red
+        $0.isUserInteractionEnabled = true
     }
     let _QUICK_BUTTON           = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     let _BOOK_MARK_FLAG         = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     let _BOOK_MARK_TOOL_TIP     = UIView(frame:.zero).then{
         $0.backgroundColor = .red
+        $0.isUserInteractionEnabled = true
     }
     let _FLOATING_SEARCH_BUTTON = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     let _FLOATING_ADD_BUTTON    = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     let _FLOATING_EXTEND_BUTTON = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
+        $0.isUserInteractionEnabled = true
     }
     
     

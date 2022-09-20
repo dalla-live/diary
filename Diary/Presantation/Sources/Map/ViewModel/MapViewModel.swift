@@ -13,6 +13,10 @@ import Then
 import SnapKit
 import RxGesture
 import Util
+import Domain
+import Service
+import GoogleMapsUtils
+import GoogleMaps
 
 //struct MapUseCases {
 //    var
@@ -20,11 +24,11 @@ import Util
 
 // 무엇을 했다
 protocol MapViewModelInput {
-    func didSubMenu(selected: MapSubMenu)          // 상단 서브메뉴 토글
-    func showQuickBookmark()                           // 빠른 북마크 보기
-    func didFloating(selected: MapQuickMenu)   // 하단 플루팅 버튼
-    func didSelectBookmarkFlag()                       // 북마크 깃발
-    func didOpenBookmarkDetail()                       // 북마크 상세보기 선택
+//    func didSubMenu(selected: MapSubMenu)          // 상단 서브메뉴 토글
+//    func showQuickBookmark()                           // 빠른 북마크 보기
+//    func didFloating(selected: MapQuickMenu)   // 하단 플루팅 버튼
+//    func didSelectBookmarkFlag()                       // 북마크 깃발
+//    func didOpenBookmarkDetail()                       // 북마크 상세보기 선택
 }
 
 enum MapSubMenu {
@@ -37,18 +41,14 @@ enum MapQuickMenu {
     case toggle
 }
 
-@dynamicMemberLookup
-public class MapViewModel {
-    /**
-        DialogModel: 다이네믹 멤버를 받을 타입, U: 해당 멤버의 프로퍼티 -> DialogModel에 접근한다
-        let viewModel = MapViewModel()
-         viewModel._BOOK_MARK_FLAG  == viewModel.model._BOOK_MARK_FLAG
-     - Returns: DialogModel
-     */
-    subscript<T>(dynamicMember keyPath: KeyPath<MapLayoutModel, T>) -> T {
-        return layoutModel[keyPath: keyPath]
-    }
+
+public class MapViewModel: NSObject {
+    // for Repository
+    var mapUseCase : MapUseCase!
     
+    init(mapUseCase: MapUseCase) {
+        self.mapUseCase      = mapUseCase
+    }
     
     var layoutModel = MapLayoutModel()
     var disposeBag: DisposeBag = .init()
@@ -57,21 +57,22 @@ public class MapViewModel {
     var openWindow = PublishSubject<Bool>()
     
     
-    func viewDidLoad(parentView: UIView) {
-        setLayout(parentView: parentView)
+    func viewDidLoad() {
+        setLayout()
         setConstraint()
         setUI()
     }
     
-    func setLayout(parentView: UIView) {
-        parentView.addSubview(layoutModel._SUBMENU_MAP)
-        parentView.addSubview(layoutModel._SUBMENU_LIST)
-        parentView.addSubview(layoutModel._QUICK_BUTTON)
-        parentView.addSubview(layoutModel._BOOK_MARK_FLAG)
-        parentView.addSubview(layoutModel._BOOK_MARK_TOOL_TIP)
-        parentView.addSubview(layoutModel._FLOATING_SEARCH_BUTTON)
-        parentView.addSubview(layoutModel._FLOATING_ADD_BUTTON)
-        parentView.addSubview(layoutModel._FLOATING_EXTEND_BUTTON)
+    func setLayout() {
+        
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_MAP)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_LIST)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._QUICK_BUTTON)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._BOOK_MARK_FLAG)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._BOOK_MARK_TOOL_TIP)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_SEARCH_BUTTON)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_ADD_BUTTON)
+        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_EXTEND_BUTTON)
     }
     
     func setConstraint() {

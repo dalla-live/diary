@@ -18,13 +18,11 @@ project 'Diary/Util.xcodeproj'
 
 def pods
   pod 'RealmSwift'
-  pod 'GoogleMaps'
-  
 end
 
 target 'App' do
   project 'Diary/App/App.xcodeproj'
-
+  pod 'GoogleMaps'
   pods
 
 end
@@ -45,7 +43,7 @@ end
 
 target 'Presantation' do
   project 'Diary/Presantation/Presantation.xcodeproj'
-
+  
   pods
 
 end
@@ -60,6 +58,8 @@ end
 target 'Service' do
   project 'Diary/Service/Service.xcodeproj'
   pods
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
 
 end
 

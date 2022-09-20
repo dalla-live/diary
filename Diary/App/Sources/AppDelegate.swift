@@ -7,13 +7,17 @@
 
 import UIKit
 
+class Sh {
+    static let shared : Sh = .init()
+}
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
+    
+    static let GOOGLE_API_KEY = "AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
         return true
     }
 
