@@ -15,7 +15,6 @@ import RxSwift
 import RxCocoa
 
 class AddBookmarkView: ProgrammaticallyView {
-    let testFirst = true
     let backgroundView = UIView().then {
         $0.backgroundColor = Const.Custom.background.color
     }
