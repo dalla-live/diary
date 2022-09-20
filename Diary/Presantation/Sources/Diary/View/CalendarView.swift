@@ -46,6 +46,7 @@ class CalendarView : ProgrammaticallyView {
         view.isPagingEnabled              = false
         view.showsVerticalScrollIndicator = false
         view.allowsMultipleSelection      = false
+        view.isScrollEnabled              = false
         view.delegate                     = self
         view.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCollectionViewCell")
         view.backgroundColor = .white
@@ -59,21 +60,19 @@ class CalendarView : ProgrammaticallyView {
     var visibleDateInfo : Date = Date()
     var date : PublishSubject<Date> = .init()
     var lastSelectedIndexPath : IndexPath?
-    
-    
-    var contentCellWidth : CGFloat {
-        return CGFloat( (UIScreen.main.bounds.width - 32) / 7)
-    }
-    
+
     override func addComponent() {
         fileName = #file.fileName
         setUI()
         configWeekStackView()
-        
     }
     
     override func moreAction() {
         addGesture()
+    }
+    
+    override func bind() {
+        binds()
     }
     
     func setUI() {
@@ -86,14 +85,11 @@ class CalendarView : ProgrammaticallyView {
     
     }
 
-    override func bind() {
-        binds()
-    }
-    
     override func setConstraints() {
         contentView.snp.makeConstraints{
+            let height = (Size.contentCellWidth.scale() * 6) + Size.monthOfDateHeight.scale() + Size.weekStackHeight.scale() + Size.weekStackTopPadding.scale()
             $0.centerX.centerY.equalToSuperview()
-            $0.height.equalTo(400)
+            $0.height.equalTo(height)
             $0.left.equalToSuperview().offset(16)
             $0.right.equalToSuperview().offset(-16)
         }
@@ -101,7 +97,7 @@ class CalendarView : ProgrammaticallyView {
         monthOfDate.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.top.left.right.equalToSuperview()
-            $0.height.equalTo(50)
+            $0.height.equalTo(Size.monthOfDateHeight.scale())
         }
         
         monthLabel.snp.makeConstraints{
@@ -124,11 +120,11 @@ class CalendarView : ProgrammaticallyView {
         weekStackView.snp.makeConstraints{
             $0.left.right.equalToSuperview()
             $0.top.equalTo(monthOfDate.snp.bottom)
-            $0.height.equalTo(30)
+            $0.height.equalTo(Size.monthOfDateHeight.scale())
         }
         
         collectionView.snp.makeConstraints{
-            $0.top.equalTo(weekStackView.snp.bottom).offset(10)
+            $0.top.equalTo(weekStackView.snp.bottom).offset(Size.weekStackTopPadding.scale())
             $0.width.bottom.equalToSuperview()
             $0.left.right.equalToSuperview()
         }
@@ -144,7 +140,7 @@ class CalendarView : ProgrammaticallyView {
             label.font = .systemFont(ofSize: 12)
             self.weekStackView.addArrangedSubview(label)
             label.snp.makeConstraints{
-                $0.width.equalTo(contentCellWidth)
+                $0.width.equalTo(Size.contentCellWidth.scale())
             }
         }
     }
@@ -181,7 +177,7 @@ class CalendarView : ProgrammaticallyView {
 
 extension CalendarView : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: contentCellWidth , height: contentCellWidth)
+        return CGSize(width: Size.contentCellWidth.scale() , height: Size.contentCellWidth.scale())
     }
     
     func collectionView(_ collectionView: UICollectionView,
@@ -190,4 +186,29 @@ extension CalendarView : UICollectionViewDelegateFlowLayout {
         return .zero
     }
 
+}
+
+
+extension CalendarView {
+    enum Size {
+        case contentCellWidth
+        case monthOfDateHeight
+        case weekStackHeight
+        case weekStackTopPadding
+        
+        var const : CGFloat  {
+            switch self {
+            case .contentCellWidth:
+                return (UIScreen.main.bounds.width - 32) / 7
+            case .monthOfDateHeight:
+                return 50
+            case .weekStackHeight:
+                return 30
+            case .weekStackTopPadding:
+                return 10
+            }
+        }
+        
+        func scale() -> CGFloat { return const }
+    }
 }
