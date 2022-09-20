@@ -20,7 +20,8 @@ let dependencies = Dependencies(
             .lottie,
             .rxKeyboard,
             .rxGesture,
-            .swiftyJson
+            .swiftyJson,
+            .toast
     ],
     platforms: [.iOS]
 )
@@ -37,4 +38,5 @@ public extension Package {
     static let rxKeyboard: Package    = .remote(url: "https://github.com/RxSwiftCommunity/RxKeyboard", requirement: .upToNextMajor(from: "2.0.0"))
     static let rxGesture: Package     = .remote(url: "https://github.com/RxSwiftCommunity/RxGesture", requirement: .upToNextMajor(from: "4.0.4"))
     static let swiftyJson: Package    = .remote(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", requirement: .upToNextMajor(from: "4.0.0"))
+    static let toast: Package         = .remote(url: "https://github.com/scalessec/Toast-Swift", requirement: .branch("master"))
 }

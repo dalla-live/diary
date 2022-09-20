@@ -10,7 +10,7 @@ import Util
 import UIKit
 import SnapKit
 import Then
-import CoreTelephony
+import Toast
 
 class AddBookmarkView: ProgrammaticallyView {
     
@@ -183,14 +183,16 @@ class AddBookmarkView: ProgrammaticallyView {
             .disposed(by: disposeBag)
         
         reviseLocationButton.rx.tap
-            .bind { print("위치 다시 조정하기") }
+            .bind { [unowned self] in self.isHidden = true }
             .disposed(by: disposeBag)
         
         cancelButton.rx.tap
             .bind { [unowned self] in
                 print("취소 \(date.string(from: Date()))")
                 // 오류 있을 때 Shake And Show Toast
-                contentView.shakeAnimation()
+                contentView.shakeAnimation() {
+                    self.makeToast("오류가 있습니다!")
+                }
             }
             .disposed(by: disposeBag)
     }

@@ -59,8 +59,9 @@ public final class BookmarkViewController: UIViewController {
             
         case .ended:
             print("panGesture ended")
-            makeAddBookmarkView()
+            let addBookmarkViewList = view.subviews.filter { $0 is AddBookmarkView }.map { $0 as! AddBookmarkView }
             
+            addBookmarkViewList.isEmpty ? makeAddBookmarkView() : updateBookmarkLocation(addBookmarkViewList.first!)
         case _: break
         }
     }
@@ -73,5 +74,10 @@ public final class BookmarkViewController: UIViewController {
         addBookmarkView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
+    }
+    
+    private func updateBookmarkLocation(_ bookmarkView: AddBookmarkView) {
+        print(bookmarkView.roadNameLabel.text)
+        print("업데이트하는 함수 구현")
     }
 }
