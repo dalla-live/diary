@@ -8,6 +8,10 @@
 import UIKit
 import Util
 
+public protocol DiaryCoordinatorDependencies {
+    func makeWriteDiaryViewController() -> WriteDiaryViewController
+}
+
 public class DiaryCoordinator: Coordinator {
     public var childCoordinator: [Coordinator]  = []
     public var navigationController: UINavigationController
