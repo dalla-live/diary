@@ -109,6 +109,7 @@ class CalendarCollectionViewCell : UICollectionViewCell {
         case .Next, .Prev:
             label.isHidden = true
             eventView.isHidden = true
+            isUserInteractionEnabled = false
         }
     }
     
