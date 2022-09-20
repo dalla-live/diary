@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol DiaryRepository{
+public protocol DiaryRepositoryProtocol{
     // TODO: 조건별 Fetch 추가
     func fetchDiaryList(completion: @escaping (Result<DiaryList, Error>) -> Void)
     

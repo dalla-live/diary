@@ -11,10 +11,10 @@ public protocol UpdateDiaryUseCase {
     func execute(diary: Diary, completion: @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-public final class DefaultUpdateDiaryUseCase: UpdateDiaryUseCase {
-    private let diaryRepository: DiaryRepository
+public final class DefaultUpdateDiaryService: UpdateDiaryUseCase {
+    private let diaryRepository: DiaryRepositoryProtocol
     
-    public init(diaryRepository:DiaryRepository) {
+    public init(diaryRepository:DiaryRepositoryProtocol) {
         self.diaryRepository = diaryRepository
     }
     

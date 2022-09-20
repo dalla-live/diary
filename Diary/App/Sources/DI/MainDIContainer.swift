@@ -31,7 +31,8 @@ extension MainDIContainer: MainCoordinatorDependencies {
     }
     
     func makeDiaryCoordinator(navigationController: UINavigationController) -> DiaryCoordinator {
-        return DiaryCoordinator(navigation: navigationController)
+        let diContainer = DiaryDIContainer()
+        return diContainer.makeDiaryCoordinator(navigationController: navigationController)
     }
     
     func makeMapCoordinator(navigationController: UINavigationController) -> MapCoordinator {
