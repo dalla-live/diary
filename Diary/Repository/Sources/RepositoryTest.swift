@@ -11,13 +11,23 @@ import RealmSwift
 
 public class RepositoryTest {
     public init() {
+        // MARK: WeatherAPITestCode
+//        WeatherAPI.requestCurrentWeather(request: WeatherDTO(lat: 37.57, lon: 126.85), completion: { (result) in
+//            switch result {
+//            case .success(let model):
+//                Log.d(model)
+//            case .failure(let error):
+//                Log.e(error)
+//            }
+//        })
+//
         // MARK: LocalNameAPITestCode
 //        LocalAPI.requestLocalName(request: LocalDTO(lat: 37.541, lon: 126.980, limit: 1), completion: { (result) in
 //            switch result {
 //            case .success(let model):
-//                break
+//                Log.d(model)
 //            case .failure(let error):
-//                break
+//                Log.d(error)
 //            }
 //        })
         

@@ -14,17 +14,18 @@ import Util
 import Domain
 import Service
 
-class MapCoordinator: Coordinator {
-    var childCoordinator: [Coordinator]  = []
-    var navigationController: UINavigationController
+public class MapCoordinator: Coordinator {
+    
+    public var childCoordinator: [Coordinator]  = []
+    private var navigationController: UINavigationController
     weak var coordinator : MainCoordinator?
     
-    init(navigation: UINavigationController) {
+    public init(navigation: UINavigationController) {
         navigationController = navigation
         navigation.view.backgroundColor = .blue
     }
     
-    func start() {
+    public func start() {
         let mapVc = MapViewController(dependency: getMapViewModel(), service: getMapService())
             mapVc.coordinator = self
         self.navigationController.pushViewController(mapVc, animated: false)

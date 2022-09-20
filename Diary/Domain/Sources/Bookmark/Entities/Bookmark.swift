@@ -37,9 +37,17 @@ class Bookmark: Object {
     }
 }
 
-class Location: Object {
-    @objc dynamic var la: String = ""
-    @objc dynamic var lo: String = ""
+public class Location: Object {
+    @objc dynamic var lat: Double = 0.0
+    @objc dynamic var lon: Double = 0.0
+    
+    public func getLat()-> Double {
+        return lat
+    }
+    
+    public func getLon()-> Double {
+        return lon
+    }
 }
 
 struct BookmarkList {

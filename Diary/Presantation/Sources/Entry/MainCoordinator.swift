@@ -13,17 +13,25 @@ import RxCocoa
 import RxGesture
 import Util
 
-
+public protocol MainCoordinatorDependencies {
+    func makeBookmarkCoordinator(navigationController: UINavigationController)-> BookmarkCoordinator
+    func makeMapCoordinator(navigationController: UINavigationController)-> MapCoordinator
+    func makeDiaryCoordinator(navigationController: UINavigationController)-> DiaryCoordinator
+}
 
 public class MainCoordinator: Coordinator {
     public var childCoordinator: [Coordinator] = []
     
     public var coordinator : DiaryTabbarController
     
+    private let dependencies: MainCoordinatorDependencies
+    
     var disposeBag: DisposeBag = .init()
     
-    public init(coordinator: DiaryTabbarController) {
+    public init(coordinator: DiaryTabbarController,
+                dependencies: MainCoordinatorDependencies) {
         self.coordinator = coordinator
+        self.dependencies = dependencies
     }
     
     public func start(){
@@ -49,10 +57,10 @@ public class MainCoordinator: Coordinator {
         let vc2 = getNavigation()
         let vc3 = getNavigation()
         
-        let bookMarkCoordinator = BookmarkCoordinator(navigation: vc1)
-        let mapCoordinator      = MapCoordinator(navigation: vc2)
+        let bookMarkCoordinator = dependencies.makeBookmarkCoordinator(navigationController: vc1)
+        let mapCoordinator      = dependencies.makeMapCoordinator(navigationController: vc2)
             mapCoordinator.coordinator = self
-        let diaryCoordinator    = DiaryCoordinator(navigation: vc3)
+        let diaryCoordinator    = dependencies.makeDiaryCoordinator(navigationController: vc3)
         
         var image: (deselected: UIImage?, selected: UIImage?) {
             if #available(iOS 15.0, *) {
@@ -77,6 +85,7 @@ public class MainCoordinator: Coordinator {
         bookMarkCoordinator.start()
         mapCoordinator.start()
         diaryCoordinator.start()
+//        diaryCoordinator.WriteDiaryViewControllerStart()
     }
 }
 class TestSubView: UIView {
