@@ -101,6 +101,7 @@ class CalendarCollectionViewCell : UICollectionViewCell {
         
         switch data.monthType {
         case .Curr:
+            isUserInteractionEnabled = true
             label.text = data.day()
             if data.getDate() == CalendarHelper.shared.getDate() {
                 label.font = .systemFont(ofSize: 13, weight: .bold)
