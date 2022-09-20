@@ -64,7 +64,6 @@ public class MapViewModel: NSObject {
     }
     
     func setLayout() {
-        
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_MAP)
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_LIST)
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._QUICK_BUTTON)

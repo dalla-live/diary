@@ -16,14 +16,6 @@ import Service
 
 class MapViewController: UIViewController {
     
-    let mapLayer = UIView().then{
-        $0.isHidden = false
-    }
-    
-    let buttonLayer = UIView().then{
-        $0.isHidden = false
-    }
-    
     weak var coordinator: MapViewDelegate?
     var disposeBag: DisposeBag = .init()
     var viewModel : MapViewModel
@@ -37,9 +29,6 @@ class MapViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
     }
-    
-    
-    
     
     required init?(coder: NSCoder) {
          fatalError("init(coder:) is not supported")
@@ -57,6 +46,9 @@ class MapViewController: UIViewController {
         setOutput()
     }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
     
     func setLayout() {
         self.view.addSubview(viewModel.layoutModel._MAP_CONTAINER)
@@ -65,15 +57,16 @@ class MapViewController: UIViewController {
         self.setMapView()
     }
     
+    
     func setMapView() {
         guard let view = service?.mapUI else {
             return
         }
+        
         viewModel.layoutModel._MAP_CONTAINER.addSubview(view)
     }
     
     func setConstraint() {
-        
         viewModel.layoutModel._MAP_CONTAINER.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
@@ -86,9 +79,6 @@ class MapViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
     }
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
     
     func setInput() {
         
@@ -96,7 +86,7 @@ class MapViewController: UIViewController {
     
    
     
-    func setOutput(){
+    func setOutput() {
         viewModel.openWindow.subscribe(onNext: { _ in
             self.coordinator?.openWindow()
         }).disposed(by: disposeBag)
