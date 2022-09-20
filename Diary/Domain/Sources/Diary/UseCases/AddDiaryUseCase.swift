@@ -11,7 +11,7 @@ public protocol AddDiaryUseCase {
     func execute(diary: Diary, completion: @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-public final class defaultAddDiaryUseCase: AddDiaryUseCase {
+public final class defaultAddDiaryService: AddDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
     init(diaryRepository:DiaryRepository){

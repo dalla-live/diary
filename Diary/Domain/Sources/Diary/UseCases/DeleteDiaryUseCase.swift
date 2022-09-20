@@ -11,7 +11,7 @@ public protocol DeleteDiaryUseCase {
     func execute(id: Diary.Identifier, completion: @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-public final class DefaultDeleteDiaryUseCase: DeleteDiaryUseCase {
+public final class DefaultDeleteDiaryService: DeleteDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
     public init(diaryRepository: DiaryRepository){

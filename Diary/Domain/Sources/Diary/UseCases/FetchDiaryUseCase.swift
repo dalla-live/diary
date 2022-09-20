@@ -12,7 +12,7 @@ public protocol FetchDiaryUseCase {
     func getListByDate(_ query : String , completion : @escaping ((Result<DiaryList, Error>) -> Void))
 }
 
-public final class DefaultFetchDiaryUseCase: FetchDiaryUseCase {
+public final class DefaultFetchDiaryService: FetchDiaryUseCase {
     private let diaryRepository: DiaryRepository
     
     public init(diaryRepository: DiaryRepository){
