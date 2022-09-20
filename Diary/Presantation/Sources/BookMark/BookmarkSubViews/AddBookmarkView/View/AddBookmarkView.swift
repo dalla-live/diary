@@ -15,7 +15,7 @@ import RxSwift
 import RxCocoa
 
 class AddBookmarkView: ProgrammaticallyView {
-    
+    let testFirst = true
     let backgroundView = UIView().then {
         $0.backgroundColor = Const.Custom.background.color
     }
@@ -64,19 +64,7 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
     
-//    lazy var weatherCollectionView: UICollectionView = {
-//        let layout                = UICollectionViewFlowLayout()
-//        layout.minimumInteritemSpacing = 4.0
-//        layout.scrollDirection    = .horizontal
-//        layout.itemSize = CGSize(width: 34.0, height: 36.0)
-//
-//        let collectionView = UICollectionView(frame: self.frame, collectionViewLayout: layout)
-//        collectionView.backgroundColor = .white
-//        collectionView.showsHorizontalScrollIndicator = false
-//        collectionView.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
-//
-//        return collectionView
-//    }()
+    let weatherGradientView = UIView()
     
     let weatherCollectionView = UICollectionView(frame: .zero, collectionViewLayout: TestFlowLayout()).then {
         $0.backgroundColor = .white
@@ -88,6 +76,14 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.text = Const.ToBeLocalized.mood.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16, weight: .medium)
+    }
+    
+    let moodGradientView = UIView()
+    
+    let moodCollectionView = UICollectionView(frame: .zero, collectionViewLayout: TestFlowLayout()).then {
+        $0.backgroundColor = .white
+        $0.showsHorizontalScrollIndicator = false
+        $0.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
     }
     
     let buttonStackView = UIStackView().then {
@@ -115,9 +111,9 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.dateFormat = "yyyy-MM-d"
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        setGradient()
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        [weatherGradientView, moodGradientView].forEach(setGradient)
     }
     
     override func addComponent() {
@@ -130,10 +126,13 @@ class AddBookmarkView: ProgrammaticallyView {
          reviseLocationButton,
          roadNameLabel,
          weatherLabel,
-         weatherCollectionView,
+         weatherGradientView,
          moodLabel,
+         moodGradientView,
          buttonStackView].forEach(contentView.addSubview)
         
+        weatherGradientView.addSubview(weatherCollectionView)
+        moodGradientView.addSubview(moodCollectionView)
         [cancelButton,
          storeButton].forEach(buttonStackView.addArrangedSubview)
     }
@@ -184,16 +183,31 @@ class AddBookmarkView: ProgrammaticallyView {
             $0.leading.equalTo(locationLabel)
         }
         
-        weatherCollectionView.snp.makeConstraints {
+        weatherGradientView.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(halfSpacing)
             $0.centerY.equalTo(weatherLabel)
             $0.height.equalTo(36)
             $0.width.equalTo(150)
         }
         
+        weatherCollectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         moodLabel.snp.makeConstraints {
             $0.top.equalTo(weatherLabel.snp.bottom).offset(defaultSpacing * 2)
             $0.leading.equalTo(weatherLabel)
+        }
+        
+        moodGradientView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(halfSpacing)
+            $0.centerY.equalTo(moodLabel)
+            $0.height.equalTo(36)
+            $0.width.equalTo(150)
+        }
+        
+        moodCollectionView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         buttonStackView.snp.makeConstraints {
@@ -209,10 +223,12 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     func setRxCollection() {
-        let cases = Weather.allCases,
-        test = BehaviorRelay(value: cases)
+        let weatherCases = Weather.allCases,
+            weatherTest = BehaviorRelay(value: weatherCases),
+            moodCases = Mood.allCases,
+            moodTest = BehaviorRelay(value: moodCases)
         
-        test.asDriver()
+        weatherTest.asDriver()
             .drive(weatherCollectionView.rx.items(cellIdentifier: EmoticonCell.identifier, cellType: EmoticonCell.self)) { row, model, cell in
                 cell.emotionLabel.text = model.emoticon
             }
@@ -222,21 +238,31 @@ class AddBookmarkView: ProgrammaticallyView {
             .bind {
                 print($0.text)
             }.disposed(by: disposeBag)
+        
+        moodTest.asDriver()
+            .drive(moodCollectionView.rx.items(cellIdentifier: EmoticonCell.identifier, cellType: EmoticonCell.self)) { row, model, cell in
+                cell.emotionLabel.text = model.emoticon
+            }
+            .disposed(by: disposeBag)
+        
+        moodCollectionView.rx.modelSelected(Mood.self)
+            .bind {
+                print($0.text)
+            }.disposed(by: disposeBag)
     }
     
-    private func setGradient() {
-        let backgroundView = UIView(frame: weatherCollectionView.bounds),
-            gradient = CAGradientLayer(),
+    private func setGradient(to view: UIView) {
+        let gradient = CAGradientLayer(),
             clearColor = UIColor.clear.cgColor,
             whiteColor = UIColor.white.cgColor
         
-        backgroundView.backgroundColor = .white
-        gradient.frame = backgroundView.frame
-        gradient.colors = [whiteColor, clearColor, clearColor, whiteColor]
+        gradient.frame = view.bounds
+        gradient.colors = [clearColor, whiteColor, whiteColor, clearColor]
         gradient.startPoint = CGPoint(x:0.0, y:0.5)
         gradient.endPoint = CGPoint(x:1.0, y:0.5)
+        gradient.locations = [0, 0.1, 0.9, 1]
         
-        weatherCollectionView.layer.insertSublayer(gradient, at: 0)
+        view.layer.mask = gradient
     }
 }
 
