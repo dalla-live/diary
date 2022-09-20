@@ -11,7 +11,7 @@ import RxSwift
 
 public final class WriteDiaryViewController: UIViewController {
     
-    weak var coordinatro: DiaryCoordinator?
+    weak var coordinator: DiaryCoordinator?
     private var viewModel: WriteDiaryViewModel!
     let disposeBag = DisposeBag()
     
@@ -25,5 +25,6 @@ public final class WriteDiaryViewController: UIViewController {
     
     public override func viewDidLoad() {
         print("writeDiartViewController!!!!")
+        self.view.backgroundColor = .green
     }
 }

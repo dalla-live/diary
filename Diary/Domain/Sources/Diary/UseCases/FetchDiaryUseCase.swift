@@ -13,9 +13,9 @@ public protocol FetchDiaryUseCase {
 }
 
 public final class DefaultFetchDiaryService: FetchDiaryUseCase {
-    private let diaryRepository: DiaryRepository
+    private let diaryRepository: DiaryRepositoryProtocol
     
-    public init(diaryRepository: DiaryRepository){
+    public init(diaryRepository: DiaryRepositoryProtocol){
         self.diaryRepository = diaryRepository
     }
     

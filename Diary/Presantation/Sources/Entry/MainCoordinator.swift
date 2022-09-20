@@ -85,6 +85,7 @@ public class MainCoordinator: Coordinator {
         bookMarkCoordinator.start()
         mapCoordinator.start()
         diaryCoordinator.start()
+//        diaryCoordinator.WriteDiaryViewControllerStart()
     }
 }
 class TestSubView: UIView {

@@ -12,9 +12,9 @@ public protocol UpdateDiaryUseCase {
 }
 
 public final class DefaultUpdateDiaryService: UpdateDiaryUseCase {
-    private let diaryRepository: DiaryRepository
+    private let diaryRepository: DiaryRepositoryProtocol
     
-    public init(diaryRepository:DiaryRepository) {
+    public init(diaryRepository:DiaryRepositoryProtocol) {
         self.diaryRepository = diaryRepository
     }
     
