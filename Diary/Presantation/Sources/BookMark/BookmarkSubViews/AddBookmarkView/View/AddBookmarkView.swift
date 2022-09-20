@@ -11,6 +11,8 @@ import UIKit
 import SnapKit
 import Then
 import Toast
+import RxSwift
+import RxCocoa
 
 class AddBookmarkView: ProgrammaticallyView {
     
@@ -62,6 +64,26 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }
     
+//    lazy var weatherCollectionView: UICollectionView = {
+//        let layout                = UICollectionViewFlowLayout()
+//        layout.minimumInteritemSpacing = 4.0
+//        layout.scrollDirection    = .horizontal
+//        layout.itemSize = CGSize(width: 34.0, height: 36.0)
+//
+//        let collectionView = UICollectionView(frame: self.frame, collectionViewLayout: layout)
+//        collectionView.backgroundColor = .white
+//        collectionView.showsHorizontalScrollIndicator = false
+//        collectionView.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
+//
+//        return collectionView
+//    }()
+    
+    let weatherCollectionView = UICollectionView(frame: .zero, collectionViewLayout: TestFlowLayout()).then {
+        $0.backgroundColor = .white
+        $0.showsHorizontalScrollIndicator = false
+        $0.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
+    }
+    
     let moodLabel = UILabel().then {
         $0.text = Const.ToBeLocalized.mood.text
         $0.textColor = .black
@@ -93,6 +115,11 @@ class AddBookmarkView: ProgrammaticallyView {
         $0.dateFormat = "yyyy-MM-d"
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setGradient()
+    }
+    
     override func addComponent() {
         fileName = #file.fileName
         [backgroundView, contentView].forEach(addSubview)
@@ -103,6 +130,7 @@ class AddBookmarkView: ProgrammaticallyView {
          reviseLocationButton,
          roadNameLabel,
          weatherLabel,
+         weatherCollectionView,
          moodLabel,
          buttonStackView].forEach(contentView.addSubview)
         
@@ -156,6 +184,13 @@ class AddBookmarkView: ProgrammaticallyView {
             $0.leading.equalTo(locationLabel)
         }
         
+        weatherCollectionView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(halfSpacing)
+            $0.centerY.equalTo(weatherLabel)
+            $0.height.equalTo(36)
+            $0.width.equalTo(150)
+        }
+        
         moodLabel.snp.makeConstraints {
             $0.top.equalTo(weatherLabel.snp.bottom).offset(defaultSpacing * 2)
             $0.leading.equalTo(weatherLabel)
@@ -169,31 +204,52 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     override func bind() {
-        rxEventBind()
+        setRxCollection()
+        rxTapActions()
     }
     
-    fileprivate func rxEventBind() {
-        backgroundView.rx.tapGesture()
-            .when(.recognized)
-            .bind { [unowned self] _ in removeFromSuperview() }
-            .disposed(by: disposeBag)
+    func setRxCollection() {
+        let cases = Weather.allCases,
+        test = BehaviorRelay(value: cases)
         
-        storeButton.rx.tap
-            .bind { print("저장") }
-            .disposed(by: disposeBag)
-        
-        reviseLocationButton.rx.tap
-            .bind { [unowned self] in self.isHidden = true }
-            .disposed(by: disposeBag)
-        
-        cancelButton.rx.tap
-            .bind { [unowned self] in
-                print("취소 \(date.string(from: Date()))")
-                // 오류 있을 때 Shake And Show Toast
-                contentView.shakeAnimation() {
-                    self.makeToast("오류가 있습니다!")
-                }
+        test.asDriver()
+            .drive(weatherCollectionView.rx.items(cellIdentifier: EmoticonCell.identifier, cellType: EmoticonCell.self)) { row, model, cell in
+                cell.emotionLabel.text = model.emoticon
             }
             .disposed(by: disposeBag)
+        
+        weatherCollectionView.rx.modelSelected(Weather.self)
+            .bind {
+                print($0.text)
+            }.disposed(by: disposeBag)
+    }
+    
+    private func setGradient() {
+        let backgroundView = UIView(frame: weatherCollectionView.bounds),
+            gradient = CAGradientLayer(),
+            clearColor = UIColor.clear.cgColor,
+            whiteColor = UIColor.white.cgColor
+        
+        backgroundView.backgroundColor = .white
+        gradient.frame = backgroundView.frame
+        gradient.colors = [whiteColor, clearColor, clearColor, whiteColor]
+        gradient.startPoint = CGPoint(x:0.0, y:0.5)
+        gradient.endPoint = CGPoint(x:1.0, y:0.5)
+        
+        weatherCollectionView.layer.insertSublayer(gradient, at: 0)
+    }
+}
+
+class TestFlowLayout: UICollectionViewFlowLayout {
+    override init() {
+        super.init()
+        scrollDirection = .horizontal
+        sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        minimumLineSpacing = 4.0
+        itemSize = CGSize(width: 34.0, height: 36.0)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
