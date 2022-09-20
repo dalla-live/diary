@@ -120,7 +120,7 @@ class CalendarView : ProgrammaticallyView {
         weekStackView.snp.makeConstraints{
             $0.left.right.equalToSuperview()
             $0.top.equalTo(monthOfDate.snp.bottom)
-            $0.height.equalTo(Size.monthOfDateHeight.scale())
+            $0.height.equalTo(Size.weekStackHeight.scale())
         }
         
         collectionView.snp.makeConstraints{
@@ -203,7 +203,7 @@ extension CalendarView {
             case .monthOfDateHeight:
                 return 50
             case .weekStackHeight:
-                return 30
+                return 50
             case .weekStackTopPadding:
                 return 10
             }
