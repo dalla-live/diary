@@ -18,4 +18,7 @@ public protocol DiaryRepositoryProtocol{
     func updateDiary(diary: Diary, completion: @escaping(Result<DiaryList, Error>) -> Void)
     
     func fetchListByDate(_ date: String, completion: @escaping(Result<DiaryList, Error>) -> Void)
+    
+    func fetchDateofContents(_ month: String, completion: @escaping([String]) -> Void)
+    
 }

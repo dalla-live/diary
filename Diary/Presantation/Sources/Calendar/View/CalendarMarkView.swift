@@ -31,8 +31,7 @@ class CalendarMarkView : ProgrammaticallyView , UITableViewDelegate{
         $0.register(CalendarMarkCell.self, forCellReuseIdentifier: "CalendarMarkCell")
     }
     
-    weak var delegate : DiaryViewDelegate?
-    var viewModel : CalendarMarkViewModel!
+    var calendarVM : CalendarViewModel!
     
     override func addComponent() {
         fileName = #file.fileName
@@ -77,7 +76,9 @@ class CalendarMarkView : ProgrammaticallyView , UITableViewDelegate{
         
         tableView.rx.itemSelected.bind{ [weak self] indexPath in
             guard let self = self else { return }
-            self.delegate?.openDiaryView()
+            
+            self.calendarVM.openDiaryViewController()
+            
         }.disposed(by: disposeBag)
         
         addDiaryBtn.rx.tapGesture()
@@ -85,8 +86,8 @@ class CalendarMarkView : ProgrammaticallyView , UITableViewDelegate{
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                self.delegate?.openDiaryView()
             
+                self.calendarVM.openDiaryViewController()
         }).disposed(by: disposeBag)
     }
 }

@@ -44,13 +44,14 @@ extension CalendarView {
                 cell.isSelected = true
             }
             
+            self.calendarVM?.getContentofList(date: data?.getDate() ?? "")
+            
         }.disposed(by: disposeBag)
         
         prevButton.rx.tap.bind{ [weak self] _ in
             guard let self = self else { return }
             let prevMonth = CalendarHelper.shared.getPrevMonth(self.viewModel.model.date)
             self.date.onNext(prevMonth)
-    
         }.disposed(by: disposeBag)
         
         nextButton.rx.tap.bind{ [weak self] _ in
@@ -64,8 +65,15 @@ extension CalendarView {
             
             guard let self = self else { return }
             self.monthLabel.text = data
+            self.calendarVM?.getMonth(month: data)
             
         }.disposed(by: disposeBag)
+        
+        calendarVM?.dateList.bind{ [weak self] data in
+            print("data :: \(data)")
+            
+        }.disposed(by: disposeBag)
+        
     }
 
 }

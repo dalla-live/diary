@@ -27,4 +27,8 @@ public final class WriteDiaryViewController: UIViewController {
         print("writeDiartViewController!!!!")
         self.view.backgroundColor = .green
     }
+    
+    deinit {
+        print("WriteDiaryViewController deinit")
+    }
 }

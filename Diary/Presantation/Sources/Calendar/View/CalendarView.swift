@@ -55,7 +55,7 @@ class CalendarView : ProgrammaticallyView {
     
     
     var viewModel : CalendarGridViewModel!
-    weak var delegate : DiaryViewDelegate?
+    var calendarVM : CalendarViewModel?
     
     var visibleDateInfo : Date = Date()
     var date : PublishSubject<Date> = .init()

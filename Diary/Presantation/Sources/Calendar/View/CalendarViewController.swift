@@ -9,17 +9,29 @@ import Foundation
 import UIKit
 import Util
 
-class CalendarViewController : UIViewController {
+public final class CalendarViewController : UIViewController {
     
-    weak var delegate : DiaryViewDelegate?
+    private var viewModel : CalendarViewModel!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    public static func create(with viewModel: CalendarViewModel) -> CalendarViewController {
+        let vc = CalendarViewController()
+        vc.viewModel = viewModel
         
+        return vc
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        setUI()
+        bind(to : viewModel)
+    }
+    
+    func setUI() {
         let calendarView = CalendarView(frame: self.view.frame)
-            calendarView.delegate = delegate
+            calendarView.calendarVM = viewModel
+        
         let calendarMarkView = CalendarMarkView(frame: self.view.frame)
-            calendarMarkView.delegate = delegate
+            calendarMarkView.calendarVM = viewModel
         
         [calendarView, calendarMarkView].forEach{ self.view.addSubview($0)}
         
@@ -40,6 +52,10 @@ class CalendarViewController : UIViewController {
         calendarView.contentView.layer.cornerRadius = 15
         calendarView.contentView.layer.masksToBounds = true
         calendarView.addShadow(location: .bottom, color: UIColor(rgb: 103), opacity: 0.16, blur: 6)
+    }
+    
+    func bind(to viewModel: CalendarViewModel) {
+        
     }
     
 }

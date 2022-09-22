@@ -52,6 +52,10 @@ final class DiaryDIContainer {
                                    updateDiaryUsecase: makeUpdateDiaryUseCase())
     }
     
+    func makeCalendarViewModel(action : CalendarViewModelAction) -> CalendarViewModel {
+        return CalendarViewModel(usecase: makeFetchDiaryUseCase(), action: action)
+    }
+    
     // MARK: Coordinator
     func makeDiaryCoordinator(navigationController: UINavigationController) -> DiaryCoordinator {
         return DiaryCoordinator(navigation: navigationController, dependencies: self)
@@ -59,7 +63,14 @@ final class DiaryDIContainer {
 }
 
 extension DiaryDIContainer: DiaryCoordinatorDependencies {
+
     func makeWriteDiaryViewController() -> WriteDiaryViewController {
         return WriteDiaryViewController.create(with: makeWriteDiaryViewModel())
     }
+    
+    func makeCalenderViewController(action : CalendarViewModelAction) -> CalendarViewController {
+        return CalendarViewController.create(with: makeCalendarViewModel(action: action))
+    }
+    
+
 }
