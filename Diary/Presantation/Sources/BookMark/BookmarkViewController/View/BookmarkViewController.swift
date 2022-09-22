@@ -39,6 +39,7 @@ public final class BookmarkViewController: UIViewController {
         bookmarker.rx.panGesture()
             .bind { [unowned self] in handlingBookmarker($0) }
             .disposed(by: disposeBag)
+        
     }
     
     private func handlingBookmarker(_ sender: UIPanGestureRecognizer) {
