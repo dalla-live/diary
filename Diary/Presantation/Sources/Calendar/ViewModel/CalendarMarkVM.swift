@@ -10,7 +10,11 @@ import RxSwift
 import RxCocoa
 import Domain
 
-class CalendarMarkViewModel {
+public struct CalendarMarkViewModelAction {
+    let showContentsList: (DiaryList) -> Void
+}
+
+public class CalendarMarkViewModel {
     struct Model {
         
     }
@@ -23,27 +27,24 @@ class CalendarMarkViewModel {
         
     }
     
-    private let fetchDiaryUseCase : FetchDiaryUseCase
-    
     var input : Input?
     var disposeBag  = DisposeBag()
     
-    init(_ input : Input, fetchDiaryUseCase : FetchDiaryUseCase ) {
-        self.input             = input
-        self.fetchDiaryUseCase = fetchDiaryUseCase
-        
-        input.date?.bind{ [weak self] data in
-            guard let self = self else { return }
-            self.getList(data)
-
-        }.disposed(by: disposeBag)
-       
+   init(_ input : Input) {
+        self.input   = input
     }
+    /*
+     input.date?.bind{ [weak self] data in
+         guard let self = self else { return }
+         self.getList(data)
+
+     }.disposed(by: disposeBag)
+     */
     
     func getList(_ date : String) {
-        fetchDiaryUseCase.getListByDate(date, completion: {_ in
-            
-        })
+//        usecase.getListByDate(date, completion: {_ in
+//
+//        })
     }
      
 }

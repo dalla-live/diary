@@ -16,7 +16,6 @@ class CalendarGridViewModel {
     struct Model {
         var date : Date = Date()
         var dateInfo : DateInfo = DateInfo(date: Date())
-        var hasBooKMarkDate : [String] = ["2022.09.15", "2022.09.22", "2022.09.23"]
         var currSelectedDate : String = ""
     }
     
