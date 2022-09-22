@@ -39,6 +39,45 @@ public final class BookmarkViewController: UIViewController {
         bookmarker.rx.panGesture()
             .bind { [unowned self] in handlingBookmarker($0) }
             .disposed(by: disposeBag)
+        
+        testScrollView()
+        
+    }
+    
+    private func testScrollView() {
+        let testScrollView = UIScrollView().then {
+            $0.backgroundColor = .black
+        }
+        
+        let testStackView = UIStackView().then {
+            $0.spacing = 10
+        }
+        
+        view.addSubview(testScrollView)
+        testScrollView.addSubview(testStackView)
+        
+        testScrollView.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(200)
+            $0.trailing.equalToSuperview().inset(32)
+            $0.height.equalTo(36)
+            $0.width.equalTo(100)
+        }
+        
+        testStackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.height.equalToSuperview()
+        }
+        
+        
+        (1...6).forEach { _ in
+            let emoticonView = EmoticonView()
+            emoticonView.backgroundColor = .cyan
+            testStackView.addArrangedSubview(emoticonView)
+            emoticonView.snp.makeConstraints {
+                $0.width.equalTo(34)
+            }
+        }
+        
     }
     
     private func handlingBookmarker(_ sender: UIPanGestureRecognizer) {
