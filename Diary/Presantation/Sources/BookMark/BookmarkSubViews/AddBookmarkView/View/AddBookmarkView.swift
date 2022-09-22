@@ -65,10 +65,20 @@ class AddBookmarkView: ProgrammaticallyView {
     
     let weatherGradientView = UIView()
     
-    let weatherCollectionView = UICollectionView(frame: .zero, collectionViewLayout: TestFlowLayout()).then {
-        $0.backgroundColor = .white
+    let weatherScrollView = UIScrollView().then {
         $0.showsHorizontalScrollIndicator = false
-        $0.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
+    }
+    
+    let weatherStackView = UIStackView().then {
+        $0.spacing = 2
+    }
+    
+    let moodScrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+    }
+    
+    let moodStackView = UIStackView().then {
+        $0.spacing = 2
     }
     
     let moodLabel = UILabel().then {
@@ -78,12 +88,6 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     let moodGradientView = UIView()
-    
-    let moodCollectionView = UICollectionView(frame: .zero, collectionViewLayout: TestFlowLayout()).then {
-        $0.backgroundColor = .white
-        $0.showsHorizontalScrollIndicator = false
-        $0.register(EmoticonCell.self, forCellWithReuseIdentifier: EmoticonCell.identifier)
-    }
     
     let buttonStackView = UIStackView().then {
         $0.distribution = .fillEqually
@@ -130,8 +134,12 @@ class AddBookmarkView: ProgrammaticallyView {
          moodGradientView,
          buttonStackView].forEach(contentView.addSubview)
         
-        weatherGradientView.addSubview(weatherCollectionView)
-        moodGradientView.addSubview(moodCollectionView)
+        weatherGradientView.addSubview(weatherScrollView)
+        weatherScrollView.addSubview(weatherStackView)
+        
+        moodGradientView.addSubview(moodScrollView)
+        moodScrollView.addSubview(moodStackView)
+        
         [cancelButton,
          storeButton].forEach(buttonStackView.addArrangedSubview)
     }
@@ -146,7 +154,8 @@ class AddBookmarkView: ProgrammaticallyView {
         
         contentView.snp.makeConstraints {
             $0.center.equalToSuperview()
-            $0.size.equalTo(300)
+            $0.width.equalTo(300)
+            $0.height.equalTo(260)
         }
         
         titleLabel.snp.makeConstraints {
@@ -189,8 +198,14 @@ class AddBookmarkView: ProgrammaticallyView {
             $0.width.equalTo(150)
         }
         
-        weatherCollectionView.snp.makeConstraints {
+        weatherScrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        weatherStackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(halfSpacing)
+            $0.top.bottom.equalToSuperview()
+            $0.height.equalToSuperview()
         }
         
         moodLabel.snp.makeConstraints {
@@ -205,8 +220,14 @@ class AddBookmarkView: ProgrammaticallyView {
             $0.width.equalTo(150)
         }
         
-        moodCollectionView.snp.makeConstraints {
+        moodScrollView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+        
+        moodStackView.snp.makeConstraints {
+            $0.leading.trailing.equalToSuperview().inset(halfSpacing)
+            $0.top.bottom.equalToSuperview()
+            $0.height.equalToSuperview()
         }
         
         buttonStackView.snp.makeConstraints {
@@ -217,37 +238,53 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     override func bind() {
-        setRxCollection()
+        setScrollView()
         rxTapActions()
     }
     
-    func setRxCollection() {
+    private func setScrollView() {
         let weatherCases = Weather.allCases,
-            weatherTest = BehaviorRelay(value: weatherCases),
-            moodCases = Mood.allCases,
-            moodTest = BehaviorRelay(value: moodCases)
+            moodCases = Mood.allCases
         
-        weatherTest.asDriver()
-            .drive(weatherCollectionView.rx.items(cellIdentifier: EmoticonCell.identifier, cellType: EmoticonCell.self)) { row, model, cell in
-                cell.emotionLabel.text = model.emoticon
+        weatherCases.forEach { model in
+            let view = EmoticonView()
+            view.emotionLabel.text = model.emoticon
+            
+            weatherStackView.addArrangedSubview(view)
+            
+            view.snp.makeConstraints {
+                $0.width.equalTo(34)
             }
-            .disposed(by: disposeBag)
+            
+            view.rx.tapGesture()
+                .when(.recognized)
+                .bind { [unowned self] _ in selectItem(for: weatherStackView, to: view) }
+                .disposed(by: disposeBag)
+        }
         
-        weatherCollectionView.rx.modelSelected(Weather.self)
-            .bind {
-                print($0.text)
-            }.disposed(by: disposeBag)
-        
-        moodTest.asDriver()
-            .drive(moodCollectionView.rx.items(cellIdentifier: EmoticonCell.identifier, cellType: EmoticonCell.self)) { row, model, cell in
-                cell.emotionLabel.text = model.emoticon
+        moodCases.forEach { model in
+            let view = EmoticonView()
+            view.emotionLabel.text = model.emoticon
+            
+            moodStackView.addArrangedSubview(view)
+            
+            view.snp.makeConstraints {
+                $0.width.equalTo(34)
             }
-            .disposed(by: disposeBag)
-        
-        moodCollectionView.rx.modelSelected(Mood.self)
-            .bind {
-                print($0.text)
-            }.disposed(by: disposeBag)
+            
+            view.rx.tapGesture()
+                .when(.recognized)
+                .bind { [unowned self] _ in selectItem(for: moodStackView, to: view) }
+                .disposed(by: disposeBag)
+        }
+    }
+    
+    private func selectItem(for stackView: UIStackView, to item: EmoticonView) {
+        let emoticonViews = stackView.arrangedSubviews.filter { $0 is EmoticonView }.map { $0 as! EmoticonView }
+        emoticonViews.forEach {
+            $0.selectImage.isHidden = true
+        }
+        item.selectImage.isHidden = false
     }
     
     private func setGradient(to view: UIView) {
@@ -262,19 +299,5 @@ class AddBookmarkView: ProgrammaticallyView {
         gradient.locations = [0, 0.1, 0.9, 1]
         
         view.layer.mask = gradient
-    }
-}
-
-class TestFlowLayout: UICollectionViewFlowLayout {
-    override init() {
-        super.init()
-        scrollDirection = .horizontal
-        sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        minimumLineSpacing = 4.0
-        itemSize = CGSize(width: 34.0, height: 36.0)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
