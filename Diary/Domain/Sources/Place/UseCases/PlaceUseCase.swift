@@ -30,24 +30,24 @@ public protocol PlaceUseCase : SearchPlaceUseCase,  AddPlaceUseCase, UpdatePlace
 
 public class MapUseCaseProvider: PlaceUseCase {
     public func search(requestModel: MapUseCaseRequestWrapper) {
-        <#code#>
+        
     }
     
     public func add(requestModel: MapUseCaseRequestWrapper) {
-        <#code#>
+        
     }
     
     public func update(requestModel: MapUseCaseRequestWrapper) {
-        <#code#>
+        
     }
     
     public func delete(requestModel: MapUseCaseRequestWrapper) {
-        <#code#>
+        
     }
     
     
     
-    var repository: MapRepository
+//    var repository: PlaceRepository!
     
     
     

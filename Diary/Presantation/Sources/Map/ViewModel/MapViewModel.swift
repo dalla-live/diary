@@ -44,9 +44,9 @@ enum MapQuickMenu {
 
 public class MapViewModel: NSObject {
     // for Repository
-    var mapUseCase : MapUseCase!
+    var mapUseCase : PlaceUseCase!
     
-    init(mapUseCase: MapUseCase) {
+    init(mapUseCase: PlaceUseCase) {
         self.mapUseCase      = mapUseCase
     }
     
