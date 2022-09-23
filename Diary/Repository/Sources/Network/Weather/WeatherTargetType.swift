@@ -11,7 +11,7 @@ import Moya
 //🔎 참고: https://github.com/Moya/Moya/blob/master/docs/Targets.md
 
 public enum WeatherTargetType {
-    case requestCurrentWeather(WeatherDTO)
+    case requestCurrentWeather(WeatherRequestDTO)
 }
 
 extension WeatherTargetType: BaseTargetType {

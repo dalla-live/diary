@@ -1,55 +1,63 @@
 //
-//  Bookmark.swift
-//  DomainTests
+//  BookmarkModel.swift
+//  Domain
 //
-//  Created by chuchu on 2022/09/15.
+//  Created by cheonsong on 2022/09/22.
 //
 
 import Foundation
-import CoreLocation
 import RealmSwift
 
-class Bookmark: Object {
-    typealias Identifier = Int
+public struct Bookmark {
+
+    public var id: Int
+    public var mood: Mood
+    public var weather: Weather
+    public var date: String
+    public var location: Location
+    public var hasWritten: Bool
     
-    @objc dynamic var id: Identifier = 0
-    @objc dynamic var weather: String = ""
-    @objc dynamic var location: Location? = Location()
-    @objc dynamic var date: Date = Date()
-    @objc dynamic var mood: String = ""
-    @objc dynamic var hasWritten: Bool = false
-    
-    let ofDiary = LinkingObjects(fromType: Diary.self, property: "bookmark")
-    
-    convenience init(id: Identifier, weather: String, location: Location, mood: String, hasWritten: Bool) {
-        self.init()
+    public init(id: Int, mood: Mood, weather: Weather, date: String, location: Location, hasWritten: Bool) {
         self.id = id
-        self.weather = weather
-        self.location = location
         self.mood = mood
+        self.weather = weather
+        self.date = date
+        self.location = location
         self.hasWritten = hasWritten
     }
+}
+
+public struct BookmarkList {
+    var bookmarks: [Bookmark]
     
-    
-    // 기본키 설정
-    override class func primaryKey() -> String? {
-        return "id"
+    public init(bookmarks: [Bookmark]) {
+        self.bookmarks = bookmarks
     }
 }
 
-public class Location: Object {
-    @objc dynamic var lat: Double = 0.0
-    @objc dynamic var lon: Double = 0.0
-    
-    public func getLat()-> Double {
-        return lat
+
+public struct Mood {
+    public enum MoodCase: String {
+        case mood1
+        case mood2
+        case mood3
+        case mood4
+        case mood5
     }
     
-    public func getLon()-> Double {
-        return lon
+    public var mood: MoodCase
+    
+    public init(mood: MoodCase) {
+        self.mood = mood
     }
 }
 
-struct BookmarkList {
-    let bookmarks: [Bookmark]
+public struct Location {
+    public var lat: Double
+    public var lon: Double
+    
+    public init(lat: Double, lon: Double) {
+        self.lat = lat
+        self.lon = lon
+    }
 }

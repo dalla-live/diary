@@ -13,13 +13,11 @@ public class Diary: Object {
     
     @objc dynamic var id: Identifier = 0
     @objc dynamic var contents: String = ""
-    @objc dynamic var bookmark: Bookmark? = Bookmark()
     
-    convenience init(id: Identifier, contents: String, bookmark: Bookmark) {
+    convenience init(id: Identifier, contents: String) {
         self.init()
         self.id = id
         self.contents = contents
-        self.bookmark = bookmark
     }
     
     // 기본키 설정

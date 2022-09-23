@@ -13,9 +13,9 @@ protocol AddBookmarkUseCase {
 }
 
 final class DefaultAddBookmarkUseCase: AddBookmarkUseCase {
-    private let bookmarkRepository: BookmarkRepository
+    private let bookmarkRepository: BookmarkRepositoryProtocol
     
-    init(bookmarkRepository: BookmarkRepository) {
+    init(bookmarkRepository: BookmarkRepositoryProtocol) {
         self.bookmarkRepository = bookmarkRepository
     }
     
