@@ -13,9 +13,9 @@ protocol DeleteBookmarkUseCase {
 }
 
 final class DefaultDeleteBookmarkUseCase: DeleteBookmarkUseCase {
-    private let bookmarkRepository: BookmarkRepository
+    private let bookmarkRepository: BookmarkRepositoryProtocol
     
-    init(bookmarkRepository: BookmarkRepository) {
+    init(bookmarkRepository: BookmarkRepositoryProtocol) {
         self.bookmarkRepository = bookmarkRepository
     }
     
