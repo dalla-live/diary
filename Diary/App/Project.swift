@@ -8,4 +8,5 @@ let project = Project.app(name: Module.app.name, dependencies: [
     Module.design,
     Module.util,
     Module.service
-].map(\.project))
+].map(\.project),
+                          resources: .default)
