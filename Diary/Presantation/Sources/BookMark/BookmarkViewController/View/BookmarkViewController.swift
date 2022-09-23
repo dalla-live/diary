@@ -26,14 +26,20 @@ public final class BookmarkViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        let bookmarker = BookmarkerView()
+        let bookmarker = BookmarkerView(),
+            bookmarkList = BookmarkListView()
         
         self.view.addSubview(bookmarker)
-        
+        self.view.addSubview(bookmarkList)
         bookmarker.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.width.equalTo(30)
             $0.height.equalTo(50)
+        }
+        bookmarkList.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(100)
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(600)
         }
         
         bookmarker.rx.panGesture()
