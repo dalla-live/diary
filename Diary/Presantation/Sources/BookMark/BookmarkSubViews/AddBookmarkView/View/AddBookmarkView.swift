@@ -246,7 +246,7 @@ class AddBookmarkView: ProgrammaticallyView {
         let weatherCases = Weather.allCases,
             moodCases = Mood.allCases
         
-        weatherCases.forEach { model in
+        weatherCases.enumerated().forEach { index, model in
             let view = EmoticonView()
             view.emotionLabel.text = model.emoticon
             
@@ -258,11 +258,11 @@ class AddBookmarkView: ProgrammaticallyView {
             
             view.rx.tapGesture()
                 .when(.recognized)
-                .bind { [unowned self] _ in selectItem(for: weatherStackView, to: view) }
+                .bind { [unowned self] _ in selectItem(for: weatherStackView, index: index) }
                 .disposed(by: disposeBag)
         }
         
-        moodCases.forEach { model in
+        moodCases.enumerated().forEach { index, model in
             let view = EmoticonView()
             view.emotionLabel.text = model.emoticon
             
@@ -274,17 +274,18 @@ class AddBookmarkView: ProgrammaticallyView {
             
             view.rx.tapGesture()
                 .when(.recognized)
-                .bind { [unowned self] _ in selectItem(for: moodStackView, to: view) }
+                .bind { [unowned self] _ in selectItem(for: moodStackView, index: index) }
                 .disposed(by: disposeBag)
         }
     }
     
-    private func selectItem(for stackView: UIStackView, to item: EmoticonView) {
+    private func selectItem(for stackView: UIStackView, index: Int) {
         let emoticonViews = stackView.arrangedSubviews.filter { $0 is EmoticonView }.map { $0 as! EmoticonView }
         emoticonViews.forEach {
             $0.selectImage.isHidden = true
         }
-        item.selectImage.isHidden = false
+        
+        emoticonViews[safe: index]?.selectImage.isHidden = false
     }
     
     private func setGradient(to view: UIView) {
