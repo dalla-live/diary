@@ -12,6 +12,8 @@ import RxGesture
 import SnapKit
 import GoogleMaps
 import Service
+import ReSwift
+import Util
 
 
 class MapViewController: UIViewController {
@@ -21,6 +23,10 @@ class MapViewController: UIViewController {
     var viewModel : MapViewModel
     var service: MapService!
     
+    var changeLanguageBtn = UIButton().then {
+        $0.setTitle("언어 변경", for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+    }
     
     init ( dependency: MapViewModel, service: MapService ) {
         self.viewModel = dependency
@@ -44,6 +50,8 @@ class MapViewController: UIViewController {
         
         setInput()
         setOutput()
+        
+        setChangeLanguage()
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -92,5 +100,31 @@ class MapViewController: UIViewController {
         }).disposed(by: disposeBag)
     }
     
+    func setChangeLanguage() {
+        view.addSubview(changeLanguageBtn)
+        changeLanguageBtn.snp.makeConstraints {
+            $0.right.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.width.equalTo(100)
+            $0.height.equalTo(50)
+        }
+        changeLanguageBtn.rx.tap
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: {
+                let pickerView = LocalizePickerView()
+                self.tabBarController?.view?.addSubview(pickerView)
+                pickerView.snp.makeConstraints {
+                    $0.bottom.left.right.equalToSuperview()
+                    $0.height.equalTo(250)
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        Localize.newState.subscribe(onNext: { [weak self] code in
+            self?.viewModel.layoutModel.googleLabel.text = "google".localized
+            self?.viewModel.layoutModel.naverLabel.text = "naver".localized
+        })
+        .disposed(by: disposeBag)
+    }
     
 }
