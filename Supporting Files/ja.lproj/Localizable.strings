@@ -1,0 +1,20 @@
+// App
+
+// Weather
+"Thunderstorm" = "暴風";
+"Drizzle" = "霧雨";
+"Rain" = "雨";
+"Snow" = "雪";
+"Atmosphere" = "霧";
+"Clear" = "晴れ";
+"Clouds" = "雲";
+
+// Menu
+"map" = "指導";
+"list" = "リスト";
+"bookmark" = "ブックマーク";
+"modify" = "修整";
+"translation" = "翻訳";
+"delete" = "削除する";
+"google" = "グーグル";
+"naver" = "ネイバー";
