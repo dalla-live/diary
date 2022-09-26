@@ -50,7 +50,17 @@ struct MapLayoutModel {
         $0.isUserInteractionEnabled = true
     }
     
+    let googleLabel = UILabel().then {
+        $0.text = "google".localized
+        $0.font = .systemFont(ofSize: 15)
+        $0.textColor = .black
+    }
     
+    let naverLabel = UILabel().then {
+        $0.text = "naver".localized
+        $0.font = .systemFont(ofSize: 15)
+        $0.textColor = .black
+    }
     
     
     

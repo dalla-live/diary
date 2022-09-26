@@ -72,6 +72,8 @@ public class MapViewModel: NSObject {
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_SEARCH_BUTTON)
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_ADD_BUTTON)
         layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_EXTEND_BUTTON)
+        layoutModel._SUBMENU_MAP.addSubview(layoutModel.googleLabel)
+        layoutModel._SUBMENU_LIST.addSubview(layoutModel.naverLabel)
     }
     
     func setConstraint() {
@@ -124,6 +126,13 @@ public class MapViewModel: NSObject {
             $0.bottom.equalTo(layoutModel._FLOATING_ADD_BUTTON.snp.top).offset(-20)
         }
         
+        layoutModel.googleLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        layoutModel.naverLabel.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
     }
     
     func setUI(){
