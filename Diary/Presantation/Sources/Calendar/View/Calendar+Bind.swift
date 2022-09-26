@@ -68,7 +68,8 @@ extension CalendarViewController {
         
         bookMark.bind(to: tableView.rx.items(cellIdentifier: CalendarMarkCell.identifier, cellType: CalendarMarkCell.self)) { [weak self] row, model, cell in
             guard let _ = self else { return }
-            cell.bookMarkTitle.text = model
+            cell.configUI(model.type)
+            cell.bookMarkTitle.text = model.contents
             cell.selectionStyle = .none
         }.disposed(by: disposeBag)
         
