@@ -64,8 +64,8 @@ final class DiaryDIContainer {
 
 extension DiaryDIContainer: DiaryCoordinatorDependencies {
 
-    func makeWriteDiaryViewController() -> WriteDiaryViewController {
-        return WriteDiaryViewController.create(with: makeWriteDiaryViewModel())
+    func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController {
+        return WriteDiaryViewController.create(viewModel: makeWriteDiaryViewModel(), coordinator: coordinator)
     }
     
     func makeCalenderViewController(action : CalendarViewModelAction) -> CalendarViewController {

@@ -9,14 +9,14 @@ import UIKit
 import Util
 
 public protocol DiaryCoordinatorDependencies {
-    func makeWriteDiaryViewController() -> WriteDiaryViewController
     func makeCalenderViewController(action : CalendarViewModelAction ) -> CalendarViewController
+    func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController
 }
 
 public class DiaryCoordinator: Coordinator {
     public var childCoordinator: [Coordinator]  = []
     public var navigationController: UINavigationController
-    private var dependencies: DiaryCoordinatorDependencies
+    var dependencies: DiaryCoordinatorDependencies
     
     public init(navigation: UINavigationController,
                 dependencies: DiaryCoordinatorDependencies) {
@@ -25,7 +25,7 @@ public class DiaryCoordinator: Coordinator {
     }
     
     public func start() {
-        let action = CalendarViewModelAction(showDiaryVC: WriteDiaryViewControllerStart)
+        let action = CalendarViewModelAction(showDiaryVC: writeDiaryViewControllerStart)
         
         let vc = dependencies.makeCalenderViewController(action: action)
     
@@ -33,9 +33,8 @@ public class DiaryCoordinator: Coordinator {
         print(#file)
     }
     
-    public func WriteDiaryViewControllerStart() {
-        let vc = dependencies.makeWriteDiaryViewController()
-        vc.coordinator = self
+    public func writeDiaryViewControllerStart() {
+        let vc = dependencies.makeWriteDiaryViewController(coordinator: self)
         
         self.navigationController.present(vc, animated: true)
 //        self.navigationController.pushViewController(vc, animated: false)

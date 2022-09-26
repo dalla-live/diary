@@ -13,7 +13,8 @@ public final class CurrentWeatherRepository: CurrentWeatherRepositoryProtocol {
     public init() {}
     
     public func requestCurrentWeather(request: Location, completion: @escaping (Result<String, Error>) -> Void) {
-        WeatherAPI.requestCurrentWeather(request: WeatherDTO(lat: request.getLat(), lon: request.getLon()), completion: { (result) in
+        
+        WeatherAPI.requestCurrentWeather(request: WeatherRequestDTO(lat: request.lat, lon: request.lon), completion: { (result) in
             completion(result)
         })
     }

@@ -17,6 +17,7 @@ public protocol MapService: AnyObject {
     func search(place: String)
     func getLocation() -> CLLocationCoordinate2D
     func setLocation(position: CLLocationCoordinate2D)
+    func setLocation(position: [CLLocationCoordinate2D])
 }
 
 public class GoogleMapServiceProvider : NSObject, MapService {
@@ -89,8 +90,12 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         
     }
     
-    public func setLocation(position: CLLocationCoordinate2D){
+    public func setLocation(position: CLLocationCoordinate2D) {
         marker.position = position
+    }
+    
+    public func setLocation(position: [CLLocationCoordinate2D]) {
+        
     }
     
     public func getMap() -> UIView {
