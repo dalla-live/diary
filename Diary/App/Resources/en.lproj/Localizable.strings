@@ -18,3 +18,7 @@
 "delete" = "Delete";
 "google" = "Google";
 "naver" = "Naver";
+
+// Button
+"okBtn" = "Done";
+"cancelBtn" = "Cancel";

@@ -18,3 +18,7 @@
 "delete" = "削除する";
 "google" = "グーグル";
 "naver" = "ネイバー";
+
+// Button
+"okBtn" = "確認";
+"cancelBtn" = "取り消す";

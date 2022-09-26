@@ -18,3 +18,7 @@
 "delete" = "삭제";
 "google" = "구글";
 "naver" = "네이버";
+
+// Button
+"okBtn" = "확인";
+"cancelBtn" = "취소";
