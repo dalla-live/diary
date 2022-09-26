@@ -69,6 +69,20 @@ public struct Mood {
     public init(mood: MoodCase) {
         self.mood = mood
     }
+    
+    public init(string mood: String) {
+        var moodCase: MoodCase {
+            switch mood {
+            case Mood.MoodCase.happy.text: return .happy
+            case Mood.MoodCase.sad.text: return .sad
+            case Mood.MoodCase.angry.text: return .angry
+            case Mood.MoodCase.amazed.text: return .amazed
+            case Mood.MoodCase.shameful.text: return .shameful
+            default: return .happy
+            }
+        }
+        self.mood = moodCase
+    }
 }
 
 public struct Location {
