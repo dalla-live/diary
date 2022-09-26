@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BookmarkRequestDTO {
+public struct BookmarkRequestDTO {
     var id: Int
     var weather: String
     var location: LocationDTO

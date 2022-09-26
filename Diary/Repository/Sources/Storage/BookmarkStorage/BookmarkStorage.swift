@@ -23,8 +23,8 @@ public class BookmarkStorage {
         .disposed(by: disposeBag)
     }
     
-    public func add(data: BookmarkEntity)-> Result<Void,Error> {
-        return database.add(data)
+    public func add(data: BookmarkRequestDTO)-> Result<Void,Error> {
+        return database.add(data.toEntity())
     }
     
     public func read()-> [BookmarkResponseDTO] {

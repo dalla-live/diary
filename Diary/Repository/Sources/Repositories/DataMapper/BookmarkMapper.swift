@@ -31,8 +31,18 @@ extension BookmarkResponseDTO {
     }
     
     func toDomain()-> Bookmark {
+        var mood: Mood {
+            switch self.mood {
+            case Mood.MoodCase.happy.text: return .init(mood: .happy)
+            case Mood.MoodCase.sad.text: return .init(mood: .sad)
+            case Mood.MoodCase.angry.text: return .init(mood: .angry)
+            case Mood.MoodCase.amazed.text: return .init(mood: .amazed)
+            case Mood.MoodCase.shameful.text: return .init(mood: .shameful)
+            default: return .init(mood: .happy)
+            }
+        }
         return .init(id: id,
-                     mood: Mood(mood: Mood.MoodCase(rawValue: mood)!),
+                     mood: mood,
                      weather: Weather(weather: Weather.WeatherCase(rawValue: weather)!),
                      date: date,
                      location: location.toDomain(),
@@ -46,7 +56,7 @@ extension Bookmark {
                      weather: weather.weather.rawValue,
                      location: location.toDTO(),
                      date: date,
-                     mood: mood.mood.rawValue,
+                     mood: mood.mood.text,
                      hasWritten: hasWritten)
     }
 }

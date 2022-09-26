@@ -9,3 +9,6 @@ open:
 
 clean:
 	tuist clean
+asset:
+	tuist generate
+	pod install
