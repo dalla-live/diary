@@ -9,74 +9,250 @@ import Foundation
 import UIKit
 import Util
 import RxSwift
-import RxGesture
 import RxCocoa
 
-public final class CalendarViewController : UIViewController {
+struct testBookMark {
+    var type : CalendarType
+    var contents : String
+}
+
+public final class CalendarViewController : UIViewController, UITableViewDelegate {
     
-    weak var delegate : DiaryViewDelegate?
-    var coordinator: DiaryCoordinator?
-    var disposeBag = DisposeBag()
-    
-    let writeDiaryButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "plus.circle"), for: .normal)
-        $0.backgroundColor = .black
-        $0.tintColor = .blue
-        $0.layer.cornerRadius = 10.0
+    var calendarView = UIView().then {
+        $0.backgroundColor = .white
     }
     
-    // ViewController 의존성 주입을 위한 create
-    public static func create(coordinator: DiaryCoordinator) -> CalendarViewController {
+    var monthOfDate = UIView().then {
+        $0.backgroundColor = .white
+    }
+    
+    var monthLabel = UILabel().then {
+        $0.backgroundColor = .white
+        $0.textColor = .black
+    }
+    
+    var prevButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+        $0.tintColor = .black
+    }
+    
+    var nextButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "chevron.forward"), for: .normal)
+        $0.tintColor = .black
+    }
+    
+    lazy var weekStackView = UIStackView()
+    
+    lazy var collectionView : UICollectionView = {
+        let layout                        = UICollectionViewFlowLayout()
+        layout.minimumLineSpacing         = 0
+        layout.minimumInteritemSpacing    = 0
+        let view                          = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
+        view.isPagingEnabled              = false
+        view.showsVerticalScrollIndicator = false
+        view.allowsMultipleSelection      = false
+        view.isScrollEnabled              = false
+        view.delegate                     = self
+        view.register(CalendarCollectionViewCell.self, forCellWithReuseIdentifier: "CalendarCollectionViewCell")
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    var markView = UIView().then{
+        $0.backgroundColor = .white
+    }
+    
+    var addDiaryBtn = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+        $0.tintColor = .black
+    }
+    
+    var tableView = UITableView().then{
+        $0.backgroundColor = .white
+        $0.isScrollEnabled = false
+        $0.rowHeight = 50
+        $0.separatorInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        $0.register(CalendarMarkCell.self, forCellReuseIdentifier: "CalendarMarkCell")
+    }
+
+    var viewModel : CalendarViewModel!
+    var visibleDateInfo : Date = Date()
+    var lastSelectedIndexPath : IndexPath?
+    
+    var bookMark : BehaviorRelay<[testBookMark]> = .init(value: [])
+    
+    var disposeBag : DisposeBag = DisposeBag()
+    
+    public static func create(with viewModel: CalendarViewModel) -> CalendarViewController {
         let vc = CalendarViewController()
-        vc.coordinator = coordinator
+        vc.viewModel = viewModel
         
         return vc
     }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        setUI()
+        configWeekStackView()
+        setConstraint()
+        bind()
+        addGesture()
         
-        let calendarView = CalendarView(frame: self.view.frame)
-            calendarView.delegate = delegate
-        let calendarMarkView = CalendarMarkView(frame: self.view.frame)
-            calendarMarkView.delegate = delegate
-        
-        [calendarView, calendarMarkView, writeDiaryButton].forEach{ self.view.addSubview($0)}
-        
-        self.view.backgroundColor = .white
-        
-        calendarView.snp.makeConstraints{
-            $0.left.right.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
-            $0.height.equalTo(400)
+        let testArr : [testBookMark] = [testBookMark(type: .Diary, contents: "다이어리1"),
+                                         testBookMark(type: .Diary, contents: "다이어리이이이이"),
+                                         testBookMark(type: .BookMark, contents: "북마크크")]
+        bookMark.accept(testArr)
+    }
+    
+    private func configWeekStackView() {
+        let dayofWeek = ["일", "월", "화", "수", "목", "금", "토"]
+        dayofWeek.forEach{ data in
+            let label = UILabel()
+            label.text = data
+            label.textColor = .black
+            label.textAlignment = .center
+            label.font = .systemFont(ofSize: 12)
+            self.weekStackView.addArrangedSubview(label)
+            label.snp.makeConstraints{
+                $0.width.equalTo(Size.contentCellWidth.scale())
+            }
         }
+    }
+    
+    func setUI() {
+        view.backgroundColor = .white
+        [calendarView, markView, addDiaryBtn].forEach{ self.view.addSubview($0) }
+        [monthOfDate, weekStackView, collectionView].forEach{ calendarView.addSubview($0)}
         
-        calendarMarkView.snp.makeConstraints{
-            $0.left.right.equalToSuperview()
-            $0.top.equalTo(calendarView.snp.bottom).offset(20)
-            $0.height.equalTo(300)
-        }
+        [monthLabel, prevButton, nextButton].forEach{ monthOfDate.addSubview($0)}
+        [tableView].forEach{ markView.addSubview($0) }
         
-        writeDiaryButton.snp.makeConstraints {
-            $0.size.equalTo(50)
-            $0.right.equalToSuperview().inset(30)
-            $0.bottom.equalToSuperview().inset(100)
-        }
+        calendarView.roundCorners(.allCorners, radius: 15)
 
-        calendarView.contentView.layer.cornerRadius = 15
-        calendarView.contentView.layer.masksToBounds = true
         calendarView.addShadow(location: .bottom, color: UIColor(rgb: 103), opacity: 0.16, blur: 6)
         
-        bind()
+        markView.frame = markView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 15, right: 0))
+        tableView.delegate = self
     }
     
-    func bind(){
-        writeDiaryButton.rx.tapGesture()
-            .when(.recognized)
-            .bind {[weak self] _ in
-                self?.coordinator?.writeDiaryViewControllerStart()
+    func setConstraint() {
+        calendarView.snp.makeConstraints{
+            let height = (Size.contentCellWidth.scale() * 6) + Size.monthOfDateHeight.scale() + Size.weekStackHeight.scale() + Size.weekStackTopPadding.scale()
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.equalTo(height)
+        }
+        
+        monthOfDate.snp.makeConstraints{
+            $0.top.equalToSuperview()
+            $0.top.left.right.equalToSuperview()
+            $0.height.equalTo(Size.monthOfDateHeight.scale())
+        }
+        
+        monthLabel.snp.makeConstraints{
+            $0.left.equalToSuperview().offset(16)
+            $0.top.bottom.equalToSuperview()
+        }
+        
+        nextButton.snp.makeConstraints{
+            $0.right.equalToSuperview().inset(8)
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(50)
+        }
+        
+        prevButton.snp.makeConstraints{
+            $0.right.equalTo(nextButton.snp.left).inset(-3)
+            $0.top.bottom.equalToSuperview()
+            $0.width.equalTo(50)
+        }
+        
+        weekStackView.snp.makeConstraints{
+            $0.left.right.equalToSuperview()
+            $0.top.equalTo(monthOfDate.snp.bottom)
+            $0.height.equalTo(Size.weekStackHeight.scale())
+        }
+        
+        collectionView.snp.makeConstraints{
+            $0.top.equalTo(weekStackView.snp.bottom).offset(Size.weekStackTopPadding.scale())
+            $0.width.bottom.equalToSuperview()
+            $0.left.right.equalToSuperview()
+        }
+        
+        addDiaryBtn.snp.makeConstraints{
+            $0.top.equalTo(calendarView.snp.bottom).offset(20)
+            $0.right.equalToSuperview().offset(-16)
+            $0.width.height.equalTo(40)
+        }
+        
+        markView.snp.makeConstraints{
+            $0.top.equalTo(addDiaryBtn.snp.bottom).offset(5)
+            $0.left.right.bottom.equalToSuperview()
+        }
+    
+        tableView.snp.makeConstraints{
+            $0.top.equalTo(addDiaryBtn.snp.bottom).offset(10)
+            $0.left.right.bottom.equalToSuperview()
+        }
+    }
+    
+    private func addGesture() {
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureRecog(_ :)))
+        swipeRight.direction = .right
+        self.view.addGestureRecognizer(swipeRight)
+        
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureRecog(_ :)))
+        swipeLeft.direction = .left
+        self.view.addGestureRecognizer(swipeLeft)
+    }
+    
+    @objc func swipeGestureRecog(_ sender : UISwipeGestureRecognizer) {
+        switch sender.direction {
+        case .right:
+            let prevMonthDate = CalendarHelper.shared.getPrevMonth(viewModel.model.date)
+            self.viewModel.getDate(date: prevMonthDate)
+        case .left:
+            let nextMonthDate = CalendarHelper.shared.getNextMonth(viewModel.model.date)
+            self.viewModel.getDate(date: nextMonthDate)
+        default:
+            return
+        }
+    }
+    
+}
+
+extension CalendarViewController : UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: Size.contentCellWidth.scale() , height: Size.contentCellWidth.scale())
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return .zero
+    }
+
+}
+
+
+extension CalendarViewController {
+    enum Size {
+        case contentCellWidth
+        case monthOfDateHeight
+        case weekStackHeight
+        case weekStackTopPadding
+        
+        var const : CGFloat  {
+            switch self {
+            case .contentCellWidth:
+                return (UIScreen.main.bounds.width - 32) / 7
+            case .monthOfDateHeight:
+                return 50
+            case .weekStackHeight:
+                return 50
+            case .weekStackTopPadding:
+                return 10
             }
-            .disposed(by: disposeBag)
+        }
+        
+        func scale() -> CGFloat { return const }
     }
-    
 }

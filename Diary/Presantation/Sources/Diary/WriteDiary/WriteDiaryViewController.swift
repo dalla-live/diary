@@ -51,4 +51,8 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController {
     public override func deinitAction() {
         
     }
+    
+    deinit {
+        print("WriteDiaryViewController deinit")
+    }
 }
