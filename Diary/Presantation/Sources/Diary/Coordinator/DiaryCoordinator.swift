@@ -9,8 +9,8 @@ import UIKit
 import Util
 
 public protocol DiaryCoordinatorDependencies {
+    func makeCalenderViewController(action : CalendarViewModelAction ) -> CalendarViewController
     func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController
-    func makeCalenderViewController(coordinator: DiaryCoordinator) -> CalendarViewController
 }
 
 public class DiaryCoordinator: Coordinator {
@@ -25,8 +25,10 @@ public class DiaryCoordinator: Coordinator {
     }
     
     public func start() {
-        let vc = dependencies.makeCalenderViewController(coordinator: self)
+        let action = CalendarViewModelAction(showDiaryVC: writeDiaryViewControllerStart)
         
+        let vc = dependencies.makeCalenderViewController(action: action)
+    
         navigationController.pushViewController(vc, animated: true)
         print(#file)
     }
@@ -34,21 +36,11 @@ public class DiaryCoordinator: Coordinator {
     public func writeDiaryViewControllerStart() {
         let vc = dependencies.makeWriteDiaryViewController(coordinator: self)
         
-        self.navigationController.pushViewController(vc, animated: false)
+        self.navigationController.present(vc, animated: true)
+//        self.navigationController.pushViewController(vc, animated: false)
     }
     
     deinit {
         print(#file)
     }
-}
-// TODO: 삭제해도 될 듯?
-extension DiaryCoordinator : DiaryViewDelegate {
-    public func openDiaryView() {
-        let vc = DiaryViewController()
-        navigationController.present(vc, animated: true)
-    }
-}
-
-public protocol DiaryViewDelegate : AnyObject {
-    func openDiaryView()
 }
