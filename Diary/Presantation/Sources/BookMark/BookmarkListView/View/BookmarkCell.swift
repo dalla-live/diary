@@ -10,9 +10,11 @@ import UIKit
 import SnapKit
 import Util
 import Design
+import RxSwift
 
 class BookmarkCell: UITableViewCell {
     static let identifier = description()
+    let disposeBag = DisposeBag()
     
     let dateLabel = UILabel().then {
         $0.text = "2021-09-23"
@@ -25,9 +27,7 @@ class BookmarkCell: UITableViewCell {
     }
     
     let moreActionButton = UIButton().then {
-//        $0.setImage(UIImage(named: "icoMore"), for: .normal)
         $0.setImage(PresantationAsset.icoMore.image, for: .normal)
-        $0.backgroundColor = .black
     }
     
     // Map으로 바뀔 예정
@@ -77,17 +77,17 @@ class BookmarkCell: UITableViewCell {
             halfSapcing: CGFloat = 8.0
         
         dateLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(defaultSpacing)
+            $0.top.leading.equalToSuperview().inset(halfSapcing)
         }
         
         moreActionButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(defaultSpacing)
-            $0.centerY.equalTo(dateLabel)
-            $0.size.equalTo(30)
+            $0.top.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(halfSapcing)
+            $0.size.equalTo(40)
         }
         
         distanceLabel.snp.makeConstraints {
-            $0.trailing.equalTo(moreActionButton.snp.leading).offset(-halfSapcing)
+            $0.trailing.equalTo(moreActionButton.snp.leading)
             $0.centerY.equalTo(dateLabel)
         }
         

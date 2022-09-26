@@ -13,6 +13,7 @@ import Then
 import Toast
 import RxSwift
 import RxCocoa
+import Domain
 
 class AddBookmarkView: ProgrammaticallyView {
     let backgroundView = UIView().then {
@@ -244,7 +245,7 @@ class AddBookmarkView: ProgrammaticallyView {
     
     private func setScrollView() {
         let weatherCases = Weather.allCases,
-            moodCases = Mood.allCases
+            moodCases = Mood.MoodCase.allCases
         
         weatherCases.enumerated().forEach { index, model in
             let view = EmoticonView()

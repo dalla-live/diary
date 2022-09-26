@@ -37,14 +37,33 @@ public struct BookmarkList {
 
 
 public struct Mood {
-    public enum MoodCase: String {
-        case mood1
-        case mood2
-        case mood3
-        case mood4
-        case mood5
+    public enum MoodCase: Int, CaseIterable {
+        case happy        // 행복한
+        case sad          // 슬픈
+        case angry        // 화난
+        case amazed       // 놀라운
+        case shameful     // 부끄러운
+        
+        public var text: String {
+            switch self {
+            case .happy: return "행복한"
+            case .sad: return "슬픈"
+            case .angry: return "화난"
+            case .amazed: return "놀라운"
+            case .shameful: return "부끄러운"
+            }
+        }
+        
+        public var emoticon: String {
+            switch self {
+            case .happy: return "😀"
+            case .sad: return "😢"
+            case .angry: return "😡"
+            case .amazed: return "🤩"
+            case .shameful: return "☺️"
+            }
+        }
     }
-    
     public var mood: MoodCase
     
     public init(mood: MoodCase) {
