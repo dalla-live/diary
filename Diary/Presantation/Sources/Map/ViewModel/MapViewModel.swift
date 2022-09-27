@@ -59,6 +59,7 @@ public class MapViewModel: NSObject {
     
     func viewDidLoad() {
     }
+  
     
     // test func 인터페이스 호출
     public func showFullScreenWindow() {
