@@ -66,7 +66,6 @@ class BookmarkCell: UITableViewCell {
         
         let title = contentsLabel.currentLineCount < 2 ? BookmarkListView.ContentButtonType.translate.title : BookmarkListView.ContentButtonType.readMore.title
         readMoreButton.setTitle(title, for: .normal)
-        print(contentsLabel.currentLineCount < 2)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -155,6 +154,9 @@ class BookmarkCell: UITableViewCell {
                 }
             }
             .disposed(by: disposeBag)
-        
+    }
+    
+    deinit {
+        print("cellDeinit")
     }
 }
