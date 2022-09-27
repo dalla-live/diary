@@ -14,6 +14,11 @@ import Util
 import Domain
 import Service
 
+
+public protocol MapViewDelegate: AnyObject {
+    func openMapViewEdit()
+}
+
 public class MapCoordinator: Coordinator {
     
     public var childCoordinator: [Coordinator]  = []
@@ -26,19 +31,19 @@ public class MapCoordinator: Coordinator {
     }
     
     public func start() {
-        let mapVc = MapViewController(dependency: getMapViewModel(), service: getMapService())
+        let mapVc = PlaceViewController(dependency: getMapViewModel())
             mapVc.coordinator = self
         self.navigationController.pushViewController(mapVc, animated: false)
     }
     
-    func getMapService() -> MapService {
-        return GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: nil)
-    }
+//    func getMapService() -> MapService {
+//        return GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: nil)
+//    }
     
     func getMapViewModel() -> MapViewModel {
         
         let mapViewModel    = MapViewModel(
-            mapUseCase: MapUseCaseProvider())
+            mapUseCase: MapUseCaseProvider(placeRepo: PlaceRepositoryProvider()))
         return mapViewModel
     }
     
@@ -52,14 +57,12 @@ public class MapCoordinator: Coordinator {
 }
 
 extension MapCoordinator: MapViewDelegate {
-    public func openWindow() {
-        coordinator?.presentFullScreenLayer()
+    public func openMapViewEdit() {
+        
+        let vc = PlaceEditViewController()
+        navigationController.topViewController?.present(vc, animated: true)
     }
 }
 
 
-
-public protocol MapViewDelegate: AnyObject {
-    func openWindow()
-}
 

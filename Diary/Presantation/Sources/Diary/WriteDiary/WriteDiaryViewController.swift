@@ -170,4 +170,8 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     public override func deinitAction() {
         
     }
+    
+    deinit {
+        print("WriteDiaryViewController deinit")
+    }
 }

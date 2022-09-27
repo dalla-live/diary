@@ -23,7 +23,7 @@ class CalendarCollectionViewCell : UICollectionViewCell {
     }
     
     var eventMark = UIView().then{
-        $0.backgroundColor = .systemGray
+        $0.backgroundColor = .orange
         $0.layer.cornerRadius = 2.5
     }
     
@@ -96,7 +96,6 @@ class CalendarCollectionViewCell : UICollectionViewCell {
         
         label.isHidden          = false
         eventView.isHidden      = false
-        eventMark.isHidden      = true
         label.font = .systemFont(ofSize: 12, weight: .regular)
         
         switch data.monthType {

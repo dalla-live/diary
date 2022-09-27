@@ -1,0 +1,24 @@
+// App
+
+// Weather
+"Thunderstorm" = "Thunderstorm";
+"Drizzle" = "Drizzle";
+"Rain" = "Rain";
+"Snow" = "Snow";
+"Atmosphere" = "Mist";
+"Clear" = "Clear";
+"Clouds" = "Clouds";
+
+// Menu
+"map" = "Map";
+"list" = "List";
+"bookmark" = "Bookmark";
+"modify" = "Modify";
+"translation" = "Translation";
+"delete" = "Delete";
+"google" = "Google";
+"naver" = "Naver";
+
+// Button
+"okBtn" = "Done";
+"cancelBtn" = "Cancel";

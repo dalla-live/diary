@@ -9,29 +9,31 @@ import Foundation
 import UIKit
 import GoogleMaps
 import GoogleMapsUtils
-
-
+import GooglePlaces
+import SnapKit
 
 public protocol MapService: AnyObject {
-    var mapUI : UIView? {get}
+    var mapUI : GMSMapView? {get}
     func search(place: String)
     func getLocation() -> CLLocationCoordinate2D
+    func setCurrentLocation() -> CLLocationCoordinate2D
     func setLocation(position: CLLocationCoordinate2D)
     func setLocation(position: [CLLocationCoordinate2D])
 }
 
 public class GoogleMapServiceProvider : NSObject, MapService {
     
-    public weak var mapUI : UIView? {
+    public weak var mapUI : GMSMapView? {
         return self.mapView
     }
-    
+    private var placesClient: GMSPlacesClient!
+
     private var mapView: GMSMapView!
     var clusterManager: GMUClusterManager!
     var marker : GMSMarker!
     var kClusterItemCount = 20
-    var kCameraLatitude = -33.8
-    var kCameraLongitude = 151.2
+    var kCameraLatitude = 35.1268275
+    var kCameraLongitude = 126.8810436
     public weak var delegate : GMSMapViewDelegate?
     
     // 맵서비스에는 기본적으로 GPS 좌표 시스템에 의존적이라고 생각하고 ..
@@ -43,18 +45,41 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         self.service = service
         
         service?.setDelegate(delegate: self)
-        
+        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
         GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
-        
+        placesClient = GMSPlacesClient.shared()
+
         // 초기 세팅은 엉뚱한 곳으로
-        let camera   = GMSCameraPosition.camera(withLatitude: kCameraLatitude, longitude: kCameraLongitude, zoom: 15, bearing: 0, viewingAngle: 45)
+        let camera   = GMSCameraPosition.camera(withLatitude: kCameraLatitude, longitude: kCameraLongitude, zoom: 15)
         self.mapView = GMSMapView(frame: .zero, camera: camera)
-        
+              
+//        self.mapView.isMyLocationEnabled = true
         setClusterManager()
         setDelegate()
+        findPlace()
     }
     
-    
+    func findPlace(){
+        let placeFields: GMSPlaceField = [.name, .formattedAddress, .coordinate]
+        
+            placesClient.findPlaceLikelihoodsFromCurrentLocation(withPlaceFields: placeFields) { [weak self] (placeLikelihoods, error) in
+              guard let strongSelf = self else {
+                return
+              }
+
+              guard error == nil else {
+                print("Current place error: \(error?.localizedDescription ?? "")")
+                return
+              }
+
+              guard let place = placeLikelihoods?.first?.place else {
+                return
+              }
+                print("::::: \(place.name)")
+                print("::::: \(place.formattedAddress)")
+                print("::::: \(place.coordinate)")
+            }
+    }
     // 마커 간략화 처리를 위한 클러스터 등록
     // GMSMarker(position: position)
     // self.addPlace
@@ -91,6 +116,7 @@ public class GoogleMapServiceProvider : NSObject, MapService {
     }
     
     public func setLocation(position: CLLocationCoordinate2D) {
+        mapView.animate(toLocation: position)
         marker.position = position
     }
     
@@ -105,9 +131,15 @@ public class GoogleMapServiceProvider : NSObject, MapService {
     public func search(place: String) {
         
     }
-    
     public func getLocation() -> CLLocationCoordinate2D {
-        return self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
+        let currentPosition =  self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
+        return currentPosition
+    }
+    
+    public func setCurrentLocation() -> CLLocationCoordinate2D {
+        let currentPosition =  self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
+        self.setLocation(position: currentPosition)
+        return currentPosition
     }
 }
 
@@ -118,8 +150,14 @@ extension GoogleMapServiceProvider: LocationServiceDelegate {
             mapView.animate(toLocation: location)
             
             marker = GMSMarker(position: location)
-            marker.title = "현재위치"
+//            marker.title = "현재위치"
+//            marker.snippet = "Population: 4,169,103"
             marker.map = mapView
+//            mapView.selectedMarker = marker
+            
+           //            $0.centerX.equalToSuperview()
+           //            $0.centerY.equalToSuperview().offset(-100)
+           //        }
             return
         }
         
@@ -128,6 +166,12 @@ extension GoogleMapServiceProvider: LocationServiceDelegate {
 }
 
 extension GoogleMapServiceProvider: GMSMapViewDelegate {
+    public func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
+       return nil
+    }
+    public func mapView(_ mapView: GMSMapView, markerInfoContents marker: GMSMarker) -> UIView? {
+        return nil
+    }
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         print(gesture)
     }
@@ -141,7 +185,9 @@ extension GoogleMapServiceProvider: GMSMapViewDelegate {
         print("didTap")
     }
     public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        print(position)
+        
+        print(mapView.camera.target)
+//        print(mapView.camera.target)
     }
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
 

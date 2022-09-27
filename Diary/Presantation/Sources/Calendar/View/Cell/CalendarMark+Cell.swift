@@ -80,9 +80,9 @@ class CalendarMarkCell : UITableViewCell {
     func configUI(_ data : CalendarType) {
         switch data {
         case .BookMark:
-            markDivider.backgroundColor = .blue
+            markDivider.backgroundColor = .darkGray
         case .Diary:
-            markDivider.backgroundColor = .yellow
+            markDivider.backgroundColor = .purple
         }
     }
 }

@@ -52,10 +52,17 @@ public class GPSLocationServiceProvider : NSObject, LocationService ,  CLLocatio
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last, self.currentLocation != location.coordinate {
-            self.currentLocation = location.coordinate
-            delegate?.setLocation(location: location.coordinate)
+//        print("location called")
+        guard let location = locations.last else {
+            return
         }
+        
+        if self.currentLocation == nil {
+            // 한번만
+            delegate?.setLocation(location: location.coordinate)
+            delegate = nil
+        }
+        self.currentLocation = location.coordinate
     }
     
     public func getLocation() -> CLLocationCoordinate2D {

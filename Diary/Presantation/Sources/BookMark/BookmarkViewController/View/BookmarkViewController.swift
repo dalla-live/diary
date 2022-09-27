@@ -27,7 +27,9 @@ public final class BookmarkViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         let bookmarker = BookmarkerView(),
-            bookmarkList = BookmarkListView()
+            bookmarkList = BookmarkListView().then {
+                $0.isHidden = false
+            }
         
         self.view.addSubview(bookmarker)
         self.view.addSubview(bookmarkList)

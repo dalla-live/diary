@@ -9,13 +9,20 @@ import Foundation
 
 
 
-protocol PlaceRepository {
-
+public protocol PlaceRepository {
+    func fetchList()
 }
 
 
 // repository project로 이동 할예정
-class PlaceRepositoryProvider: PlaceRepository {
+public class PlaceRepositoryProvider: PlaceRepository {
+    public init() {
+        
+    }
+    public func fetchList() {
+        
+    }
+    
     
 
 

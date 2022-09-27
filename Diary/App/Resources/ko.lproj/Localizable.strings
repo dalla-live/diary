@@ -1,0 +1,24 @@
+// App
+
+// Weather
+"Thunderstorm" = "폭풍";
+"Drizzle" = "이슬비";
+"Rain" = "비";
+"Snow" = "눈";
+"Atmosphere" = "안개";
+"Clear" = "맑음";
+"Clouds" = "구름";
+
+// Menu
+"map" = "지도";
+"list" = "리스트";
+"bookmark" = "북마크";
+"modify" = "수정";
+"translation" = "번역";
+"delete" = "삭제";
+"google" = "구글";
+"naver" = "네이버";
+
+// Button
+"okBtn" = "확인";
+"cancelBtn" = "취소";
