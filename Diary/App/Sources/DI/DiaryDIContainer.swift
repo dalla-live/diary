@@ -9,6 +9,7 @@ import Foundation
 import Domain
 import Repository
 import Presantation
+import Service
 import UIKit
 
 
@@ -56,6 +57,11 @@ final class DiaryDIContainer {
         return CalendarViewModel(usecase: makeFetchDiaryUseCase(), action: action)
     }
     
+    // MARK: Service
+    func makeSpeechRecognizer() -> SpeechRecognizer {
+        return SpeechRecognizer()
+    }
+    
     // MARK: Coordinator
     func makeDiaryCoordinator(navigationController: UINavigationController) -> DiaryCoordinator {
         return DiaryCoordinator(navigation: navigationController, dependencies: self)
@@ -65,7 +71,7 @@ final class DiaryDIContainer {
 extension DiaryDIContainer: DiaryCoordinatorDependencies {
 
     func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController {
-        return WriteDiaryViewController.create(viewModel: makeWriteDiaryViewModel(), coordinator: coordinator)
+        return WriteDiaryViewController.create(viewModel: makeWriteDiaryViewModel(), coordinator: coordinator, speechRecognizer: makeSpeechRecognizer())
     }
     
     func makeCalenderViewController(action : CalendarViewModelAction) -> CalendarViewController {

@@ -29,7 +29,7 @@ public class SpeechRecognizer: NSObject, SFSpeechRecognizerDelegate {
         super.init()
         
         let identifier: String = Locale.preferredLanguages.first ?? "ko-KR"
-        self.recognizer = SFSpeechRecognizer(locale: Locale.init(identifier: identifier))
+        self.recognizer = SFSpeechRecognizer(locale: Locale.init(identifier: identifier)) // 디바이스 언어 인식
         self.recognizer?.delegate = self
     }
     
@@ -117,5 +117,9 @@ public class SpeechRecognizer: NSObject, SFSpeechRecognizerDelegate {
         } catch {
             print("audioEngine couldn't start because of an error.")
         }
+    }
+    
+    deinit{
+        print("SpeechRecognizer deinit")
     }
 }
