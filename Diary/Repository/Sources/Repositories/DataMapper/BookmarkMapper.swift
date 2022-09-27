@@ -12,7 +12,7 @@ extension BookmarkEntity {
     func toDTO()-> BookmarkResponseDTO {
         return .init(id: id,
                      weather: weather,
-                     location: .init(lat: lat, lon: lon),
+                     location: .init(lat: lat, lon: lon, address: address),
                      date: date,
                      mood: mood,
                      hasWritten: hasWritten)
@@ -25,6 +25,7 @@ extension BookmarkResponseDTO {
                      weather: weather,
                      lat: location.lat,
                      lon: location.lon,
+                     address: location.address,
                      date: date,
                      mood: mood,
                      hasWritten: hasWritten)
@@ -67,6 +68,7 @@ extension BookmarkRequestDTO {
                      weather: weather,
                      lat: location.lat,
                      lon: location.lon,
+                     address: location.address,
                      date: date,
                      mood: mood,
                      hasWritten: hasWritten)
@@ -75,12 +77,20 @@ extension BookmarkRequestDTO {
 
 extension LocationDTO {
     func toDomain()-> Location {
-        return .init(lat: lat, lon: lon)
+        return .init(lat: lat, lon: lon, address: address)
     }
 }
 
 extension Location {
     func toDTO()-> LocationDTO {
-        return .init(lat: lat, lon: lon)
+        return .init(lat: lat, lon: lon, address: address)
     }
+}
+
+func dateFormatter(date: Date)-> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy.MM.d" // 2020-08-13 16:30
+    let convertStr = dateFormatter.string(from: date)
+
+    return convertStr
 }

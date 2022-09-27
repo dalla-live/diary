@@ -74,9 +74,11 @@ public struct Mood {
 public struct Location {
     public var lat: Double
     public var lon: Double
+    public var address: String
     
-    public init(lat: Double, lon: Double) {
+    public init(lat: Double, lon: Double, address: String) {
         self.lat = lat
         self.lon = lon
+        self.address = address
     }
 }

@@ -29,9 +29,11 @@ public struct BookmarkResponseDTO {
 struct LocationDTO {
     var lat: Double
     var lon: Double
+    var address: String
     
-    init(lat: Double, lon: Double) {
+    init(lat: Double, lon: Double, address: String) {
         self.lat = lat
         self.lon = lon
+        self.address = address
     }
 }
