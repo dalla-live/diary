@@ -23,11 +23,21 @@ public class BookmarkStorage {
         .disposed(by: disposeBag)
     }
     
-    public func add(data: BookmarkRequestDTO)-> Result<Void,Error> {
-        return database.add(data.toEntity())
+    public func add(data: BookmarkRequestDTO)-> Result<Int,Error> {
+        switch database.add(data.toEntity()) {
+        case .success():
+            return .success(readLatestData().id)
+            
+        case .failure(let error):
+            return .failure(error)
+        }
     }
     
     public func read()-> [BookmarkResponseDTO] {
-        return bookmarkList.map { $0.toDTO() }
+        return database.read().map { $0.toDTO() }
+    }
+    
+    public func readLatestData()-> BookmarkEntity {
+        return database.read().last!
     }
 }

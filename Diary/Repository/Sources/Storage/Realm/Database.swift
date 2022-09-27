@@ -26,7 +26,7 @@ struct Database<Q: Object> {
             try realm?.write {
                 realm?.add(object)
             }
-            changeSet.onNext(Array(read()))
+            
             return .success(())
         } catch {
             return .failure(error)
@@ -45,7 +45,7 @@ struct Database<Q: Object> {
         }
     }
 
-    private func read()-> Results<Q> {
+    func read()-> Results<Q> {
         let objects = realm!.objects(Q.self)
 
         return objects
