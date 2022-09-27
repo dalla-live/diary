@@ -21,8 +21,7 @@ let dependencies = Dependencies(
             .rxKeyboard,
             .rxGesture,
             .swiftyJson,
-            .toast,
-            .reSwift
+            .toast
     ],
     platforms: [.iOS]
 )
@@ -40,5 +39,5 @@ public extension Package {
     static let rxGesture: Package     = .remote(url: "https://github.com/RxSwiftCommunity/RxGesture", requirement: .upToNextMajor(from: "4.0.4"))
     static let swiftyJson: Package    = .remote(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", requirement: .upToNextMajor(from: "4.0.0"))
     static let toast: Package         = .remote(url: "https://github.com/scalessec/Toast-Swift", requirement: .branch("master"))
-    static let reSwift: Package       = .remote(url: "https://github.com/ReSwift/ReSwift.git", requirement: .upToNextMajor(from: "5.0.0"))
+//    static let reSwift: Package       = .remote(url: "https://github.com/ReSwift/ReSwift.git", requirement: .upToNextMajor(from: "5.0.0"))
 }

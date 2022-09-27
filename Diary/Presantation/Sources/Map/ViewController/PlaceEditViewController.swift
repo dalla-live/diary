@@ -1,5 +1,5 @@
 //
-//  AddBookMarkViewController.swift
+//  PlaceEditViewController.swift
 //  Presantation
 //
 //  Created by inforex_imac on 2022/09/26.
@@ -14,9 +14,16 @@ import GoogleMaps
 import Service
 import GooglePlaces
 
-class PlaceEditViewController: UIViewController {
+
+
+struct EditLayoutModel {
     
+}
+
+class PlaceEditViewController: UIViewController {
     var service: MapService?
+    let mapWrapper = UIView()
+    let addPlaceView = BookmarkerView()
     
 //    override func loadView() {
 //        guard let view = service?.mapUI else {
@@ -30,7 +37,6 @@ class PlaceEditViewController: UIViewController {
     init () {
         super.init(nibName: nil, bundle: nil)
         service = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
-        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
     
     required init?(coder: NSCoder) {
@@ -41,50 +47,59 @@ class PlaceEditViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .red
         setLayout()
-        
-        print("print :: \(self.tabBarItem)")
-//        setConstraint()
-//
-//
-//        self.viewModel.viewDidLoad()
-//
-//        btnBind()
     }
     
+
     
     func setLayout(){
-        let bue = UIView()
+        
         guard let map = service?.mapUI as? GMSMapView else {
             return
         }
         
+        // 이게 없으면 왠지 지도 중심을 못잡는다 ..
+        let mapInsets = UIEdgeInsets(top: 1, left: 0.0, bottom: 0.0, right: 0)
+            map.padding = mapInsets
+        mapWrapper.addSubview(map)
+        
         let width = UIScreen.main.bounds.width
-        
-        self.view.addSubview(bue)
-        bue.addSubview(map)
-        
-        bue.snp.makeConstraints{
-            $0.width.height.equalTo(width)
-            $0.center.equalToSuperview()
+        view.addSubview(mapWrapper)
+        view.addSubview(self.addPlaceView)
+        self.addPlaceView.snp.makeConstraints{
+            $0.top.equalTo(mapWrapper.snp.bottom)
+            $0.bottom.left.right.equalToSuperview()
         }
         
         map.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
-//        self.view.addSubview(bue)
-//        bue.addSubview(map)
-//        map.snp.makeConstraints{
-//            $0.edges.equalToSuperview()
-//        }
-//        bue.snp.makeConstraints{
-//            $0.width.height.equalToSuperview().dividedBy(2)
-//        }
+        
+        mapWrapper.snp.makeConstraints{
+            $0.width.equalToSuperview()
+            $0.height.equalTo(width * 9 / 16)
+            $0.centerX.equalToSuperview()
+            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+        }
+        
+        let addBookmarkView = AddBookmarkView()
+        
+        view.addSubview(addBookmarkView)
+        
+        addBookmarkView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        self.view.layoutIfNeeded()
+//        print(service?.mapUI?.frame)
+//        print(service?.mapUI?.bounds)
+//        self.view.layoutIfNeeded()
     }
     
 }
@@ -113,11 +128,11 @@ extension PlaceEditViewController: GMSMapViewDelegate {
         
         
         public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                
-            })
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+//
+//            })
             
-            mapView.animate(toLocation: marker.position)
+//            mapView.animate(toLocation: marker.position)
             
             return true
         }
@@ -128,9 +143,7 @@ extension PlaceEditViewController: GMSMapViewDelegate {
         
         
         public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-            print(mapView.camera.target)
-//            mapView.animate(toLocation: mapView.camera.target)
-//            service?.setLocation(position: mapView.camera.target)
+            service?.setLocation(position: position.target)
         }
         
         public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {

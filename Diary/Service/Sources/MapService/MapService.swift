@@ -52,7 +52,7 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         // 초기 세팅은 엉뚱한 곳으로
         let camera   = GMSCameraPosition.camera(withLatitude: kCameraLatitude, longitude: kCameraLongitude, zoom: 15)
         self.mapView = GMSMapView(frame: .zero, camera: camera)
-        
+              
 //        self.mapView.isMyLocationEnabled = true
         setClusterManager()
         setDelegate()

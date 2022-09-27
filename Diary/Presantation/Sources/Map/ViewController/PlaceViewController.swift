@@ -1,5 +1,5 @@
 //
-//  MapViewController.swift
+//  PlaceViewController.swift
 //  Presantation
 //
 //  Created by inforex_imac on 2022/09/14.
@@ -32,7 +32,7 @@ class PlaceViewController: UIViewController {
         self.viewModel = dependency
         super.init(nibName: nil, bundle: nil)
         self.service   = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
-        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
+//        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
     
     required init?(coder: NSCoder) {

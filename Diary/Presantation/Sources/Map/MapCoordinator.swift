@@ -60,11 +60,7 @@ extension MapCoordinator: MapViewDelegate {
     public func openMapViewEdit() {
         
         let vc = PlaceEditViewController()
-            vc.hidesBottomBarWhenPushed = true
-            vc.modalPresentationStyle = .fullScreen
-        navigationController.topViewController?.present(vc, animated: true, completion: nil)
-        
-        
+        navigationController.topViewController?.present(vc, animated: true)
     }
 }
 
