@@ -39,6 +39,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        DesignTest()
 //        DomainTest()
         RepositoryTest()
+        ResourceManager.shared.makeResourceDirectory()
 //        PresentationTest()
 //        UtilTest()
 //        ServiceTest()
