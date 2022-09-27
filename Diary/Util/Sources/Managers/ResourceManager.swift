@@ -11,7 +11,7 @@ import UIKit
 public struct ResourceManager {
     public static let shared = ResourceManager()
     
-    let filePath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0].appendingPathComponent("Resource")
+    private let filePath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask)[0].appendingPathComponent("Resource")
     
     public func makeResourceDirectory() {
         if !FileManager.default.fileExists(atPath: filePath.path) {
@@ -23,9 +23,15 @@ public struct ResourceManager {
         }
     }
     
-    public func saveImage(imageNo: String, imageData: Data) {
+    /// Save Image file in local.
+    /// - Parameters:
+    ///   - imageNo: `imageNo` is the last line number +1 in the database.
+    ///   - view: Take a snapshot with `view`.
+    ///   - compressionQuality: Image `compressionQuality` percentage, default value is 0.5.
+    public func saveImage(imageNo: String, from view: UIView, _ compressionQuality: CGFloat = 0.5) {
+        let imageData = view.layer.snapshotImage?.jpegData(compressionQuality: compressionQuality)
         do {
-            try imageData.write(to: filePath.appendingPathComponent(imageNo))
+            try imageData?.write(to: filePath.appendingPathComponent(imageNo))
         } catch let error {
             print(error.localizedDescription)
             Log.e("do not save image")
