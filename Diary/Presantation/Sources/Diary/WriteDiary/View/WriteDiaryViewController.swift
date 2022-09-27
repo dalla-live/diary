@@ -15,7 +15,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     
     var coordinator: DiaryCoordinator?
     private var viewModel: WriteDiaryViewModel!
-    var speechRecognizer = SpeechRecognizer() // TODO: 의존성 주입
+    var speechRecognizer : SpeechRecognizer?
     
     // MARK: Component
     let recordButton = UIButton().then{
@@ -42,10 +42,11 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     // ViewController 의존성 주입을 위한 create
-    public static func create(viewModel: WriteDiaryViewModel, coordinator: DiaryCoordinator) -> WriteDiaryViewController {
+    public static func create(viewModel: WriteDiaryViewModel, coordinator: DiaryCoordinator, speechRecognizer: SpeechRecognizer) -> WriteDiaryViewController {
         let vc = WriteDiaryViewController()
             vc.viewModel = viewModel
             vc.coordinator = coordinator
+            vc.speechRecognizer = speechRecognizer
         
         return vc
     }
@@ -72,7 +73,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         print(code)
 
         
-        self.speechRecognizer.delegate = self
+        self.speechRecognizer?.delegate = self
         self.view.backgroundColor = .white
     }
     
@@ -107,7 +108,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
             .when(.recognized)
             .bind {[weak self] _ in
                 guard let self = self else { return }
-                self.speechRecognizer.speechToText()
+                self.speechRecognizer?.speechToText()
             }
             .disposed(by: disposeBag)
         
