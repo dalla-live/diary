@@ -25,66 +25,64 @@ public struct SearchPlaceRequestModel {
 }
 
 public protocol PlaceUseCase : SearchPlaceUseCase,  AddPlaceUseCase, UpdatePlaceUseCase, DeletePlaceUseCase{
-
+//    func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void)
 }
 
 public class MapUseCaseProvider: PlaceUseCase {
-    public func search(requestModel: MapUseCaseRequestWrapper) {
+    
+    private let placeRepository: PlaceRepository!
+    
+    func excute(completion: @escaping (BookmarkList) -> Void) {
         
     }
     
-    public func add(requestModel: MapUseCaseRequestWrapper) {
-        
-    }
-    
-    public func update(requestModel: MapUseCaseRequestWrapper) {
-        
-    }
-    
-    public func delete(requestModel: MapUseCaseRequestWrapper) {
-        
-    }
-    
-    
-    
-//    var repository: PlaceRepository!
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public func search(requestVo: SearchPlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+//        switch requestVo.type {
+//        case .byId(id: let idd) :
 //
-//    public func excute(requestModel: SearchPlaceRequestModel) {
-////        switch requestModel.type {
-////        case .add(let bookMark):
-////            print("add")
-////        case .update(let bookMark):
-////            print("update")
-////        case .delete(let uuid):
-////            print("delete")
-////        case .select(let uuid):
-////            // all list
-////            if uuid == nil {
-////
-////            } else {
-////                // select Row
-////
-////
-////            }
-////        }
-//    }
+//            break
+//        case .list:
+//            break
+//        case .byPlace(name: let namee ):
+//            break
+//        }
+            
+    }
+    
+    public func add(requestVo: AddUpdatePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+        
+    }
+    
+    public func update(requestVo: AddUpdatePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+        
+    }
+    
+    public func delete(requestVo: DeletePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+        
+    }
+    
+    
+    
+//    public func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+//        switch requestModel {
 //
-//    public func execute(model: SearchLocationRequestModel) {
-//
+//        case .add(entity: let entity):
+//            <#code#>
+//        case .update(entity: let entity):
+//            <#code#>
+//        case .deleteBy(id: let id):
+//            <#code#>
+//        case .select(isAll: let isAll, page: let page):
+//            <#code#>
+//        case .selectBy(id: let id):
+//            <#code#>
+//        case .searchBy(placeName: let placeName):
+//            <#code#>
+//        }
 //    }
     
-    public init() {
+    public init(placeRepo: PlaceRepository) {
+        self.placeRepository = placeRepo
     }
 }
 

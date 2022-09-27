@@ -50,7 +50,7 @@ public class MapViewModel: NSObject {
         self.mapUseCase      = mapUseCase
     }
     
-    var layoutModel = MapLayoutModel()
+    
     var disposeBag: DisposeBag = .init()
     
     // MARK: @ Output
@@ -58,86 +58,8 @@ public class MapViewModel: NSObject {
     
     
     func viewDidLoad() {
-        setLayout()
-        setConstraint()
-        setUI()
     }
     
-    func setLayout() {
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_MAP)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._SUBMENU_LIST)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._QUICK_BUTTON)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._BOOK_MARK_FLAG)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._BOOK_MARK_TOOL_TIP)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_SEARCH_BUTTON)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_ADD_BUTTON)
-        layoutModel._BUTTON_CONTAINER.addSubview(layoutModel._FLOATING_EXTEND_BUTTON)
-        layoutModel._SUBMENU_MAP.addSubview(layoutModel.googleLabel)
-        layoutModel._SUBMENU_LIST.addSubview(layoutModel.naverLabel)
-    }
-    
-    func setConstraint() {
-        layoutModel._SUBMENU_MAP.snp.makeConstraints{
-            $0.width.equalTo(50)
-            $0.height.equalTo(25)
-            $0.top.equalTo(50)
-            $0.centerX.equalToSuperview().offset(-25)
-        }
-        
-        layoutModel._SUBMENU_LIST.snp.makeConstraints{
-            $0.width.equalTo(50)
-            $0.height.equalTo(25)
-            $0.top.equalTo(50)
-            $0.centerX.equalToSuperview().offset(+25)
-        }
-        
-        layoutModel._QUICK_BUTTON.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.right.equalToSuperview()
-            $0.centerY.equalToSuperview().dividedBy(2)
-        }
-        
-        layoutModel._BOOK_MARK_FLAG.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.center.equalToSuperview()
-        }
-        
-        layoutModel._BOOK_MARK_TOOL_TIP.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.bottom.equalTo(layoutModel._BOOK_MARK_FLAG.snp.top)
-            $0.centerX.equalToSuperview()
-        }
-        
-        layoutModel._FLOATING_SEARCH_BUTTON.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.right.equalToSuperview()
-            $0.bottom.equalToSuperview().offset(-100)
-        }
-        
-        layoutModel._FLOATING_ADD_BUTTON.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.right.equalToSuperview()
-            $0.bottom.equalTo(layoutModel._FLOATING_SEARCH_BUTTON.snp.top).offset(-20)
-        }
-        
-        layoutModel._FLOATING_EXTEND_BUTTON.snp.makeConstraints{
-            $0.width.height.equalTo(50)
-            $0.right.equalToSuperview()
-            $0.bottom.equalTo(layoutModel._FLOATING_ADD_BUTTON.snp.top).offset(-20)
-        }
-        
-        layoutModel.googleLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
-        layoutModel.naverLabel.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-    
-    func setUI(){
-        
-    }
     // test func 인터페이스 호출
     public func showFullScreenWindow() {
         
