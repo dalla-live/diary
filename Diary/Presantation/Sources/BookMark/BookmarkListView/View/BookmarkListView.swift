@@ -43,6 +43,7 @@ class BookmarkListView: ProgrammaticallyView {
                                TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
                                TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
                                TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
                                TestBK(date: "1997-03-18", contents: "이것은 일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 일기이것은 일기이것은\n 일기이것은 일기이것은 일기\n?", distance: "장성 40km")]
     var testIndexPathList: Set<IndexPath> = []
     
@@ -58,10 +59,6 @@ class BookmarkListView: ProgrammaticallyView {
     }
     
     override func bind() {
-        self.rx.tapGesture()
-            .when(.recognized)
-            .bind{ [weak self] _ in self?.removeFromSuperview() }
-            .disposed(by: disposeBag)
     }
     
     private func buttonAction(buttonTitle: String?, indexPath: IndexPath) {
@@ -91,8 +88,8 @@ extension BookmarkListView: UITableViewDataSource {
         cell.mapView.image = ResourceManager.shared.getImage(imageNo: "\(indexPath.row)")
         
         switch indexPath.row {
-        case let test where testIndexPathList.contains(where: { $0.row == test }): cell.contentsLabel.numberOfLines = 0
-        default: cell.contentsLabel.numberOfLines = 2
+        case let row where testIndexPathList.contains(where: { $0.row == row }): cell.contentsLabel.numberOfLines = 0
+        default: cell.contentsLabel.numberOfLines = 1
         }
 
         cell.readMoreButton.rx.tap
