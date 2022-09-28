@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 import RxSwift
+import Util
 
 struct Database<Q: Object> {
     
@@ -21,13 +22,24 @@ struct Database<Q: Object> {
         self.realm = try! Realm()
     }
 
-    func add(_ object: Q)-> Result<Void,Error> {
+    func add(_ object: Q)-> Result<Q,Error> {
         do {
             try realm?.write {
                 realm?.add(object)
             }
             dbCount.onNext(read().count)
-            return .success(())
+            return .success(object)
+        } catch {
+            return .failure(error)
+        }
+    }
+    
+    func update(_ object: Q)-> Result<Q, Error> {
+        do {
+            try realm?.write {
+                realm?.add(object, update: .modified)
+            }
+            return .success(object)
         } catch {
             return .failure(error)
         }

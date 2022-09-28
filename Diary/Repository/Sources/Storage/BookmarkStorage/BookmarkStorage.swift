@@ -28,21 +28,30 @@ public class BookmarkStorage {
     /// 북마크를 추가하는 함수, 추가 성공 시 ID값 리턴
     /// - Parameter data: BookmarkAddRequestDTO
     /// - Returns Result<Int, Error>
-    public func add(data: BookmarkAddDTO)-> Result<Int,Error> {
+    public func add(data: BookmarkAddDTO)-> Result<BookmarkDTO,Error> {
         let entity = data.toEntity()
         entity.id = bookmarkCount + 1
         
         switch database.add(entity) {
-        case .success():
-            return .success(readLatestData().id)
+        case .success(let entity):
+            return .success(entity.toDTO())
             
         case .failure(let error):
             return .failure(error)
         }
     }
     
-    private func readLatestData()-> BookmarkEntity {
-        return database.read().last!
+    /// 북마크를 업데이트하는 함수, 업데이트 성공 시 성공한 Bookmark Return
+    /// - Parameter data: BookmarkAddDTO
+    /// - Returns Result<BookmarkDTO, Error>
+    public func update(data: BookmarkAddDTO)-> Result<BookmarkDTO, Error> {
+        switch database.update(data.toEntity()) {
+        case .success(let entity):
+            return .success(entity.toDTO())
+            
+        case .failure(let error):
+            return .failure(error)
+        }
     }
     
     /// 북마크리스트를 불러오는 함수
@@ -76,5 +85,7 @@ public class BookmarkStorage {
         
         return BookmarkResponseDTO(bookmarks: dto, hasNext: end != bookmarkCount)
     }
+    
+    
 }
 
