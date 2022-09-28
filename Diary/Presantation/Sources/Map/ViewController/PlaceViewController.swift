@@ -150,6 +150,38 @@ class PlaceViewController: UIViewController {
                 self.autocompleteClicked()
             })
             .disposed(by: disposeBag)
+        
+        var lastPosition = 0
+        
+        layoutModel._QUICK_LIST_BUTTON.rx.panGesture().when(.changed, .ended)
+            .subscribe(onNext: { [weak self] gesture in
+                guard let `self` = self else {
+                    return
+                }
+                
+                let trans            = gesture.translation(in: self.view)
+                let openedWidth        = (self.layoutModel._QUICK_LIST.frame.width / 2)
+                let movedDistance    = self.layoutModel._QUICK_LIST.transform.tx.magnitude + trans.x.magnitude
+                var transX           = -min(movedDistance, openedWidth)
+                
+                if trans.x > 0 {
+                    lastPosition = 1
+                    transX       = min((self.layoutModel._QUICK_LIST.transform.tx + trans.x), 0)
+                } else if trans.x < 0 {
+                    lastPosition = -1
+                }
+                
+                if gesture.state == .ended {
+                    return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
+                }
+                
+                self.layoutModel._QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: transX, y: 0)
+                self.layoutModel._QUICK_LIST.transform        = CGAffineTransform(translationX: transX, y: 0)
+                
+                gesture.setTranslation(.zero, in: self.view)
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     // Present the Autocomplete view controller when the button is pressed.
@@ -216,23 +248,6 @@ extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
      }
 }
 extension PlaceViewController : GMSMapViewDelegate {
-//     인포는 나중에
-//    public func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
-//        marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.5)
-//        marker.icon = UIImage(named: "plus.app")
-//        marker.map = mapView
-//        mapView.selectedMarker = marker
-//        return nil
-//    }
-//    public func mapView(_ mapView: GMSMapView, markerInfoContents marker: GMSMarker) -> UIView? {
-//
-//        marker.snippet = "testests"
-//        marker.title = "testset"
-//        marker.map = mapView
-//
-//        return contentView
-//    }
-//
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         layoutModel._BOOK_MARK_TOOL_TIP.isHidden = true
         
@@ -247,7 +262,6 @@ extension PlaceViewController : GMSMapViewDelegate {
         })
         
         mapView.animate(toLocation: marker.position)
-        
         return true
     }
 
