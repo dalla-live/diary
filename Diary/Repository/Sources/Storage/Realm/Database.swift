@@ -51,8 +51,8 @@ struct Database<Q: Object> {
         return objects
     }
     
-    func readWithQuery(query: String)-> Results<Q> {
-        let objects = realm!.objects(Q.self).filter(query)
+    func readWithQuery(query: (Query<Q>)-> Query<Bool>)-> Results<Q> {
+        let objects = realm!.objects(Q.self).where(query)
         
         return objects
     }
