@@ -9,7 +9,7 @@ import Foundation
 
 protocol UpdateBookmarkUseCase {
     func excute(bookmark: Bookmark,
-                completion: @escaping ((Result<BookmarkList, Error>) -> Void))
+                completion: @escaping ((Result<Bookmark, Error>) -> Void))
 }
 
 final class DefaultUpdateBookmarkUseCase: UpdateBookmarkUseCase {
@@ -19,7 +19,7 @@ final class DefaultUpdateBookmarkUseCase: UpdateBookmarkUseCase {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(bookmark: Bookmark, completion: @escaping ((Result<BookmarkList, Error>) -> Void)) {
+    func excute(bookmark: Bookmark, completion: @escaping ((Result<Bookmark, Error>) -> Void)) {
         bookmarkRepository.updateBookmark(bookmark: bookmark) { completion($0) }
     }
 }

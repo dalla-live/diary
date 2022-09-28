@@ -23,12 +23,23 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         completion(responseData.toDomain())
     }
     
-    func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Int, Error>) -> Void) {
-        completion(storage.add(data: bookmark.toDTO()))
+    func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
+        
+        switch storage.add(data: bookmark.toDTO()) {
+        case .success(let dto):
+            completion(.success(dto.toDomain()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
     
-    func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
-        
+    func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
+        switch storage.update(data: bookmark.toDTO()) {
+        case .success(let dto):
+            completion(.success(dto.toDomain()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
     
     func deleteBookmark(id: String, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
