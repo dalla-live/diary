@@ -8,15 +8,21 @@
 import UIKit
 import Then
 import SnapKit
+import RxCocoa
+import RxSwift
+import RxGesture
 
 // 디자인 소스 분리 테스트..
 //  맵 뷰컨 레이아웃 부분을 따로 뗀것
 // add, hidden, 등의 액션을 여기서 처리해볼것이다
 struct MapLayoutModel {
+    
+    var disposeBag = DisposeBag()
+    
     let _MAP_CONTAINER            = UIView(frame: .zero).then{
         $0.backgroundColor = .clear
     }
-    
+
     let _CURRENT_LOCATION_BUTTON = UIView(frame: .zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "location.north.fill"))
             imgView.contentMode = .scaleAspectFit
@@ -71,8 +77,13 @@ struct MapLayoutModel {
         $0.isUserInteractionEnabled = true
     }
     
-    let _QUICK_BUTTON           = UIView(frame:.zero).then{
-        $0.backgroundColor = .magenta
+    let _QUICK_LIST_BUTTON           = UIView(frame:.zero).then{
+        $0.backgroundColor = .red
+        $0.isUserInteractionEnabled = true
+    }
+    
+    let _QUICK_LIST = UIView(frame: .zero).then{
+        $0.backgroundColor = .white
         $0.isUserInteractionEnabled = true
     }
     
@@ -167,7 +178,8 @@ struct MapLayoutModel {
     func layoutButton(container: UIView) {
         container.addSubview(_SUBMENU_MAP)
         container.addSubview(_SUBMENU_LIST)
-        container.addSubview(_QUICK_BUTTON)
+        container.addSubview(_QUICK_LIST_BUTTON)
+        container.addSubview(_QUICK_LIST)
         container.addSubview(_BOOK_MARK_TOOL_TIP)
         container.addSubview(_FLOATING_SEARCH_BUTTON)
         container.addSubview(_FLOATING_ADD_BUTTON)
@@ -201,10 +213,16 @@ struct MapLayoutModel {
             $0.centerY.equalToSuperview().offset(-90)
         }
         
-        _QUICK_BUTTON.snp.makeConstraints{
+        _QUICK_LIST_BUTTON.snp.makeConstraints{
             $0.width.height.equalTo(50)
             $0.right.equalToSuperview()
             $0.centerY.equalToSuperview().dividedBy(2)
+        }
+        
+        _QUICK_LIST.snp.makeConstraints{
+            $0.width.equalToSuperview()
+            $0.height.equalToSuperview()
+            $0.left.equalTo(_QUICK_LIST_BUTTON.snp.right)
         }
         
         _FLOATING_SEARCH_BUTTON.snp.makeConstraints{
@@ -212,8 +230,6 @@ struct MapLayoutModel {
             $0.right.equalToSuperview().offset(-5)
             $0.bottom.equalTo(_FLOATING_ADD_BUTTON.snp.top).offset(-20)
         }
-        
-        
         
         _FLOATING_ADD_BUTTON.snp.makeConstraints{
             $0.width.height.equalTo(40)
@@ -242,45 +258,13 @@ struct MapLayoutModel {
             $0.centerY.equalToSuperview().offset(-20)
             $0.centerX.equalToSuperview()
         }
-        
+    }
+    
+    func setAnimation(toOriginX: CGFloat){
+        UIView.animate(withDuration: 0.5, animations: {
+            _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
+            _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
+        })
     }
     
 }
-
-// 아래 방식도 사용 가능할듯 하다
-//public struct CustomViewContainer<T: UIView> {
-//    var frame: CGRect
-//    var view : T
-//
-//    public init(viewType: T.Type) {
-//        frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-//        view = viewType.init(frame: frame) as T
-//    }
-//
-//    public init(viewType: T.Type, frame: CGRect) {
-//        self.frame = frame
-//        view = viewType.init(frame: frame) as T
-//    }
-//}
-//
-//enum FlotingButton {
-//    case search, add, extend
-//    var view : CustomViewContainer<UIView> {
-//        switch self {
-//        case .search:
-//            return CustomViewContainer(viewType: UIView.self)
-//        case .add:
-//            return CustomViewContainer(viewType: UIView.self)
-//        case .extend:
-//            return CustomViewContainer(viewType: UIView.self)
-//        }
-//    }
-//}
-
-//struct MapView {
-//    var _BOOK_MARK_FLAG         = CustomViewContainer(viewType: UIView.self)
-//    var _QUICK_BUTTON           = CustomViewContainer(viewType: UIView.self)
-//    var _FLOATING_SEARCH_BUTTON = CustomViewContainer(viewType: UIView.self)
-//    var _FLOATING_ADD_BUTTON    = CustomViewContainer(viewType: UIView.self)
-//    var _FLOATING_EXTEND_BUTTON = CustomViewContainer(viewType: UIView.self)
-//}
