@@ -8,6 +8,16 @@
 import Foundation
 
 public struct BookmarkResponseDTO {
+    var bookmarks: [BookmarkDTO]
+    var hasNext: Bool
+    
+    init(bookmarks: [BookmarkDTO], hasNext: Bool) {
+        self.bookmarks = bookmarks
+        self.hasNext = hasNext
+    }
+}
+
+public struct BookmarkDTO {
     var id: Int
     var weather: String
     var location: LocationDTO

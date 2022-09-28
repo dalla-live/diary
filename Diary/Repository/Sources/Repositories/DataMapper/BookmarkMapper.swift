@@ -9,7 +9,7 @@ import Foundation
 import Domain
 
 extension BookmarkEntity {
-    func toDTO()-> BookmarkResponseDTO {
+    func toDTO()-> BookmarkDTO {
         return .init(id: id,
                      weather: weather,
                      location: .init(lat: lat, lon: lon, address: address),
@@ -21,18 +21,12 @@ extension BookmarkEntity {
 }
 
 extension BookmarkResponseDTO {
-    func toEntity()-> BookmarkEntity {
-        return .init(id: id,
-                     weather: weather,
-                     lat: location.lat,
-                     lon: location.lon,
-                     address: location.address,
-                     date: date,
-                     mood: mood,
-                     hasWritten: hasWritten,
-                     note: note)
+    func toDomain()-> BookmarkList {
+        return .init(bookmarks: bookmarks.map({ $0.toDomain() }), hasNext: hasNext)
     }
-    
+}
+
+extension BookmarkDTO {
     func toDomain()-> Bookmark {
         var mood: Mood {
             switch self.mood {
@@ -55,7 +49,7 @@ extension BookmarkResponseDTO {
 }
 
 extension Bookmark {
-    func toDTO()-> BookmarkAddRequestDTO {
+    func toDTO()-> BookmarkAddDTO {
         return .init(id: id,
                      weather: weather.weather.rawValue,
                      location: location.toDTO(),
@@ -66,7 +60,7 @@ extension Bookmark {
     }
 }
 
-extension BookmarkAddRequestDTO {
+extension BookmarkAddDTO {
     func toEntity()-> BookmarkEntity {
         return .init(id: id,
                      weather: weather,

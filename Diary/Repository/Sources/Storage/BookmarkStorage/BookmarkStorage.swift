@@ -28,7 +28,7 @@ public class BookmarkStorage {
     /// 북마크를 추가하는 함수, 추가 성공 시 ID값 리턴
     /// - Parameter data: BookmarkAddRequestDTO
     /// - Returns Result<Int, Error>
-    public func add(data: BookmarkAddRequestDTO)-> Result<Int,Error> {
+    public func add(data: BookmarkAddDTO)-> Result<Int,Error> {
         let entity = data.toEntity()
         entity.id = bookmarkCount + 1
         
@@ -48,23 +48,33 @@ public class BookmarkStorage {
     /// 북마크리스트를 불러오는 함수
     /// - Parameter dto: BookmarkFetchDTO (query, page)
     /// - Returns [BookmarkResponseDTO]
-    public func read(_ dto: BookmarkFetchDTO)-> [BookmarkResponseDTO] {
-        var data: [BookmarkEntity]!
+    public func read(_ dto: BookmarkFetchDTO)-> BookmarkResponseDTO {
+        var data: [BookmarkEntity] = []
+        
         // Query유무에 따른 함수 실행
-        if dto.query.isEmpty {
+        switch dto.query {
+        case .all:
             data = Array(database.read())
-        } else {
-            data = Array(database.readWithQuery(query: dto.query))
+        default:
+            data = Array(database.readWithQuery(query: dto.query.query))
         }
-        data.reverse()
         // 페이지가 0이라면 페이징 처리하지 않고 리턴
         if dto.page == 0 {
-            return data.map { $0.toDTO() }
+            let dto = data.map { $0.toDTO() }
+            return BookmarkResponseDTO(bookmarks: dto, hasNext: false)
         }
         // 페이징 처리 10개 단위로
+        data.reverse()
         let start = (dto.page - 1) * 10
-        let end = dto.page * 10
-        return data[start..<end].map { $0.toDTO() }
+        // 페이지 요청이 최대 페이지를 넘어선 경우 빈배열 반환
+        if start > bookmarkCount {
+            return BookmarkResponseDTO(bookmarks: [], hasNext: false)
+        }
+        
+        let end = min(dto.page * 10, bookmarkCount) // 해당 페이지가 10개가 되지 않는 경우 예외 처리
+        let dto = data[start..<end].map { $0.toDTO() }
+        
+        return BookmarkResponseDTO(bookmarks: dto, hasNext: end != bookmarkCount)
     }
 }
 
