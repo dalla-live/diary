@@ -16,11 +16,10 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         self.storage = storage
     }
     
-    func fetchBookmarkList(completion: @escaping (Domain.BookmarkList) -> Void) {
-        let dto = storage.read()
-        let domain = dto.map { $0.toDomain() }
-        
-        completion(BookmarkList(bookmarks: domain))
+    func fetchBookmarkList(query: BookmarkQuery, page: Int, completion: @escaping (Domain.BookmarkList) -> Void) {
+        let requestDto = BookmarkFetchDTO(query: query.query, page: page)
+        let domainData = storage.read(requestDto).map { $0.toDomain() }
+        completion(BookmarkList(bookmarks: domainData))
     }
     
     func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Int, Error>) -> Void) {

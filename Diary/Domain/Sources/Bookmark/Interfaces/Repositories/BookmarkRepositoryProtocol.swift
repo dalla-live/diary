@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 public protocol BookmarkRepositoryProtocol {
-    func fetchBookmarkList(completion: @escaping (BookmarkList) -> Void)
+    func fetchBookmarkList(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void)
     
     func addBookmark(bookmark: Bookmark,
                      completion: @escaping (Result<Int, Error>) -> Void)

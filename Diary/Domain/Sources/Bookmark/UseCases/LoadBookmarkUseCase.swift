@@ -9,7 +9,7 @@ import Foundation
 import CoreLocation
 
 protocol LoadBookmarkUseCase {
-    func excute(completion: @escaping (BookmarkList) -> Void)
+    func excute(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void)
     
 }
 
@@ -20,7 +20,7 @@ final class DefaultLoadBookmarkUseCase: LoadBookmarkUseCase {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(completion: @escaping (BookmarkList) -> Void) {
-        bookmarkRepository.fetchBookmarkList { completion($0) }
+    func excute(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void) {
+        bookmarkRepository.fetchBookmarkList(query: query, page: page) { completion($0) }
     }
 }
