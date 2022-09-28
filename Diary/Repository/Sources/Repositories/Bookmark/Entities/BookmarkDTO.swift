@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct BookmarkAddDTO {
+public struct BookmarkDTO {
     var id: Int
     var weather: String
     var location: LocationDTO

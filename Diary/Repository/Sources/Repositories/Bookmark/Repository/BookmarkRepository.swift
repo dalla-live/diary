@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import Util
 
 class BookmarkRepository: BookmarkRepositoryProtocol {
     
@@ -42,7 +43,13 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         }
     }
     
-    func deleteBookmark(id: String, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
-        
+    func deleteBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Void, Error>) -> Void) {
+
+        switch storage.delete(bookmark.toDTO()) {
+        case .success():
+            completion(.success(()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
 }

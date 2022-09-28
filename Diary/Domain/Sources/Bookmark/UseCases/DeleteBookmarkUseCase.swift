@@ -8,8 +8,8 @@
 import Foundation
 
 protocol DeleteBookmarkUseCase {
-    func excute(id: String,
-                completion: @escaping ((Result<BookmarkList, Error>) -> Void))
+    func excute(bookmark: Bookmark,
+                completion: @escaping ((Result<Void, Error>) -> Void))
 }
 
 final class DefaultDeleteBookmarkUseCase: DeleteBookmarkUseCase {
@@ -19,7 +19,7 @@ final class DefaultDeleteBookmarkUseCase: DeleteBookmarkUseCase {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(id: String, completion: @escaping ((Result<BookmarkList, Error>) -> Void)) {
-        bookmarkRepository.deleteBookmark(id: id) { completion($0) }
+    func excute(bookmark: Bookmark, completion: @escaping ((Result<Void, Error>) -> Void)) {
+        bookmarkRepository.deleteBookmark(bookmark: bookmark) { completion($0) }
     }
 }

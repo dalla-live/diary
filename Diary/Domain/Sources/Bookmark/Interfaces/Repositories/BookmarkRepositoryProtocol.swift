@@ -17,6 +17,6 @@ public protocol BookmarkRepositoryProtocol {
     func updateBookmark(bookmark: Bookmark,
                         completion: @escaping (Result<Bookmark, Error>) -> Void)
     
-    func deleteBookmark(id: String,
-                        completion: @escaping (Result<BookmarkList, Error>) -> Void)
+    func deleteBookmark(bookmark: Bookmark,
+                        completion: @escaping (Result<Void, Error>) -> Void)
 }

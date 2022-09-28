@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import Domain
 
 public class BookmarkStorage {
     private let database = Database<BookmarkEntity>()
@@ -28,9 +29,12 @@ public class BookmarkStorage {
     /// 북마크를 추가하는 함수, 추가 성공 시 ID값 리턴
     /// - Parameter data: BookmarkAddRequestDTO
     /// - Returns Result<Int, Error>
-    public func add(data: BookmarkAddDTO)-> Result<BookmarkDTO,Error> {
+    public func add(data: BookmarkDTO)-> Result<BookmarkDTO,Error> {
         let entity = data.toEntity()
-        entity.id = bookmarkCount + 1
+        guard let id = read(.init(query: .all, page: 0)).bookmarks.last?.id else {
+            return .failure(Error.self as! Error)
+        }
+        entity.id = id + 1
         
         switch database.add(entity) {
         case .success(let entity):
@@ -44,7 +48,7 @@ public class BookmarkStorage {
     /// 북마크를 업데이트하는 함수, 업데이트 성공 시 성공한 Bookmark Return
     /// - Parameter data: BookmarkAddDTO
     /// - Returns Result<BookmarkDTO, Error>
-    public func update(data: BookmarkAddDTO)-> Result<BookmarkDTO, Error> {
+    public func update(data: BookmarkDTO)-> Result<BookmarkDTO, Error> {
         switch database.update(data.toEntity()) {
         case .success(let entity):
             return .success(entity.toDTO())
@@ -86,6 +90,20 @@ public class BookmarkStorage {
         return BookmarkResponseDTO(bookmarks: dto, hasNext: end != bookmarkCount)
     }
     
+    /// 북마크를 삭제하는 함수
+    /// - Parameter dto: BookmarkDTO
+    /// - Returns Result<Void, Error>
+    func delete(_ dto: BookmarkDTO)-> Result<Void, Error> {
+        
+        let entity = database.readWithQuery(query: BookmarkQuery.id(dto.id).query).first!
+        
+        switch database.delete(entity) {
+        case .success():
+            return .success(())
+        case .failure(let error):
+            return .failure(error)
+        }
+    }
     
 }
 
