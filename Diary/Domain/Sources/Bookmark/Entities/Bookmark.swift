@@ -31,9 +31,10 @@ public struct Bookmark {
 
 public struct BookmarkList {
     var bookmarks: [Bookmark]
-    
-    public init(bookmarks: [Bookmark]) {
+    var hasNext: Bool
+    public init(bookmarks: [Bookmark], hasNext: Bool) {
         self.bookmarks = bookmarks
+        self.hasNext = hasNext
     }
 }
 
