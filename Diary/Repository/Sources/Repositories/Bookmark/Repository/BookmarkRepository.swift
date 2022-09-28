@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import Util
 
 class BookmarkRepository: BookmarkRepositoryProtocol {
     
@@ -16,22 +17,39 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         self.storage = storage
     }
     
-    func fetchBookmarkList(completion: @escaping (Domain.BookmarkList) -> Void) {
-        let dto = storage.read()
-        let domain = dto.map { $0.toDomain() }
+    func fetchBookmarkList(query: BookmarkQuery, page: Int, completion: @escaping (Domain.BookmarkList) -> Void) {
+        let requestDto = BookmarkFetchDTO(query: query, page: page)
+        let responseData = storage.read(requestDto)
         
-        completion(BookmarkList(bookmarks: domain))
+        completion(responseData.toDomain())
     }
     
-    func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
+    func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
         
+        switch storage.add(data: bookmark.toDTO()) {
+        case .success(let dto):
+            completion(.success(dto.toDomain()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
     
-    func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
-        
+    func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
+        switch storage.update(data: bookmark.toDTO()) {
+        case .success(let dto):
+            completion(.success(dto.toDomain()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
     
-    func deleteBookmark(id: String, completion: @escaping (Result<Domain.BookmarkList, Error>) -> Void) {
-        
+    func deleteBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Void, Error>) -> Void) {
+
+        switch storage.delete(bookmark.toDTO()) {
+        case .success():
+            completion(.success(()))
+        case .failure(let error):
+            completion(.failure(error))
+        }
     }
 }

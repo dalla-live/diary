@@ -9,68 +9,75 @@ import Foundation
 import Domain
 
 extension BookmarkEntity {
-    func toDTO()-> BookmarkResponseDTO {
+    func toDTO()-> BookmarkDTO {
         return .init(id: id,
                      weather: weather,
-                     location: .init(lat: lat, lon: lon),
+                     location: .init(lat: lat, lon: lon, address: address),
                      date: date,
                      mood: mood,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 
 extension BookmarkResponseDTO {
-    func toEntity()-> BookmarkEntity {
-        return .init(id: id,
-                     weather: weather,
-                     lat: location.lat,
-                     lon: location.lon,
-                     date: date,
-                     mood: mood,
-                     hasWritten: hasWritten)
+    func toDomain()-> BookmarkList {
+        return .init(bookmarks: bookmarks.map({ $0.toDomain() }), hasNext: hasNext)
     }
-    
+}
+
+extension BookmarkDTO {
     func toDomain()-> Bookmark {
         return .init(id: id,
                      mood: Mood(string: mood),
                      weather: Weather(weather: Weather.WeatherCase(rawValue: weather)!),
                      date: date,
                      location: location.toDomain(),
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
-}
-
-extension Bookmark {
-    func toDTO()-> BookmarkRequestDTO {
-        return .init(id: id,
-                     weather: weather.weather.rawValue,
-                     location: location.toDTO(),
-                     date: date,
-                     mood: mood.mood.text,
-                     hasWritten: hasWritten)
-    }
-}
-
-extension BookmarkRequestDTO {
+    
     func toEntity()-> BookmarkEntity {
         return .init(id: id,
                      weather: weather,
                      lat: location.lat,
                      lon: location.lon,
+                     address: location.address,
                      date: date,
                      mood: mood,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
+    }
+}
+
+extension Bookmark {
+    func toDTO()-> BookmarkDTO {
+        return .init(id: id,
+                     weather: weather.weather.rawValue,
+                     location: location.toDTO(),
+                     date: date,
+                     mood: mood.mood.text,
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 
 extension LocationDTO {
     func toDomain()-> Location {
-        return .init(lat: lat, lon: lon)
+        return .init(lat: lat, lon: lon, address: address)
     }
 }
 
 extension Location {
     func toDTO()-> LocationDTO {
-        return .init(lat: lat, lon: lon)
+        return .init(lat: lat, lon: lon, address: address)
     }
+}
+
+func dateFormatter(date: Date)-> String {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy.MM.d" // 2020-08-13 16:30
+    let convertStr = dateFormatter.string(from: date)
+
+    return convertStr
 }

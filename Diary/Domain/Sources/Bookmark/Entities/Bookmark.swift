@@ -16,22 +16,25 @@ public struct Bookmark {
     public var date: String
     public var location: Location
     public var hasWritten: Bool
+    public var note: String
     
-    public init(id: Int, mood: Mood, weather: Weather, date: String, location: Location, hasWritten: Bool) {
-        self.id = id
-        self.mood = mood
-        self.weather = weather
-        self.date = date
-        self.location = location
+    public init(id: Int, mood: Mood, weather: Weather, date: String, location: Location, hasWritten: Bool, note: String) {
+        self.id         = id
+        self.mood       = mood
+        self.weather    = weather
+        self.date       = date
+        self.location   = location
         self.hasWritten = hasWritten
+        self.note       = note
     }
 }
 
 public struct BookmarkList {
     var bookmarks: [Bookmark]
-    
-    public init(bookmarks: [Bookmark]) {
+    var hasNext: Bool
+    public init(bookmarks: [Bookmark], hasNext: Bool) {
         self.bookmarks = bookmarks
+        self.hasNext = hasNext
     }
 }
 
@@ -88,9 +91,11 @@ public struct Mood {
 public struct Location {
     public var lat: Double
     public var lon: Double
+    public var address: String
     
-    public init(lat: Double, lon: Double) {
-        self.lat = lat
-        self.lon = lon
+    public init(lat: Double, lon: Double, address: String) {
+        self.lat     = lat
+        self.lon     = lon
+        self.address = address
     }
 }
