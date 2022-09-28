@@ -14,14 +14,16 @@ public struct BookmarkResponseDTO {
     var date: String
     var mood: String
     var hasWritten: Bool
+    var note: String
     
-    init(id: Int, weather: String, location: LocationDTO, date: String, mood: String, hasWritten: Bool) {
+    init(id: Int, weather: String, location: LocationDTO, date: String, mood: String, hasWritten: Bool, note: String) {
         self.id = id
         self.weather = weather
         self.location = location
         self.date = date
         self.mood = mood
         self.hasWritten = hasWritten
+        self.note = note
     }
 }
 

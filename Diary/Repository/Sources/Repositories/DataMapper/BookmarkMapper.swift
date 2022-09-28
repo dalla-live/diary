@@ -15,7 +15,8 @@ extension BookmarkEntity {
                      location: .init(lat: lat, lon: lon, address: address),
                      date: date,
                      mood: mood,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 
@@ -28,7 +29,8 @@ extension BookmarkResponseDTO {
                      address: location.address,
                      date: date,
                      mood: mood,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
     
     func toDomain()-> Bookmark {
@@ -47,22 +49,24 @@ extension BookmarkResponseDTO {
                      weather: Weather(weather: Weather.WeatherCase(rawValue: weather)!),
                      date: date,
                      location: location.toDomain(),
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 
 extension Bookmark {
-    func toDTO()-> BookmarkRequestDTO {
+    func toDTO()-> BookmarkAddRequestDTO {
         return .init(id: id,
                      weather: weather.weather.rawValue,
                      location: location.toDTO(),
                      date: date,
                      mood: mood.mood.text,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 
-extension BookmarkRequestDTO {
+extension BookmarkAddRequestDTO {
     func toEntity()-> BookmarkEntity {
         return .init(id: id,
                      weather: weather,
@@ -71,7 +75,8 @@ extension BookmarkRequestDTO {
                      address: location.address,
                      date: date,
                      mood: mood,
-                     hasWritten: hasWritten)
+                     hasWritten: hasWritten,
+                     note: note)
     }
 }
 

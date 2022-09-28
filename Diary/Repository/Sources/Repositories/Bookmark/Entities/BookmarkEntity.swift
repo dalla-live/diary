@@ -20,8 +20,9 @@ public class BookmarkEntity: Object {
     @objc dynamic var date: String = ""
     @objc dynamic var mood: String = ""
     @objc dynamic var hasWritten: Bool = false
+    @objc dynamic var note: String = ""
     
-    convenience init(id: Identifier, weather: String, lat: Double, lon: Double, address: String, date: String, mood: String, hasWritten: Bool) {
+    convenience init(id: Identifier, weather: String, lat: Double, lon: Double, address: String, date: String, mood: String, hasWritten: Bool, note: String) {
         self.init()
         self.id = id
         self.weather = weather
@@ -31,6 +32,7 @@ public class BookmarkEntity: Object {
         self.date = date
         self.mood = mood
         self.hasWritten = hasWritten
+        self.note = note
     }
     
     // 기본키 설정
