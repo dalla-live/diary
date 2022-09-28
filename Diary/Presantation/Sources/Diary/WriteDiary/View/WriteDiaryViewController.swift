@@ -115,8 +115,9 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         translateButton.rx.tapGesture()
             .when(.recognized)
             .bind {[weak self] _ in
-                self?.translate(self?.textView.text ?? "")
-                self?.detect(self?.textView.text ?? "")
+//                self?.translate(self?.textView.text ?? "")
+//                self?.detect(self?.textView.text ?? "")
+                self?.translateAfterDetect(self?.textView.text ?? "")
             }
             .disposed(by: disposeBag)
     }
@@ -153,8 +154,18 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     func translate(_ text: String){
-        // 한국어를 영어로
-        GoogleTranslater.shared.translate(text, "en", "ko") {[weak self] (text, error) in
+        // 한국어를 영어로 ko -> en
+        GoogleTranslater.shared.translate(text, "en") {[weak self] (text, error) in
+            guard let self = self,
+                  let text = text else { return }
+            DispatchQueue.main.async {
+                self.textView.text = text
+            }
+        }
+    }
+    
+    func translateAfterDetect(_ text: String){
+        GoogleTranslater.shared.translateAfterDetect(text){[weak self] (text, error) in
             guard let self = self,
                   let text = text else { return }
             DispatchQueue.main.async {
