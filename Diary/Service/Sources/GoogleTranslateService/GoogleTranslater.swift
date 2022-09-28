@@ -55,14 +55,40 @@ public class GoogleTranslater {
     /// Default URL session.
     private let session = URLSession(configuration: .default)
     
+    private var targetLanguage : String {
+        if #available(iOS 16, *) {
+            return Locale(identifier: Locale.preferredLanguages.first ?? "ko-KR").language.languageCode?.identifier ?? "ko"
+        } else {
+            return Locale(identifier: Locale.preferredLanguages.first ?? "ko-KR").languageCode ?? "ko"
+        }
+    }
     /**
         Initialization.
     
         - Parameters:
             - apiKey: A valid API key to handle requests for this API. If you are using OAuth 2.0 service account credentials (recommended), do not supply this parameter.
     */
-    public func start(with apiKey: String) {
-        self.apiKey = apiKey
+//    public func start(with apiKey: String) {
+//        self.apiKey = apiKey
+//    }
+    
+    /**
+        언어를 감지하고 그 언어를 디바이스 언어로 번역하는 함수.
+    
+        - Parameters:
+            - text : 언어를 감지하고 번역할 원문.
+    */
+    
+    public func translateAfterDetect(_ text: String, _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)){
+        detect(text) {[weak self] detections, error in
+            if let detections = detections {
+                for detection in detections {
+                    self?.translate(text, detection.language){ text, error in
+                        completion(text, error)
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -70,13 +96,12 @@ public class GoogleTranslater {
     
         - Parameters:
             - q: The input text to translate. Repeat this parameter to perform translation operations on multiple text inputs.
-            - target: The language to use for translation of the input text.
+            - target: The language to use for translation of the input text. // 추가가능
             - format: The format of the source text, in either HTML (default) or plain-text. A value of html indicates HTML and a value of text indicates plain-text.
             - source: The language of the source text. If the source language is not specified, the API will attempt to detect the source language automatically and return it within the response.
             - model: The translation model. Can be either base to use the Phrase-Based Machine Translation (PBMT) model, or nmt to use the Neural Machine Translation (NMT) model. If omitted, then nmt is used. If the model is nmt, and the requested language translation pair is not supported for the NMT model, then the request is translated using the base model.
     */
-    // source -> target 
-    public func translate(_ q: String, _ target: String, _ source: String, _ format: String = "text", _ model: String = "base", _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)) {
+    public func translate(_ q: String, _ source: String, _ format: String = "text", _ model: String = "base", _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)) {
         guard var urlComponents = URLComponents(string: API.translate.url) else {
             completion(nil, nil)
             return
@@ -85,7 +110,7 @@ public class GoogleTranslater {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "key", value: apiKey))
         queryItems.append(URLQueryItem(name: "q", value: q))
-        queryItems.append(URLQueryItem(name: "target", value: target))
+        queryItems.append(URLQueryItem(name: "target", value: targetLanguage))
         queryItems.append(URLQueryItem(name: "source", value: source))
         queryItems.append(URLQueryItem(name: "format", value: format))
         queryItems.append(URLQueryItem(name: "model", value: model))
@@ -108,7 +133,11 @@ public class GoogleTranslater {
                     return
             }
             
-            guard let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any], let d = object["data"] as? [String: Any], let translations = d["translations"] as? [[String: String]], let translation = translations.first, let translatedText = translation["translatedText"] else {
+            guard let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                  let d = object["data"] as? [String: Any],
+                  let translations = d["translations"] as? [[String: String]],
+                  let translation = translations.first,
+                  let translatedText = translation["translatedText"] else {
                 completion(nil, error)
                 return
             }
