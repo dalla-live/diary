@@ -100,7 +100,8 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
         
         let testArr : [testBookMark] = [testBookMark(type: .Diary, contents: "다이어리1"),
                                          testBookMark(type: .Diary, contents: "다이어리이이이이"),
-                                         testBookMark(type: .BookMark, contents: "북마크크")]
+                                         testBookMark(type: .BookMark, contents: "북마크크"),
+                                        testBookMark(type: .Diary, contents: "다이어리2")]
         bookMark.accept(testArr)
     }
     

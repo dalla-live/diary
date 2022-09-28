@@ -20,7 +20,8 @@ class PlaceViewController: UIViewController {
     var disposeBag: DisposeBag = .init()
     var viewModel : MapViewModel
     
-    var service: MapService?
+    var googleService: MapService?
+    var naverService : MapService?
     
     var layoutModel = MapLayoutModel()
     
@@ -31,7 +32,8 @@ class PlaceViewController: UIViewController {
     init ( dependency: MapViewModel) {
         self.viewModel = dependency
         super.init(nibName: nil, bundle: nil)
-        self.service   = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
+        self.googleService   = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
+        self.naverService   = NaverMapServiceProvider(service:  GPSLocationServiceProvider(), delegate: nil)
 //        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
     
@@ -46,8 +48,9 @@ class PlaceViewController: UIViewController {
         print(self.view.bounds)
         
         self.viewModel.viewDidLoad()
-        
+        addTarget()
         btnBind()
+        layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -55,20 +58,45 @@ class PlaceViewController: UIViewController {
     }
     
     func setLayout() {
-        self.view.addSubview(layoutModel._MAP_CONTAINER)
+        let mapContainer = [layoutModel._MAP_CONTAINER, layoutModel._NAVER_MAP_CONTAINER]
+        
+        self.view.addSubview(layoutModel._MAP_CONTENT_CONTAINER)
+        
+        layoutModel._MAP_CONTENT_CONTAINER.addSubview(layoutModel._MAP_SCROLL_CONTAINER)
+        
+        mapContainer.enumerated().forEach{ index, view in
+            view.frame = CGRect(x: CGFloat(index) * UIScreen.main.bounds.width , y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+            layoutModel._MAP_SCROLL_CONTAINER.addSubview(view)
+        }
+        
+        layoutModel._MAP_SCROLL_CONTAINER.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
         
         layoutModel.layoutButton(container: self.view)
         
-        guard let view = service?.mapUI else {
-            return
-        }
-        
-        layoutModel._MAP_CONTAINER.addSubview(view)
+        guard let googleView = googleService?.mapUI else { return }
+        guard let naverView = naverService?.mapUI else { return }
+       
+        layoutModel._MAP_CONTAINER.addSubview(googleView)
+        layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView)
     }
     
     func setConstraint() {
+        
+        layoutModel._MAP_CONTENT_CONTAINER.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
+        layoutModel._MAP_SCROLL_CONTAINER.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
         layoutModel.setConstraint(container: self.view)
-        self.service?.mapUI?.snp.makeConstraints{
+        
+        self.googleService?.mapUI?.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
+        self.naverService?.mapUI?.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
     }
@@ -76,7 +104,6 @@ class PlaceViewController: UIViewController {
         print(UIScreen.main.bounds)
         print(self.view.frame.height)
         print(self.tabBarController?.tabBar.frame.size)
-        print(layoutModel._MAP_CONTAINER.frame)
         super.viewDidAppear(animated)
         
         
@@ -92,7 +119,7 @@ class PlaceViewController: UIViewController {
                     return
                 }
                 
-                let _ = self.service?.setCurrentLocation()
+                let _ = self.googleService?.setCurrentLocation()
                 print("add tap")
             })
             .disposed(by: disposeBag)
@@ -123,6 +150,38 @@ class PlaceViewController: UIViewController {
                 self.autocompleteClicked()
             })
             .disposed(by: disposeBag)
+        
+        var lastPosition = 0
+        
+        layoutModel._QUICK_LIST_BUTTON.rx.panGesture().when(.changed, .ended)
+            .subscribe(onNext: { [weak self] gesture in
+                guard let `self` = self else {
+                    return
+                }
+                
+                let trans            = gesture.translation(in: self.view)
+                let openedWidth        = (self.layoutModel._QUICK_LIST.frame.width / 2)
+                let movedDistance    = self.layoutModel._QUICK_LIST.transform.tx.magnitude + trans.x.magnitude
+                var transX           = -min(movedDistance, openedWidth)
+                
+                if trans.x > 0 {
+                    lastPosition = 1
+                    transX       = min((self.layoutModel._QUICK_LIST.transform.tx + trans.x), 0)
+                } else if trans.x < 0 {
+                    lastPosition = -1
+                }
+                
+                if gesture.state == .ended {
+                    return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
+                }
+                
+                self.layoutModel._QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: transX, y: 0)
+                self.layoutModel._QUICK_LIST.transform        = CGAffineTransform(translationX: transX, y: 0)
+                
+                gesture.setTranslation(.zero, in: self.view)
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     // Present the Autocomplete view controller when the button is pressed.
@@ -142,13 +201,30 @@ class PlaceViewController: UIViewController {
         // Display the autocomplete view controller.
         present(autocompleteController, animated: true, completion: nil)
       }
+    
+    func addTarget() {
+        layoutModel._SUBMENU_SEGMENT.addTarget(self, action: #selector(self.segmentedValueChanged(_:)), for: UIControl.Event.valueChanged)
+    }
+    
+    @objc func segmentedValueChanged(_ sender : UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0 :
+            //구글
+            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._MAP_CONTAINER.frame.origin, animated: true)
+        case 1 :
+            //네이버
+            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._NAVER_MAP_CONTAINER.frame.origin, animated: true)
+        default:
+            return
+        }
+    }
 }
 
 extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
     
      func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
 //         print("place \(place.coordinate)")
-         self.service?.setLocation(position: place.coordinate)
+         self.googleService?.setLocation(position: place.coordinate)
        dismiss(animated: true, completion: nil)
      }
 
@@ -172,23 +248,6 @@ extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
      }
 }
 extension PlaceViewController : GMSMapViewDelegate {
-//     인포는 나중에
-//    public func mapView(_ mapView: GMSMapView, markerInfoWindow marker: GMSMarker) -> UIView? {
-//        marker.infoWindowAnchor = CGPoint(x: 0.5, y: 0.5)
-//        marker.icon = UIImage(named: "plus.app")
-//        marker.map = mapView
-//        mapView.selectedMarker = marker
-//        return nil
-//    }
-//    public func mapView(_ mapView: GMSMapView, markerInfoContents marker: GMSMarker) -> UIView? {
-//
-//        marker.snippet = "testests"
-//        marker.title = "testset"
-//        marker.map = mapView
-//
-//        return contentView
-//    }
-//
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         layoutModel._BOOK_MARK_TOOL_TIP.isHidden = true
         
@@ -203,7 +262,6 @@ extension PlaceViewController : GMSMapViewDelegate {
         })
         
         mapView.animate(toLocation: marker.position)
-        
         return true
     }
 
@@ -214,7 +272,7 @@ extension PlaceViewController : GMSMapViewDelegate {
     
     public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
         print(mapView.camera.target)
-        service?.setLocation(position: mapView.camera.target)
+        googleService?.setLocation(position: mapView.camera.target)
     }
     
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {

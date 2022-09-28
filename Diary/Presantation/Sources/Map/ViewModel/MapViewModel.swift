@@ -31,6 +31,10 @@ protocol MapViewModelInput {
 //    func didOpenBookmarkDetail()                       // 북마크 상세보기 선택
 }
 
+enum MapType {
+    case google, naver
+}
+
 enum MapSubMenu {
     case map, list
 }

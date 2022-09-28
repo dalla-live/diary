@@ -23,6 +23,7 @@ end
 target 'App' do
   project 'Diary/App/App.xcodeproj'
   pod 'GoogleMaps'
+  pod 'NMapsMap'
   pods
 
 end
@@ -46,6 +47,7 @@ target 'Presantation' do
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
   pod "GooglePlaces", '7.1.0'
+  pod 'NMapsMap'
   pods
 
 end
@@ -63,6 +65,7 @@ target 'Service' do
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
   pod "GooglePlaces", '7.1.0'
+  pod 'NMapsMap'
 end
 
 target 'Util' do

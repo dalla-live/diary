@@ -10,10 +10,10 @@ import UIKit
 import GoogleMaps
 import GoogleMapsUtils
 import GooglePlaces
-import SnapKit
+//import SnapKit
 
 public protocol MapService: AnyObject {
-    var mapUI : GMSMapView? {get}
+    var mapUI : UIView? {get}
     func search(place: String)
     func getLocation() -> CLLocationCoordinate2D
     func setCurrentLocation() -> CLLocationCoordinate2D
@@ -23,7 +23,7 @@ public protocol MapService: AnyObject {
 
 public class GoogleMapServiceProvider : NSObject, MapService {
     
-    public weak var mapUI : GMSMapView? {
+    public weak var mapUI : UIView? {
         return self.mapView
     }
     private var placesClient: GMSPlacesClient!
