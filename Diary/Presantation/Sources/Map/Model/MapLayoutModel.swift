@@ -13,8 +13,14 @@ import SnapKit
 //  맵 뷰컨 레이아웃 부분을 따로 뗀것
 // add, hidden, 등의 액션을 여기서 처리해볼것이다
 struct MapLayoutModel {
-    let _MAP_CONTAINER            = UIView(frame: .zero).then{
+    let _MAP_CONTENT_CONTAINER = UIView(frame: .zero).then{
         $0.backgroundColor = .clear
+    }
+    
+    let _MAP_SCROLL_CONTAINER    = UIScrollView(frame: .zero).then {
+        $0.backgroundColor = .clear
+        $0.isScrollEnabled = false
+        $0.contentInsetAdjustmentBehavior = .never
     }
     
     let _CURRENT_LOCATION_BUTTON = UIView(frame: .zero).then{
@@ -43,7 +49,7 @@ struct MapLayoutModel {
             point.layer.cornerRadius = 5
             point.layer.borderColor = UIColor.gray.cgColor
             point.backgroundColor = .red
-        $0.addSubview(point)
+            $0.addSubview(point)
             $0.layer.borderColor = UIColor.lightGray.cgColor
             $0.layer.borderWidth = 1
             $0.layer.cornerRadius = 75
@@ -61,15 +67,27 @@ struct MapLayoutModel {
         $0.isUserInteractionEnabled = false
     }
     
-    let _SUBMENU_MAP            = UIView(frame: .zero).then{
-        $0.backgroundColor = .magenta
-        $0.isUserInteractionEnabled = true
+    let _MAP_CONTAINER            = UIView(frame: .zero).then{
+        $0.backgroundColor = .clear
     }
     
-    let _SUBMENU_LIST           = UIView(frame: .zero).then{
-        $0.backgroundColor = .red
-        $0.isUserInteractionEnabled = true
+    let _NAVER_MAP_CONTAINER        = UIView(frame: .zero).then {
+        $0.backgroundColor = .clear
     }
+
+    let _BUTTON_CONTAINER            = UIView(frame: .zero).then{
+        $0.backgroundColor = .clear
+    }
+    
+    let _SUBMENU_SEGMENT : UISegmentedControl  = {
+        var segmentControl = UISegmentedControl(items: ["google".localized, "naver".localized])
+        segmentControl.isUserInteractionEnabled = true
+        segmentControl.selectedSegmentIndex     = 0
+        segmentControl.tintColor                = .black
+        segmentControl.backgroundColor          = .clear
+        segmentControl.selectedSegmentTintColor = .gray
+        return segmentControl
+    }()
     
     let _QUICK_BUTTON           = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
@@ -165,8 +183,7 @@ struct MapLayoutModel {
     }
     
     func layoutButton(container: UIView) {
-        container.addSubview(_SUBMENU_MAP)
-        container.addSubview(_SUBMENU_LIST)
+        container.addSubview(_SUBMENU_SEGMENT)
         container.addSubview(_QUICK_BUTTON)
         container.addSubview(_BOOK_MARK_TOOL_TIP)
         container.addSubview(_FLOATING_SEARCH_BUTTON)
@@ -180,18 +197,11 @@ struct MapLayoutModel {
     
     func setConstraint(container: UIView){
         
-        _SUBMENU_MAP.snp.makeConstraints{
-            $0.width.equalTo(50)
-            $0.height.equalTo(25)
+        _SUBMENU_SEGMENT.snp.makeConstraints{
+            $0.width.equalTo(130)
+            $0.height.equalTo(30)
             $0.top.equalTo(50)
-            $0.centerX.equalToSuperview().offset(-25)
-        }
-        
-        _SUBMENU_LIST.snp.makeConstraints{
-            $0.width.equalTo(50)
-            $0.height.equalTo(25)
-            $0.top.equalTo(50)
-            $0.centerX.equalToSuperview().offset(25)
+            $0.centerX.equalToSuperview()
         }
         
         _BOOK_MARK_TOOL_TIP.snp.makeConstraints{
@@ -231,10 +241,6 @@ struct MapLayoutModel {
             $0.width.height.equalTo(40)
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().offset(-100)
-        }
-        
-        _MAP_CONTAINER.snp.makeConstraints{
-            $0.edges.equalToSuperview()
         }
         
         _MAP_CENTER_MARKER.snp.makeConstraints{
