@@ -15,7 +15,7 @@ struct Database<Q: Object> {
 
     private var realm: Realm?
     
-    public let changeSet = PublishSubject<[Q]>()
+    public let dbCount = PublishSubject<Int>()
     
     init() {
         self.realm = try! Realm()
@@ -26,7 +26,7 @@ struct Database<Q: Object> {
             try realm?.write {
                 realm?.add(object)
             }
-            
+            dbCount.onNext(read().count)
             return .success(())
         } catch {
             return .failure(error)
@@ -38,7 +38,7 @@ struct Database<Q: Object> {
             try realm?.write {
                 realm?.delete(object)
             }
-            changeSet.onNext(Array(read()))
+            dbCount.onNext(read().count)
             return .success(())
         } catch {
             return .failure(error)
@@ -48,6 +48,12 @@ struct Database<Q: Object> {
     func read()-> Results<Q> {
         let objects = realm!.objects(Q.self)
 
+        return objects
+    }
+    
+    func readWithQuery(query: String)-> Results<Q> {
+        let objects = realm!.objects(Q.self).filter(query)
+        
         return objects
     }
 
