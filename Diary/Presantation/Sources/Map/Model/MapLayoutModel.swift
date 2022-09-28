@@ -98,13 +98,31 @@ struct MapLayoutModel {
     }
 
     let _QUICK_LIST_BUTTON           = UIView(frame:.zero).then{
-        $0.backgroundColor = .red
+        $0.backgroundColor = .clear
+        
+        let imgView             = UIImageView(image: UIImage(systemName: "arrowtriangle.left.square.fill"))
+            imgView.tag         = 12
+            imgView.contentMode = .scaleAspectFit
+            imgView.tintColor   = .gray
+            $0.addSubview(imgView)
+        
+        imgView.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
         $0.isUserInteractionEnabled = true
     }
     
     let _QUICK_LIST = UIView(frame: .zero).then{
-        $0.backgroundColor = .white
+        $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0.2).cgColor
+//        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         $0.isUserInteractionEnabled = true
+    }
+    
+    var _QUICK_LIST_TABLE = UITableView().then {
+        $0.backgroundColor = .clear
+        $0.separatorStyle = .none
+        $0.register(BookmarkCell.self, forCellReuseIdentifier: BookmarkCell.identifier)
     }
     
     let _BOOK_MARK_FLAG         = UIView(frame:.zero).then{
@@ -195,17 +213,26 @@ struct MapLayoutModel {
         $0.textColor = .black
     }
     
-    func layoutButton(container: UIView) {
+    func setLayout(container: UIView) {
+        container.addSubview(_SUBMENU_MAP)
+        container.addSubview(_SUBMENU_LIST)
+        container.addSubview(_QUICK_LIST_BUTTON)
+        container.addSubview(_QUICK_LIST)
         container.addSubview(_SUBMENU_SEGMENT)
         container.addSubview(_QUICK_BUTTON)
+        container.addSubview(_SUBMENU_MAP)
+        container.addSubview(_SUBMENU_LIST)
+        
         container.addSubview(_BOOK_MARK_TOOL_TIP)
         container.addSubview(_FLOATING_SEARCH_BUTTON)
         container.addSubview(_FLOATING_ADD_BUTTON)
         container.addSubview(_FLOATING_EXTEND_BUTTON)
         container.addSubview(_CURRENT_LOCATION_BUTTON)
-        
-//        _MAP_CONTAINER.addSubview(_MAP_CENTER_MARKER)
         container.addSubview(_MAP_CENTER_MARKER)
+        
+        container.addSubview(_QUICK_LIST_BUTTON)
+        container.addSubview(_QUICK_LIST)
+        _QUICK_LIST.addSubview(_QUICK_LIST_TABLE)
     }
     
     func setConstraint(container: UIView){
@@ -261,12 +288,21 @@ struct MapLayoutModel {
             $0.centerY.equalToSuperview().offset(-20)
             $0.centerX.equalToSuperview()
         }
+        
+        _QUICK_LIST_TABLE.snp.makeConstraints{
+            $0.left.top.bottom.equalToSuperview()
+            $0.width.equalToSuperview().dividedBy(2)
+        }
     }
     
-    func setAnimation(toOriginX: CGFloat){
-        UIView.animate(withDuration: 0.5, animations: {
+    func setAnimation(toOriginX: CGFloat) {
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
             _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
             _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
+        }, completion: { isComplete in
+            let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
+            let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
+            imgView?.image = UIImage(systemName: imageName)
         })
     }
     

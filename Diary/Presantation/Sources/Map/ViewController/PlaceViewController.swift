@@ -13,6 +13,7 @@ import SnapKit
 import GoogleMaps
 import Service
 import GooglePlaces
+import Util
 
 class PlaceViewController: UIViewController {
     
@@ -44,6 +45,8 @@ class PlaceViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setLayout()
+        
+        setDelegate()
         setConstraint()
         print(self.view.bounds)
         
@@ -57,6 +60,11 @@ class PlaceViewController: UIViewController {
         super.viewWillAppear(animated)
     }
     
+    func setDelegate() {
+        layoutModel._QUICK_LIST_TABLE.delegate   = self
+        layoutModel._QUICK_LIST_TABLE.dataSource = self
+    }
+    
     func setLayout() {
         let mapContainer = [layoutModel._MAP_CONTAINER, layoutModel._NAVER_MAP_CONTAINER]
         
@@ -64,11 +72,11 @@ class PlaceViewController: UIViewController {
         
         layoutModel._MAP_CONTENT_CONTAINER.addSubview(layoutModel._MAP_SCROLL_CONTAINER)
         
+        layoutModel.setLayout(container: self.view)
         mapContainer.enumerated().forEach{ index, view in
             view.frame = CGRect(x: CGFloat(index) * UIScreen.main.bounds.width , y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
             layoutModel._MAP_SCROLL_CONTAINER.addSubview(view)
         }
-        
         layoutModel._MAP_SCROLL_CONTAINER.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
         
         layoutModel.layoutButton(container: self.view)
@@ -153,16 +161,17 @@ class PlaceViewController: UIViewController {
         
         var lastPosition = 0
         
+        // 퀵리스트 버튼 이벤트
         layoutModel._QUICK_LIST_BUTTON.rx.panGesture().when(.changed, .ended)
             .subscribe(onNext: { [weak self] gesture in
                 guard let `self` = self else {
                     return
                 }
                 
-                let trans            = gesture.translation(in: self.view)
-                let openedWidth        = (self.layoutModel._QUICK_LIST.frame.width / 2)
-                let movedDistance    = self.layoutModel._QUICK_LIST.transform.tx.magnitude + trans.x.magnitude
-                var transX           = -min(movedDistance, openedWidth)
+                let trans         = gesture.translation(in: self.view)
+                let openedWidth   = (self.layoutModel._QUICK_LIST.frame.width / 2)
+                let movedDistance = self.layoutModel._QUICK_LIST.transform.tx.magnitude + trans.x.magnitude
+                var transX        = -min(movedDistance, openedWidth)
                 
                 if trans.x > 0 {
                     lastPosition = 1
@@ -172,6 +181,8 @@ class PlaceViewController: UIViewController {
                 }
                 
                 if gesture.state == .ended {
+                    
+                    
                     return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
                 }
                 
@@ -281,3 +292,60 @@ extension PlaceViewController : GMSMapViewDelegate {
         
     }
 }
+
+extension PlaceViewController: UITableViewDelegate {
+    
+}
+
+extension PlaceViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.mapData.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell                      = UITableViewCell()
+        
+        if #available(iOS 14.0, *) {
+            // IOS 14 : UIListContentConfiguration
+            // IOS 14 : UIBackgroundConfiguration
+            var content                           = cell.defaultContentConfiguration()
+
+            let row                               = viewModel.mapData[indexPath.row]
+                content.text                      = row.date + " " + row.distance
+                content.textProperties.color = .white.withAlphaComponent(0.5)
+            let containerView                     = content.makeContentView()
+                cell.contentView.addSubview(containerView)
+                containerView.snp.makeConstraints{
+                    $0.edges.equalToSuperview()
+                }
+            
+            var backgroundConfig = UIBackgroundConfiguration.listPlainCell()
+                backgroundConfig.backgroundColor = UIColor(r: 51, g: 51, b: 51)
+                backgroundConfig.cornerRadius = 5
+                backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
+                cell.backgroundConfiguration = backgroundConfig
+            print(cell.inputView)
+            print(cell.backgroundView)
+            print(cell.accessoryView)
+            
+        } else {
+            // Fallback on earlier versions
+            cell.textLabel?.text = viewModel.mapData[indexPath.row].contents
+        }
+            
+
+//        switch indexPath.row {
+//        case let row where testIndexPathList.contains(where: { $0.row == row }): cell.contentsLabel.numberOfLines = 0
+//        default: cell.contentsLabel.numberOfLines = 1
+//        }
+//
+//        cell.readMoreButton.rx.tap
+//            .bind { [unowned self] in buttonAction(buttonTitle: cell.readMoreButton.title(for: .normal), indexPath: indexPath) }
+//            .disposed(by: cell.disposeBag)
+        
+        return cell
+    }
+}
+
+

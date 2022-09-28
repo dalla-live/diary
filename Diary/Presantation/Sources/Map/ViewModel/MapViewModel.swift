@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
 import RxCocoa
 import Then
@@ -47,6 +46,30 @@ enum MapQuickMenu {
 
 
 public class MapViewModel: NSObject {
+    let mapData: [TestBK] = [
+                            TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
+                             TestBK(date: "1997-03-18", contents: "이것은 일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 일기이것은 일기이것은\n 일기이것은 일기이것은 일기\n?", distance: "장성 40km")]
+    
     // for Repository
     var mapUseCase : PlaceUseCase!
     
