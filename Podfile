@@ -22,7 +22,7 @@ end
 
 target 'App' do
   project 'Diary/App/App.xcodeproj'
-  pod 'GoogleMaps'
+#  pod 'GoogleMaps'
   pod 'NMapsMap'
   pods
 
@@ -32,7 +32,7 @@ target 'Domain' do
   project 'Diary/Domain/Domain.xcodeproj'
 
   pods
-  pod "GooglePlaces", '7.1.0'
+#  pod "GooglePlaces", '7.1.0'
 end
 
 target 'Design' do
@@ -44,9 +44,9 @@ end
 
 target 'Presantation' do
   project 'Diary/Presantation/Presantation.xcodeproj'
-  pod 'GoogleMaps'
-  pod 'Google-Maps-iOS-Utils'
-  pod "GooglePlaces", '7.1.0'
+#  pod 'GoogleMaps'
+#  pod 'Google-Maps-iOS-Utils'
+#  pod "GooglePlaces", '7.1.0'
   pod 'NMapsMap'
   pods
 
