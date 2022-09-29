@@ -34,7 +34,8 @@ class PlaceViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.googleService   = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
         self.naverService   = NaverMapServiceProvider(service:  GPSLocationServiceProvider(), delegate: nil)
-//        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
+        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
+        GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
     
     required init?(coder: NSCoder) {
