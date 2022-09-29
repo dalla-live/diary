@@ -5,14 +5,14 @@ use_frameworks!
 inhibit_all_warnings!
 
 
-workspace 'Diary'
-project 'Diary/App.xcodeproj'
-project 'Diary/Domain.xcodeproj'
-project 'Diary/Design.xcodeproj'
-project 'Diary/Presantation.xcodeproj'
-project 'Diary/Repository.xcodeproj'
-project 'Diary/Service.xcodeproj'
-project 'Diary/Util.xcodeproj'
+workspace 'Diary.xcworkspace'
+project 'Diary/App/App.xcodeproj'
+project 'Diary/Domain/Domain.xcodeproj'
+project 'Diary/Design/Design.xcodeproj'
+project 'Diary/Presantation/Presantation.xcodeproj'
+project 'Diary/Repository/Repository.xcodeproj'
+project 'Diary/Service/Service.xcodeproj'
+project 'Diary/Util/Util.xcodeproj'
 
 
 
@@ -44,9 +44,6 @@ end
 
 target 'Presantation' do
   project 'Diary/Presantation/Presantation.xcodeproj'
-#  pod 'GoogleMaps'
-#  pod 'Google-Maps-iOS-Utils'
-#  pod "GooglePlaces", '7.1.0'
   pod 'NMapsMap'
   pods
 
