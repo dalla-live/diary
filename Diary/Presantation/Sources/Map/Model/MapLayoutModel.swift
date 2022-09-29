@@ -212,9 +212,8 @@ struct MapLayoutModel {
         $0.textColor = .black
     }
     
-    func setLayout(container: UIView) {
+    func viewDidLoad(container: UIView) {
         container.addSubview(_MAP_CONTENT_CONTAINER)
-        
         
         _MAP_CONTENT_CONTAINER.addSubview(_MAP_SCROLL_CONTAINER)
         _MAP_SCROLL_CONTAINER.addSubview(_MAP_CONTAINER)
@@ -244,13 +243,14 @@ struct MapLayoutModel {
         
         _MAP_CONTAINER.snp.makeConstraints{
             $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
-            $0.left.equalTo(_MAP_SCROLL_CONTAINER.snp.left)
             $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview()
         }
+        
         _NAVER_MAP_CONTAINER.snp.makeConstraints{
             $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
-            $0.right.equalTo(_MAP_SCROLL_CONTAINER.snp.right)
             $0.centerY.equalToSuperview()
+            $0.left.equalTo(_MAP_CONTAINER.snp.right)
         }
         
         
@@ -319,15 +319,21 @@ struct MapLayoutModel {
         }
     }
     
-    func setAnimation(toOriginX: CGFloat) {
-        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
+    func setTransformAction(toOriginX: CGFloat, state: UIGestureRecognizer.State) {
+        switch state {
+        case .ended:
+            UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
+                _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
+                _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
+            }, completion: { isComplete in
+                let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
+                let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
+                imgView?.image = UIImage(systemName: imageName)
+            })
+        default:
             _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
             _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
-        }, completion: { isComplete in
-            let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
-            let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
-            imgView?.image = UIImage(systemName: imageName)
-        })
+        }
     }
     
 }

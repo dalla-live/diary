@@ -30,6 +30,33 @@ class PlaceViewController: UIViewController {
        return UIImageView(image: UIImage(named: "plus.app"))
      }()
     
+    
+//    // #2
+//    override func willMove(toWindow newWindow: UIWindow?) {
+//        if newWindow == nil {
+//            print("::: disapear ")
+//        } else {
+//          print("::: apear ")
+//        }
+//    }
+//
+//    // #3
+//    override func willMove(toSuperview newSuperview: UIView?) {
+//        print("subview::willmove")
+//
+//    }
+//
+//    // #4
+//    override func didMoveToWindow() {
+//        print("subview::didMoveToWindow")
+//
+//    }
+//
+//    // #6
+//    override func didMoveToSuperview() {
+//        print("subview::didMoveToSuperview")
+//    }
+    
     init ( dependency: MapViewModel) {
         self.viewModel = dependency
         super.init(nibName: nil, bundle: nil)
@@ -45,13 +72,15 @@ class PlaceViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setLayout()
-        
         setDelegate()
+        
+        setLayout()
+        layoutModel.viewDidLoad(container: self.view)
+        
         setConstraint()
-        print(self.view.bounds)
         
         self.viewModel.viewDidLoad()
+        
         addTarget()
         btnBind()
         layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
@@ -67,10 +96,6 @@ class PlaceViewController: UIViewController {
     }
     
     func setLayout() {
-        
-        
-        layoutModel.setLayout(container: self.view)
-        
         guard let googleView = googleService?.mapUI else { return }
         guard let naverView = naverService?.mapUI else { return }
        
@@ -79,7 +104,6 @@ class PlaceViewController: UIViewController {
     }
     
     func setConstraint() {
-        
         layoutModel._MAP_CONTENT_CONTAINER.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
@@ -88,8 +112,6 @@ class PlaceViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         
-        layoutModel.setConstraint(container: self.view)
-        
         self.googleService?.mapUI?.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
@@ -97,15 +119,14 @@ class PlaceViewController: UIViewController {
         self.naverService?.mapUI?.snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
+        
+        layoutModel.setConstraint(container: self.view)
     }
+    
     override func viewDidAppear(_ animated: Bool) {
-        print(UIScreen.main.bounds)
-        print(self.view.frame.height)
-        print(self.tabBarController?.tabBar.frame.size)
         super.viewDidAppear(animated)
-        
-        
     }
+    
     func btnBind() {
         // 현재 위치로
         layoutModel._CURRENT_LOCATION_BUTTON.rx.tapGesture()
@@ -171,13 +192,10 @@ class PlaceViewController: UIViewController {
                 }
                 
                 if gesture.state == .ended {
-                    print(trans.x)
-                    
-                    return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
+                    return self.layoutModel.setTransformAction(toOriginX: lastPosition < 0 ? -openedWidth : 0 , state: gesture.state)
                 }
                 
-                self.layoutModel._QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: transX, y: 0)
-                self.layoutModel._QUICK_LIST.transform        = CGAffineTransform(translationX: transX, y: 0)
+                self.layoutModel.setTransformAction(toOriginX: transX , state: gesture.state)
                 
                 gesture.setTranslation(.zero, in: self.view)
             })
