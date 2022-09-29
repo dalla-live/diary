@@ -45,8 +45,6 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         self.service = service
         
         service?.setDelegate(delegate: self)
-        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
-        GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
         placesClient = GMSPlacesClient.shared()
 
         // 초기 세팅은 엉뚱한 곳으로
