@@ -13,7 +13,9 @@ import GooglePlaces
 //import SnapKit
 
 public protocol MapService: AnyObject {
-    var mapUI : UIView? {get}
+    associatedtype Map
+
+    func getMapView()-> Map
     func search(place: String)
     func getLocation() -> CLLocationCoordinate2D
     func setCurrentLocation() -> CLLocationCoordinate2D
@@ -22,13 +24,8 @@ public protocol MapService: AnyObject {
 }
 
 public class GoogleMapServiceProvider : NSObject, MapService {
+    public typealias Map = GMSMapView
     
-    public weak var mapUI : UIView? {
-        let mapInsets = UIEdgeInsets(top: 1, left: 0.0, bottom: 0.0, right: 0)
-        mapView.padding = mapInsets
-        
-        return self.mapView
-    }
     private var placesClient: GMSPlacesClient!
 
     private var mapView: GMSMapView!
@@ -125,10 +122,6 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         
     }
     
-    public func getMap() -> UIView {
-        return self.mapView
-    }
-    
     public func search(place: String) {
         
     }
@@ -141,6 +134,10 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         let currentPosition =  self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
         self.setLocation(position: currentPosition)
         return currentPosition
+    }
+    
+    public func getMapView() -> GMSMapView {
+        return self.mapView
     }
 }
 
