@@ -310,6 +310,13 @@ struct MapLayoutModel {
             $0.left.top.bottom.equalToSuperview()
             $0.width.equalToSuperview().dividedBy(2)
         }
+        
+        _QUICK_LIST.snp.makeConstraints{
+            $0.width.equalToSuperview()
+            $0.height.equalToSuperview()
+            $0.left.equalTo(_QUICK_LIST_BUTTON.snp.right)
+            $0.centerY.equalToSuperview()
+        }
     }
     
     func setAnimation(toOriginX: CGFloat) {
