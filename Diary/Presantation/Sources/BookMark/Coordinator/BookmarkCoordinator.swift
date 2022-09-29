@@ -10,7 +10,10 @@ import Util
 
 // 의존성 주입을 위한 Coordinator Dependency
 public protocol BookmarkCoordinatorDependencies {
-    func makeBookmarkViewController()-> BookmarkViewController
+    func makeBookmarkViewController() -> BookmarkViewController
+    
+    // Child
+    func makeCommonFormatCoordinator(navigationController: UINavigationController) -> CommonFormatCoordinator
 }
 
 public class BookmarkCoordinator: Coordinator {
@@ -31,12 +34,21 @@ public class BookmarkCoordinator: Coordinator {
         bookmarVC.coordinator = self
         
         self.navigationController.pushViewController(bookmarVC, animated: false)
-        print(#file)
+        makeCommonFormatCoordinator()
+    }
+    
+    private func makeCommonFormatCoordinator() {
+        let commonFormatCoordinator = dependencies.makeCommonFormatCoordinator(navigationController: self.navigationController)
+        childCoordinator.append(commonFormatCoordinator)
+    }
+    
+    public func presentCommonFormatViewController(type: CommonFormatController.BehaviorType) {
+        guard let commonFormatCoordinator =  childCoordinator.filter({ $0 is CommonFormatCoordinator }).first as? CommonFormatCoordinator else { return }
+        
+        commonFormatCoordinator.start(to: self.navigationController, type: .bookmarkAdd)
     }
     
     deinit {
         print(#file)
     }
-    
-    
 }

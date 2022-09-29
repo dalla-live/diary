@@ -115,11 +115,8 @@ public class CommonFormatController: UIViewController {
         $0.layer.cornerRadius = 8
     }
     
-    lazy var mapView: GMSMapView = {
-        guard let map = service?.mapUI as? GMSMapView else { return GMSMapView() }
-        
-        let mapInsets = UIEdgeInsets(top: 1, left: 0.0, bottom: 0.0, right: 0)
-        map.padding = mapInsets
+    lazy var mapView: UIView = {
+        guard let map = service?.mapUI else { return UIView() }
         
         return map
     }()

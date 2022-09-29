@@ -45,6 +45,9 @@ end
 target 'Presantation' do
   project 'Diary/Presantation/Presantation.xcodeproj'
   pod 'NMapsMap'
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
+  pod "GooglePlaces", '7.1.0'
   pods
 
 end
