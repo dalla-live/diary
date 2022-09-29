@@ -37,8 +37,15 @@ final class BookmarkDIContainer {
 }
 
 extension BookmarkDIContainer: BookmarkCoordinatorDependencies {
+    func makeCommonFormatCoordinator(navigationController: UINavigationController) -> Presantation.CommonFormatCoordinator {
+        let diContainer = CommonFormatDIContainer()
+        return diContainer.makeCommonFormatCoordinator(navigationController: navigationController)
+    }
+    
+    
     // MARK: ViewController
     func makeBookmarkViewController() -> BookmarkViewController {
         return BookmarkViewController.create(with: makeBookmarkViewModel())
     }
+    
 }

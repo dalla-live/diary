@@ -23,7 +23,7 @@ public struct ResourceManager {
         }
     }
     
-    /// Save Image file in local.
+    /// Save image file in local.
     /// - Parameters:
     ///   - imageNo: `imageNo` is the last line number +1 in the database.
     ///   - view: Take a snapshot with `view`.

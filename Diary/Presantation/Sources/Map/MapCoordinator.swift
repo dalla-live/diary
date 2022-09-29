@@ -59,7 +59,7 @@ public class MapCoordinator: Coordinator {
 extension MapCoordinator: MapViewDelegate {
     public func openMapViewEdit() {
         
-        let vc = PlaceEditViewController()
+        let vc = CommonFormatController()
         navigationController.topViewController?.present(vc, animated: true)
     }
 }

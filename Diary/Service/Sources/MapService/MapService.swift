@@ -24,6 +24,9 @@ public protocol MapService: AnyObject {
 public class GoogleMapServiceProvider : NSObject, MapService {
     
     public weak var mapUI : UIView? {
+        let mapInsets = UIEdgeInsets(top: 1, left: 0.0, bottom: 0.0, right: 0)
+        mapView.padding = mapInsets
+        
         return self.mapView
     }
     private var placesClient: GMSPlacesClient!

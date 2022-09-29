@@ -28,7 +28,7 @@ extension AddBookmarkView {
         
         enum ToBeLocalized {
             case addBookmark
-            case location
+            case note
             case weather
             case mood
             case loadNameExample
@@ -40,9 +40,9 @@ extension AddBookmarkView {
             var text: String {
                 switch self {
                 case .addBookmark: return "북마크 추가하기"
-                case .location: return "위치"
+                case .note: return "메모"
                 case .weather: return "날씨"
-                case .mood: return "기분이 조크등요"
+                case .mood: return "기분"
                 case .loadNameExample: return "광주 세정아울렛"
                 case .cancel: return "취소하기"
                 case .store: return "저장하기"
