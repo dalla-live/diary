@@ -26,10 +26,12 @@ extension BookmarkQuery {
             return { $0 == $0 }
         case .month(let string):
             return { $0.date.contains(string) }
-        case .id(let int):
-            return { $0.id == int }
-        case .location(let cLLocationCoordinate2D):
-            return { $0 == $0 }
+        case .id(let id):
+            return { $0.id == id }
+        case .location(let min, let max):
+            return {
+                ($0.lat > min.latitude && $0.lat < max.latitude) && ($0.lon > min.longitude && $0.lon < max.longitude)
+            }
         }
     }
 }
