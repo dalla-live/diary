@@ -21,8 +21,8 @@ class PlaceViewController: UIViewController {
     var disposeBag: DisposeBag = .init()
     var viewModel : MapViewModel
     
-    var googleService: MapService?
-    var naverService : MapService?
+    var googleService: (any MapService)?
+    var naverService : (any MapService)?
     
     var layoutModel = MapLayoutModel()
     
@@ -30,32 +30,6 @@ class PlaceViewController: UIViewController {
        return UIImageView(image: UIImage(named: "plus.app"))
      }()
     
-    
-//    // #2
-//    override func willMove(toWindow newWindow: UIWindow?) {
-//        if newWindow == nil {
-//            print("::: disapear ")
-//        } else {
-//          print("::: apear ")
-//        }
-//    }
-//
-//    // #3
-//    override func willMove(toSuperview newSuperview: UIView?) {
-//        print("subview::willmove")
-//
-//    }
-//
-//    // #4
-//    override func didMoveToWindow() {
-//        print("subview::didMoveToWindow")
-//
-//    }
-//
-//    // #6
-//    override func didMoveToSuperview() {
-//        print("subview::didMoveToSuperview")
-//    }
     
     init ( dependency: MapViewModel) {
         self.viewModel = dependency
@@ -96,11 +70,11 @@ class PlaceViewController: UIViewController {
     }
     
     func setLayout() {
-        guard let googleView = googleService?.mapUI else { return }
-        guard let naverView = naverService?.mapUI else { return }
+        guard let googleView = googleService?.getMapView() else { return }
+        guard let naverView = naverService?.getMapView() else { return }
        
-        layoutModel._MAP_CONTAINER.addSubview(googleView)
-        layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView)
+        layoutModel._MAP_CONTAINER.addSubview(googleView as! UIView)
+        layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView as! UIView)
     }
     
     func setConstraint() {
@@ -112,11 +86,11 @@ class PlaceViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         
-        self.googleService?.mapUI?.snp.makeConstraints{
+        (self.googleService?.getMapView() as! UIView).snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
         
-        self.naverService?.mapUI?.snp.makeConstraints{
+        (self.naverService?.getMapView() as! UIView).snp.makeConstraints{
             $0.edges.equalToSuperview()
         }
         

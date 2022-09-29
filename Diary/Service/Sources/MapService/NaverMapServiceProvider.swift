@@ -11,9 +11,7 @@ import NMapsMap
 
 public class NaverMapServiceProvider : NSObject , MapService {
 
-    public var mapUI: UIView?  {
-        return self.naverMapView
-    }
+    public typealias Map = NMFNaverMapView
     
     var service: LocationService?
     var marker : NMFMarker!
@@ -66,6 +64,10 @@ public class NaverMapServiceProvider : NSObject , MapService {
     
     public func setLocation(position: [CLLocationCoordinate2D]) {
        
+    }
+    
+    public func getMapView() -> NMFNaverMapView {
+        return naverMapView
     }
 }
 

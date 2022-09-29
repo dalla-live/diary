@@ -18,7 +18,7 @@ import Domain
 
 public class CommonFormatController: UIViewController {
     weak var coordinator: CommonFormatCoordinator?
-    var service: MapService?
+    var service: (any MapService)?
     
     let disposeBag = DisposeBag()
     let mapWrapper = UIView()
@@ -115,8 +115,10 @@ public class CommonFormatController: UIViewController {
         $0.layer.cornerRadius = 8
     }
     
-    lazy var mapView: UIView = {
-        guard let map = service?.mapUI else { return UIView() }
+    lazy var mapView: GMSMapView = {
+        guard let service = service as? GoogleMapServiceProvider else { return GMSMapView() }
+        let map = service.getMapView()
+        map.padding = UIEdgeInsets(top: 1, left: 0, bottom: 0, right: 0)
         
         return map
     }()
