@@ -56,6 +56,18 @@ struct Database<Q: Object> {
             return .failure(error)
         }
     }
+    
+    func deleteAll()-> Result<Void, Error> {
+        do {
+            try realm?.write {
+                realm?.deleteAll()
+            }
+            dbCount.onNext(0)
+            return .success(())
+        } catch {
+            return .failure(error)
+        }
+    }
 
     func read()-> Results<Q> {
         let objects = realm!.objects(Q.self)
