@@ -24,6 +24,9 @@ public protocol MapService: AnyObject {
 public class GoogleMapServiceProvider : NSObject, MapService {
     
     public weak var mapUI : UIView? {
+        let mapInsets = UIEdgeInsets(top: 1, left: 0.0, bottom: 0.0, right: 0)
+        mapView.padding = mapInsets
+        
         return self.mapView
     }
     private var placesClient: GMSPlacesClient!
@@ -45,8 +48,6 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         self.service = service
         
         service?.setDelegate(delegate: self)
-        GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
-        GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
         placesClient = GMSPlacesClient.shared()
 
         // 초기 세팅은 엉뚱한 곳으로

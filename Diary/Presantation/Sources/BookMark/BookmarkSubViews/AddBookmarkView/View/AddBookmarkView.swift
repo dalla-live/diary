@@ -37,7 +37,7 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     let locationLabel = UILabel().then {
-        $0.text = Const.ToBeLocalized.location.text
+        $0.text = Const.ToBeLocalized.note.text
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16, weight: .medium)
     }

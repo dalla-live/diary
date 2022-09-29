@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 
 public final class BookmarkViewController: UIViewController {
-    weak var coordinator: BookmarkCoordinator?
+    var coordinator: BookmarkCoordinator?
     
     private var viewModel: BookmarkViewModel!
     
@@ -39,7 +39,8 @@ public final class BookmarkViewController: UIViewController {
             $0.height.equalTo(50)
         }
         bookmarkList.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(100)
+            let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 50
+            $0.bottom.equalToSuperview().inset(tabBarHeight)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(600)
         }
@@ -48,6 +49,11 @@ public final class BookmarkViewController: UIViewController {
             .bind { [unowned self] in handlingBookmarker($0) }
             .disposed(by: disposeBag)
         
+        bookmarkList.rx.tapGesture()
+            .when(.recognized)
+            .bind { [unowned self] _ in
+                coordinator?.presentCommonFormatViewController(type: .bookmarkAdd)
+            }.disposed(by: disposeBag)
     }
     
     private func handlingBookmarker(_ sender: UIPanGestureRecognizer) {
