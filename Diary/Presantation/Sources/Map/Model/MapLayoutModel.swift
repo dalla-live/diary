@@ -10,7 +10,6 @@ import Then
 import SnapKit
 import RxCocoa
 import RxSwift
-import RxGesture
 
 // 디자인 소스 분리 테스트..
 //  맵 뷰컨 레이아웃 부분을 따로 뗀것
@@ -214,15 +213,15 @@ struct MapLayoutModel {
     }
     
     func setLayout(container: UIView) {
-        container.addSubview(_SUBMENU_MAP)
-        container.addSubview(_SUBMENU_LIST)
-        container.addSubview(_QUICK_LIST_BUTTON)
-        container.addSubview(_QUICK_LIST)
-        container.addSubview(_SUBMENU_SEGMENT)
-        container.addSubview(_QUICK_BUTTON)
-        container.addSubview(_SUBMENU_MAP)
-        container.addSubview(_SUBMENU_LIST)
+        container.addSubview(_MAP_CONTENT_CONTAINER)
         
+        
+        _MAP_CONTENT_CONTAINER.addSubview(_MAP_SCROLL_CONTAINER)
+        _MAP_SCROLL_CONTAINER.addSubview(_MAP_CONTAINER)
+        _MAP_SCROLL_CONTAINER.addSubview(_NAVER_MAP_CONTAINER)
+        
+        
+        container.addSubview(_SUBMENU_SEGMENT)
         container.addSubview(_BOOK_MARK_TOOL_TIP)
         container.addSubview(_FLOATING_SEARCH_BUTTON)
         container.addSubview(_FLOATING_ADD_BUTTON)
@@ -236,6 +235,24 @@ struct MapLayoutModel {
     }
     
     func setConstraint(container: UIView){
+        
+        _MAP_SCROLL_CONTAINER.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
+        
+        _MAP_SCROLL_CONTAINER.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
+        _MAP_CONTAINER.snp.makeConstraints{
+            $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
+            $0.left.equalTo(_MAP_SCROLL_CONTAINER.snp.left)
+            $0.centerY.equalToSuperview()
+        }
+        _NAVER_MAP_CONTAINER.snp.makeConstraints{
+            $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
+            $0.right.equalTo(_MAP_SCROLL_CONTAINER.snp.right)
+            $0.centerY.equalToSuperview()
+        }
+        
         
         _SUBMENU_SEGMENT.snp.makeConstraints{
             $0.width.equalTo(130)
@@ -251,7 +268,7 @@ struct MapLayoutModel {
             $0.centerY.equalToSuperview().offset(-90)
         }
         
-        _QUICK_BUTTON.snp.makeConstraints{
+        _QUICK_LIST_BUTTON.snp.makeConstraints{
             $0.width.height.equalTo(50)
             $0.right.equalToSuperview()
             $0.centerY.equalToSuperview().dividedBy(2)

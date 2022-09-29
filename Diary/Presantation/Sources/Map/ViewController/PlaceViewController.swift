@@ -66,20 +66,9 @@ class PlaceViewController: UIViewController {
     }
     
     func setLayout() {
-        let mapContainer = [layoutModel._MAP_CONTAINER, layoutModel._NAVER_MAP_CONTAINER]
         
-        self.view.addSubview(layoutModel._MAP_CONTENT_CONTAINER)
-        
-        layoutModel._MAP_CONTENT_CONTAINER.addSubview(layoutModel._MAP_SCROLL_CONTAINER)
         
         layoutModel.setLayout(container: self.view)
-        mapContainer.enumerated().forEach{ index, view in
-            view.frame = CGRect(x: CGFloat(index) * UIScreen.main.bounds.width , y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            layoutModel._MAP_SCROLL_CONTAINER.addSubview(view)
-        }
-        layoutModel._MAP_SCROLL_CONTAINER.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
-        
-        layoutModel.layoutButton(container: self.view)
         
         guard let googleView = googleService?.mapUI else { return }
         guard let naverView = naverService?.mapUI else { return }
@@ -181,7 +170,7 @@ class PlaceViewController: UIViewController {
                 }
                 
                 if gesture.state == .ended {
-                    
+                    print(trans.x)
                     
                     return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
                 }
@@ -218,6 +207,7 @@ class PlaceViewController: UIViewController {
     }
     
     @objc func segmentedValueChanged(_ sender : UISegmentedControl) {
+        print(self.layoutModel._MAP_CONTAINER.frame.origin , self.layoutModel._NAVER_MAP_CONTAINER.frame.origin)
         switch sender.selectedSegmentIndex {
         case 0 :
             //구글
