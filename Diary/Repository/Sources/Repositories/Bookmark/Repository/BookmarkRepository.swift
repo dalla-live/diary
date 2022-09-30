@@ -52,4 +52,8 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
             completion(.failure(error))
         }
     }
+    
+    public func deleteAllData() {
+        storage.deleteAll()
+    }
 }
