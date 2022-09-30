@@ -51,37 +51,3 @@ extension AddBookmarkView {
         }
     }
 }
-
-enum Weather: CaseIterable {
-    case clear        // 맑음
-    case rain         // 비
-    case clouds       // 구름
-    case snow         // 눈
-    case atmosphere   // 안개
-    case thunderstorm // 폭풍
-    case drizzle      // 이슬비
-    
-    var text: String {
-        switch self {
-        case .clear: return "맑음"
-        case .rain: return "비"
-        case .clouds: return "구름"
-        case .snow: return "눈"
-        case .atmosphere: return "안개"
-        case .thunderstorm: return "폭풍"
-        case .drizzle: return "이슬비"
-        }
-    }
-    
-    var emoticon: String {
-        switch self {
-        case .clear: return "☀️"
-        case .rain: return "🌧"
-        case .clouds: return "☁️"
-        case .snow: return "❄️"
-        case .atmosphere: return "🌫"
-        case .thunderstorm: return "🌪"
-        case .drizzle: return "☔️"
-        }
-    }
-}

@@ -12,9 +12,20 @@ import RxSwift
 public final class BookmarkViewController: UIViewController {
     var coordinator: BookmarkCoordinator?
     
-    private var viewModel: BookmarkViewModel!
-    
     let disposeBag = DisposeBag()
+    private var viewModel: BookmarkViewModel!
+    var bookmarkListView: BookmarkListView!
+    
+    let bookmarkListTitle = UILabel().then {
+        $0.text = "북마크 리스트"
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 36, weight: .bold)
+    }
+    
+    let addBookmarkButton = UIButton().then {
+        $0.roundCorners(.allCorners, radius: 25)
+        $0.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+    }
     
     /// ViewController 의존성 주입을 위한 Create 함수
     public static func create(with viewModel: BookmarkViewModel)-> BookmarkViewController {
@@ -26,73 +37,54 @@ public final class BookmarkViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        let bookmarker = BookmarkerView(),
-            bookmarkList = BookmarkListView().then {
-                $0.isHidden = false
-            }
         
-        self.view.addSubview(bookmarker)
-        self.view.addSubview(bookmarkList)
-        bookmarker.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.equalTo(30)
+        commonInit()
+        setBookmarkListView()
+    }
+    
+    private func commonInit() {
+        addComponent()
+        setConstraints()
+        bind()
+    }
+    
+    private func addComponent() {
+        [bookmarkListTitle,
+         addBookmarkButton].forEach(view.addSubview)
+    }
+    
+    private func setConstraints() {
+        bookmarkListTitle.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalToSuperview().inset(16)
+        }
+        
+        addBookmarkButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
-        bookmarkList.snp.makeConstraints {
+    }
+    
+    private func bind() {
+        addBookmarkButton.rx.tap
+            .bind { [weak self] in
+                self?.coordinator?.presentCommonFormatViewController(type: .bookmarkAdd)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    
+    private func setBookmarkListView() {
+        self.bookmarkListView = BookmarkListView()
+        
+        view.addSubview(bookmarkListView)
+        
+        bookmarkListView.snp.makeConstraints {
             let tabBarHeight = self.tabBarController?.tabBar.frame.size.height ?? 50
+            $0.top.equalTo(addBookmarkButton.snp.bottom)
             $0.bottom.equalToSuperview().inset(tabBarHeight)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(600)
         }
-        
-        bookmarker.rx.panGesture()
-            .bind { [unowned self] in handlingBookmarker($0) }
-            .disposed(by: disposeBag)
-        
-        bookmarkList.rx.tapGesture()
-            .when(.recognized)
-            .bind { [unowned self] _ in
-                coordinator?.presentCommonFormatViewController(type: .bookmarkAdd)
-            }.disposed(by: disposeBag)
-    }
-    
-    private func handlingBookmarker(_ sender: UIPanGestureRecognizer) {
-        guard let bookmarkerView = sender.view else { return }
-        let location = sender.location(in: view)
-        switch sender.state {
-        case .began:
-            bookmarkerView.snp.remakeConstraints {
-                $0.center.equalTo(location)
-                $0.width.equalTo(30)
-                $0.height.equalTo(50)
-            }
-            
-        case .changed:
-            bookmarkerView.snp.updateConstraints {
-                $0.center.equalTo(location)
-            }
-            
-        case .ended:
-            print("panGesture ended")
-            let addBookmarkViewList = view.subviews.filter { $0 is AddBookmarkView }.map { $0 as! AddBookmarkView }
-            
-            addBookmarkViewList.isEmpty ? makeAddBookmarkView() : updateBookmarkLocation(addBookmarkViewList.first!)
-        case _: break
-        }
-    }
-    
-    private func makeAddBookmarkView() {
-        let addBookmarkView = AddBookmarkView()
-        
-        view.addSubview(addBookmarkView)
-        
-        addBookmarkView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-    }
-    
-    private func updateBookmarkLocation(_ bookmarkView: AddBookmarkView) {
-        print(bookmarkView.roadNameLabel.text)
-        print("업데이트하는 함수 구현")
     }
 }

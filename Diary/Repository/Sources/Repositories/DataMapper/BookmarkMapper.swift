@@ -30,7 +30,7 @@ extension BookmarkDTO {
     func toDomain()-> Bookmark {
         return .init(id: id,
                      mood: Mood(string: mood),
-                     weather: Weather(weather: Weather.WeatherCase(rawValue: weather)!),
+                     weather: Weather(string: weather),
                      date: date,
                      location: location.toDomain(),
                      hasWritten: hasWritten,
@@ -53,7 +53,7 @@ extension BookmarkDTO {
 extension Bookmark {
     func toDTO()-> BookmarkDTO {
         return .init(id: id,
-                     weather: weather.weather.rawValue,
+                     weather: weather.weather.text,
                      location: location.toDTO(),
                      date: date,
                      mood: mood.mood.text,
