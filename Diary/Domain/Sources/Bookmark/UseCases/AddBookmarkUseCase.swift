@@ -7,19 +7,19 @@
 
 import Foundation
 
-protocol AddBookmarkUseCase {
+public protocol AddBookmarkUseCase {
     func excute(bookmark: Bookmark,
                 completion: @escaping ((Result<Bookmark, Error>) -> Void))
 }
 
-final class DefaultAddBookmarkUseCase: AddBookmarkUseCase {
+public final class DefaultAddBookmarkUseCase: AddBookmarkUseCase {
     private let bookmarkRepository: BookmarkRepositoryProtocol
     
-    init(bookmarkRepository: BookmarkRepositoryProtocol) {
+    public init(bookmarkRepository: BookmarkRepositoryProtocol) {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(bookmark: Bookmark, completion: @escaping ((Result<Bookmark, Error>) -> Void)) {
+    public func excute(bookmark: Bookmark, completion: @escaping ((Result<Bookmark, Error>) -> Void)) {
         bookmarkRepository.addBookmark(bookmark: bookmark) { result in
             completion(result)
         }
