@@ -66,7 +66,6 @@ struct MapLayoutModel {
             $0.center.equalToSuperview()
         }
         
-//        $0.backgroundColor = .blue
         $0.isUserInteractionEnabled = false
     }
     
@@ -82,6 +81,7 @@ struct MapLayoutModel {
         $0.backgroundColor = .clear
     }
     
+    
     let _SUBMENU_SEGMENT : UISegmentedControl  = {
         var segmentControl = UISegmentedControl(items: ["google".localized, "naver".localized])
         segmentControl.isUserInteractionEnabled = true
@@ -92,18 +92,20 @@ struct MapLayoutModel {
         return segmentControl
     }()
     
+    
     let _QUICK_BUTTON           = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
     }
 
+    
     let _QUICK_LIST_BUTTON           = UIView(frame:.zero).then{
-        $0.backgroundColor = .clear
-        
         let imgView             = UIImageView(image: UIImage(systemName: "arrowtriangle.left.square.fill"))
             imgView.tag         = 12
             imgView.contentMode = .scaleAspectFit
             imgView.tintColor   = .gray
-            $0.addSubview(imgView)
+        
+        $0.addSubview(imgView)
+        $0.backgroundColor = .clear
         
         imgView.snp.makeConstraints{
             $0.edges.equalToSuperview()
@@ -112,11 +114,13 @@ struct MapLayoutModel {
         $0.isUserInteractionEnabled = true
     }
     
+    
     let _QUICK_LIST = UIView(frame: .zero).then{
         $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0.2).cgColor
 //        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         $0.isUserInteractionEnabled = true
     }
+    
     
     var _QUICK_LIST_TABLE = UITableView().then {
         $0.backgroundColor = .clear
@@ -124,16 +128,19 @@ struct MapLayoutModel {
         $0.register(BookmarkCell.self, forCellReuseIdentifier: BookmarkCell.identifier)
     }
     
+    
     let _BOOK_MARK_FLAG         = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
         $0.isUserInteractionEnabled = true
     }
+    
     
     let _BOOK_MARK_TOOL_TIP     = UIView(frame: .zero).then{
         $0.backgroundColor = .red
         $0.isUserInteractionEnabled = true
         $0.isHidden = true
     }
+    
     
     let _FLOATING_SEARCH_BUTTON = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "magnifyingglass.circle"))
@@ -156,6 +163,7 @@ struct MapLayoutModel {
             }
     }
     
+    
     let _FLOATING_ADD_BUTTON    = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "plus.bubble"))
             imgView.contentMode = .scaleAspectFit
@@ -175,9 +183,9 @@ struct MapLayoutModel {
             imgView.snp.makeConstraints{
                 $0.edges.equalToSuperview().inset(6)
             }
-
-            
     }
+    
+    
     
     let _FLOATING_EXTEND_BUTTON = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "text.justify"))
@@ -200,11 +208,15 @@ struct MapLayoutModel {
             }
     }
     
+    
+    
     let googleLabel = UILabel().then {
         $0.text = "google".localized
         $0.font = .systemFont(ofSize: 15)
         $0.textColor = .black
     }
+    
+    
     
     let naverLabel = UILabel().then {
         $0.text = "naver".localized
@@ -212,13 +224,14 @@ struct MapLayoutModel {
         $0.textColor = .black
     }
     
+    
+    
     func viewDidLoad(container: UIView) {
         container.addSubview(_MAP_CONTENT_CONTAINER)
         
         _MAP_CONTENT_CONTAINER.addSubview(_MAP_SCROLL_CONTAINER)
         _MAP_SCROLL_CONTAINER.addSubview(_MAP_CONTAINER)
         _MAP_SCROLL_CONTAINER.addSubview(_NAVER_MAP_CONTAINER)
-        
         
         container.addSubview(_SUBMENU_SEGMENT)
         container.addSubview(_BOOK_MARK_TOOL_TIP)
@@ -232,6 +245,7 @@ struct MapLayoutModel {
         container.addSubview(_QUICK_LIST)
         _QUICK_LIST.addSubview(_QUICK_LIST_TABLE)
     }
+    
     
     func setConstraint(container: UIView){
         
@@ -280,8 +294,6 @@ struct MapLayoutModel {
             $0.bottom.equalTo(_FLOATING_ADD_BUTTON.snp.top).offset(-20)
         }
         
-        
-        
         _FLOATING_ADD_BUTTON.snp.makeConstraints{
             $0.width.height.equalTo(40)
             $0.right.equalToSuperview().offset(-5)
@@ -319,18 +331,40 @@ struct MapLayoutModel {
         }
     }
     
-    func setTransformAction(toOriginX: CGFloat, state: UIGestureRecognizer.State) {
+    
+    func setTransformAction(toOriginX: CGFloat, state: UIGestureRecognizer.State,  isFirst: inout Bool) {
         switch state {
         case .ended:
+            
+//            // 열린다면
+//            if toOriginX != 0 {
+//                isFirst = true
+////                _QUICK_LIST_TABLE.visibleCells.enumerated().forEach{ idx, cell  in
+////                    UIView.animate(withDuration: 0.3 , delay: Double(idx) * 0.1 , animations: {
+////                        cell.transform = .identity
+////                    })
+////                }
+//            } else {
+//                isFirst = true
+////                _QUICK_LIST_TABLE.visibleCells.enumerated().reversed().forEach{ idx, cell  in
+////                    UIView.animate(withDuration: 0.3 , delay: Double(idx) * 0.3 , animations: {
+////                        cell.transform = CGAffineTransform(translationX: 100, y: 0)
+////                    })
+////                }
+//            }
+//
             UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
                 _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
                 _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
             }, completion: { isComplete in
                 let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
                 let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
+                
                 imgView?.image = UIImage(systemName: imageName)
             })
         default:
+            isFirst = false
+            
             _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
             _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
         }
