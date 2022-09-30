@@ -44,7 +44,7 @@ public class RepositoryTest {
         //        })
         
         // MARK: RealmTestCode
-//        let repo = BookmarkRepository(storage: BookmarkStorage())
+        let repo = BookmarkRepository(storage: BookmarkStorage())
         //        repo.fetchBookmarkList(query: .month("2022.11"), page: 0, completion: {
         //            Log.d($0)
         //        })
@@ -105,13 +105,13 @@ public class RepositoryTest {
 //                Log.d("Insert Success:: \($0)")
 //            })
 //        }
-//        let min = CLLocationCoordinate2D(latitude: 36.000, longitude: 127.000)
-//        let max = CLLocationCoordinate2D(latitude: 40.000, longitude: 130.000)
-//        repo.fetchBookmarkList(query: .location(min, max), page: 5, completion: { bookmarkList in
-//            bookmarkList.bookmarks.forEach {
-//                Log.d($0.location)
-//                print()
-//            }
-//        })
+        let min = CLLocationCoordinate2D(latitude: 36.000, longitude: 127.000)
+        let max = CLLocationCoordinate2D(latitude: 40.000, longitude: 130.000)
+        repo.fetchBookmarkList(query: .location(min, max), page: 5, completion: { bookmarkList in
+            bookmarkList.bookmarks.forEach {
+                Log.d($0.location)
+                print()
+            }
+        })
     }
 }
