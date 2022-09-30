@@ -19,6 +19,7 @@ import Domain
 public class CommonFormatController: UIViewController {
     weak var coordinator: CommonFormatCoordinator?
     var service: (any MapService)?
+    var viewModel: CommonFormatViewModel?
     
     let disposeBag = DisposeBag()
     let mapWrapper = UIView()
@@ -154,6 +155,7 @@ public class CommonFormatController: UIViewController {
         setLayout()
         bind()
         addNotification()
+        viewModel?.viewDidload()
     }
     
     public override func viewDidLayoutSubviews() {
@@ -161,9 +163,13 @@ public class CommonFormatController: UIViewController {
         [weatherGradientView, moodGradientView].forEach(setGradient)
     }
     
-    public static func create(with type: BehaviorType) -> CommonFormatController {
+    public static func create(viewModel: CommonFormatViewModel,with type: BehaviorType) -> CommonFormatController {
         let vc = CommonFormatController()
-        print(type)
+        
+        vc.viewModel = viewModel
+        
+        print("type ::: \(type)")
+        print(viewModel)
         return vc
 //        vc.viewModel = viewModel
     }
@@ -330,7 +336,7 @@ public class CommonFormatController: UIViewController {
     }
     
     private func setScrollView() {
-        let weatherCases = Weather.allCases,
+        let weatherCases = Weather.WeatherCase.allCases,
             moodCases = Mood.MoodCase.allCases
         
         weatherCases.enumerated().forEach { index, model in
@@ -411,18 +417,20 @@ public class CommonFormatController: UIViewController {
             .disposed(by: disposeBag)
         
         cancelButton.rx.tap
-            .bind { [unowned self] in
-                self.dismiss(animated: true)
+            .bind { [weak self] in
+                self?.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
         
         storeButton.rx.tap
-            .bind { [unowned self] in
-                print("\(moodTooltip.text), \(weatherTooltip.text)")
-                moodView.shakeAnimation() {
-                    self.view.makeToast("지금 기분을 선택해주세요!")
-                }
-                ResourceManager.shared.saveImage(imageNo: "0", from: mapView)
+            .bind { [weak self] in
+                self?.viewModel?.didTapStore(bookmark: Bookmark(id: 0,
+                                                                mood: Mood(mood: .amazed),
+                                                                weather: Weather(weather: .clear),
+                                                                date: "2022.09.30",
+                                                                location: Location(lat: 0, lon: 0, address: ""),
+                                                                hasWritten: false,
+                                                                note: ""))
             }
             .disposed(by: disposeBag)
         
