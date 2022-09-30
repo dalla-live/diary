@@ -244,7 +244,7 @@ class AddBookmarkView: ProgrammaticallyView {
     }
     
     private func setScrollView() {
-        let weatherCases = Weather.allCases,
+        let weatherCases = Weather.WeatherCase.allCases,
             moodCases = Mood.MoodCase.allCases
         
         weatherCases.enumerated().forEach { index, model in

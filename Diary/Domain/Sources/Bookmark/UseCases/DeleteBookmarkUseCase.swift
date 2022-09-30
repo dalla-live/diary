@@ -7,19 +7,19 @@
 
 import Foundation
 
-protocol DeleteBookmarkUseCase {
+public protocol DeleteBookmarkUseCase {
     func excute(bookmark: Bookmark,
                 completion: @escaping ((Result<Void, Error>) -> Void))
 }
 
-final class DefaultDeleteBookmarkUseCase: DeleteBookmarkUseCase {
+public final class DefaultDeleteBookmarkUseCase: DeleteBookmarkUseCase {
     private let bookmarkRepository: BookmarkRepositoryProtocol
     
-    init(bookmarkRepository: BookmarkRepositoryProtocol) {
+    public init(bookmarkRepository: BookmarkRepositoryProtocol) {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(bookmark: Bookmark, completion: @escaping ((Result<Void, Error>) -> Void)) {
+    public func excute(bookmark: Bookmark, completion: @escaping ((Result<Void, Error>) -> Void)) {
         bookmarkRepository.deleteBookmark(bookmark: bookmark) { completion($0) }
     }
 }

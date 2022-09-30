@@ -11,7 +11,7 @@ import Util
 import Domain
 
 public protocol CommonForrmatCoordinatorDependencies {
-    func makeCommonFormatCoordinator(type: CommonFormatController.BehaviorType, bookmark: Bookmark?) -> CommonFormatController
+    func makeCommonFormatController(type: CommonFormatController.BehaviorType, bookmark: Bookmark?) -> CommonFormatController
 }
 
 public class CommonFormatCoordinator: Coordinator {
@@ -26,14 +26,14 @@ public class CommonFormatCoordinator: Coordinator {
     }
     
     public func start() {
-        let CommonFormatVC = dependencies.makeCommonFormatCoordinator(type: .bookmarkAdd, bookmark: nil)
-        CommonFormatVC.coordinator = self
+        let commonFormatVC = dependencies.makeCommonFormatController(type: .bookmarkAdd, bookmark: nil)
+        commonFormatVC.coordinator = self
         
-        self.navigationController.present(CommonFormatVC, animated: true)
+        self.navigationController.present(commonFormatVC, animated: true)
     }
     
     public func start(to navi: UINavigationController ,type: CommonFormatController.BehaviorType, bookmark: Bookmark? = nil) {
-        let CommonFormatVC = dependencies.makeCommonFormatCoordinator(type: type, bookmark: bookmark)
+        let CommonFormatVC = dependencies.makeCommonFormatController(type: type, bookmark: bookmark)
         CommonFormatVC.coordinator = self
         
         navi.topViewController?.present(CommonFormatVC, animated: true)
