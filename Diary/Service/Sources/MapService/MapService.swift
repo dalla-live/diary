@@ -130,6 +130,10 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         return currentPosition
     }
     
+    public func getMarkerLocation() -> CLLocationCoordinate2D {
+        return self.mapView.camera.target
+    }
+    
     public func setCurrentLocation() -> CLLocationCoordinate2D {
         let currentPosition =  self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
         self.setLocation(position: currentPosition)

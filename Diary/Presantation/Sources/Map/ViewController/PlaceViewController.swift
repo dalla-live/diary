@@ -20,6 +20,7 @@ class PlaceViewController: UIViewController {
     var coordinator: MapViewDelegate?
     var disposeBag: DisposeBag = .init()
     var viewModel : MapViewModel
+    var mapService : (any MapService)?
     
     var googleService: (any MapService)?
     var naverService : (any MapService)?
@@ -29,6 +30,7 @@ class PlaceViewController: UIViewController {
     private lazy var contentView: UIImageView = {
        return UIImageView(image: UIImage(named: "plus.app"))
      }()
+    
     
     init ( dependency: MapViewModel) {
         self.viewModel = dependency
@@ -45,17 +47,32 @@ class PlaceViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        setLayout()
-        
         setDelegate()
+        
+        setLayout()
+        layoutModel.viewDidLoad(container: self.view)
+        
         setConstraint()
-        print(self.view.bounds)
         
         self.viewModel.viewDidLoad()
-        addTarget()
+        
+        
+        bindToViewModel()
         btnBind()
         layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
+        self.mapService = googleService
+        bindToViewModel()
+        
+        self.viewModel.didLoadList(startLocation: .init(latitude: 0, longitude: 0), endLocation: .init(latitude: 1, longitude: 1))
     }
+    
+    public func bindToViewModel() {
+        
+        self.viewModel.didItemLoaded.subscribe(onNext: { [weak self] isLoaded in
+            self?.layoutModel._QUICK_LIST_TABLE.reloadData()
+        }).disposed(by: disposeBag)
+    }
+    
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -67,18 +84,16 @@ class PlaceViewController: UIViewController {
     }
     
     func setLayout() {
+        guard let googleView = googleService?.getMapView() as? UIView else { return }
+        guard let naverView = naverService?.getMapView() as? UIView else { return }
         
-        
-        layoutModel.setLayout(container: self.view)
-        
-        guard let googleView = googleService?.getMapView() else { return }
-        guard let naverView = naverService?.getMapView() else { return }
-       
-        layoutModel._MAP_CONTAINER.addSubview(googleView as! UIView)
-        layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView as! UIView)
+        layoutModel._MAP_CONTAINER.addSubview(googleView)
+        layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView)
     }
     
     func setConstraint() {
+        guard let googleView = googleService?.getMapView() as? UIView else { return }
+        guard let naverView = naverService?.getMapView() as? UIView else { return }
         
         layoutModel._MAP_CONTENT_CONTAINER.snp.makeConstraints{
             $0.edges.equalToSuperview()
@@ -88,70 +103,61 @@ class PlaceViewController: UIViewController {
             $0.edges.equalToSuperview()
         }
         
+        googleView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        naverView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         layoutModel.setConstraint(container: self.view)
-        
-        (self.googleService?.getMapView() as! UIView).snp.makeConstraints{
-            $0.edges.equalToSuperview()
-        }
-        
-        (self.naverService?.getMapView() as! UIView).snp.makeConstraints{
-            $0.edges.equalToSuperview()
-        }
     }
+    
     override func viewDidAppear(_ animated: Bool) {
-        print(UIScreen.main.bounds)
-        print(self.view.frame.height)
-        print(self.tabBarController?.tabBar.frame.size)
         super.viewDidAppear(animated)
-        
-        
     }
-    func btnBind() {
-        // 현재 위치로
+    
+    // 현재 위치로
+    func didMoveCurrentLocation(){
         layoutModel._CURRENT_LOCATION_BUTTON.rx.tapGesture()
             .throttle(.microseconds(500), latest: false, scheduler: MainScheduler.instance)
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
-                // 약한참조 처리
-                guard let `self` = self else {
-                    return
-                }
-                
-                let _ = self.googleService?.setCurrentLocation()
-                print("add tap")
+                let _ = self?.googleService?.setCurrentLocation()
             })
             .disposed(by: disposeBag)
-        
-        // 마커 위치 북마크에 추가
+    }
+    
+    // 마커 위치 북마크에 추가
+    fileprivate func didOpenAddBookmark() {
         layoutModel._FLOATING_ADD_BUTTON.rx.tapGesture()
             .throttle(.microseconds(500), latest: false, scheduler: MainScheduler.instance)
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
-                // 약한참조 처리
-                guard let `self` = self else {
-                    return
-                }
-                print("add tap \(self.coordinator)")
-                self.coordinator?.openMapViewEdit()
+                print("add tap \(self?.coordinator)")
+                self?.coordinator?.openMapViewEdit()
             })
             .disposed(by: disposeBag)
+    }
+    
+    // 장소 점색
+    fileprivate func didOpenSearchView() {
         
-        // 장소 점색
         layoutModel._FLOATING_SEARCH_BUTTON.rx.tapGesture()
             .throttle(.microseconds(500), latest: false, scheduler: MainScheduler.instance)
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
-                // 약한참조 처리
-                guard let `self` = self else {
-                    return
-                }
-                self.autocompleteClicked()
+                self?.autocompleteClicked()
             })
             .disposed(by: disposeBag)
-        
+    }
+    
+    // 퀵리스트 버튼 이벤트
+    fileprivate func didSlideQuickList() {
         var lastPosition = 0
+        var isFirst = true
         
-        // 퀵리스트 버튼 이벤트
         layoutModel._QUICK_LIST_BUTTON.rx.panGesture().when(.changed, .ended)
             .subscribe(onNext: { [weak self] gesture in
                 guard let `self` = self else {
@@ -171,18 +177,85 @@ class PlaceViewController: UIViewController {
                 }
                 
                 if gesture.state == .ended {
-                    print(trans.x)
-                    
-                    return self.layoutModel.setAnimation(toOriginX: lastPosition < 0 ? -openedWidth : 0)
+                    return self.layoutModel.setTransformAction(toOriginX: lastPosition < 0 ? -openedWidth : 0 , state: gesture.state, isFirst: &isFirst)
                 }
                 
-                self.layoutModel._QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: transX, y: 0)
-                self.layoutModel._QUICK_LIST.transform        = CGAffineTransform(translationX: transX, y: 0)
+                self.layoutModel.setTransformAction(toOriginX: transX , state: gesture.state, isFirst: &isFirst)
                 
                 gesture.setTranslation(.zero, in: self.view)
             })
             .disposed(by: disposeBag)
+    }
+    
+    
+    
+    func toggleMapView(selectedIndex: Int) {
         
+        switch selectedIndex {
+        case 0 :
+            //구글
+            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._MAP_CONTAINER.frame.origin, animated: true)
+            self.mapService = self.googleService
+        case 1 :
+            //네이버
+            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._NAVER_MAP_CONTAINER.frame.origin, animated: true)
+            self.mapService = self.naverService
+        default:
+            return
+        }
+    }
+    
+    fileprivate func didSwitchMap() {
+        layoutModel._SUBMENU_SEGMENT.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: { [weak self] _ in
+                // 약한참조 처리
+                guard let `self` = self else {
+                    return
+                }
+                self.toggleMapView(selectedIndex: self.layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    fileprivate func didSwitchLaguageButtonTap() {
+        layoutModel._LANGUAGE_CHANGE_BUTTON.rx.tap
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                let picker = LocalizePickerView()
+                self.tabBarController?.view?.addSubview(picker)
+                picker.snp.makeConstraints {
+                    $0.height.equalTo(250)
+                    $0.left.right.bottom.equalToSuperview()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        Localize.newState.subscribe(onNext: { [weak self] language in
+            guard let self = self else { return }
+            self.layoutModel._SUBMENU_SEGMENT.setTitle("google".localized, forSegmentAt: 0)
+            self.layoutModel._SUBMENU_SEGMENT.setTitle("naver".localized, forSegmentAt: 1)
+            self.layoutModel._LANGUAGE_CHANGE_BUTTON.setTitle("changeLanguageBtn".localized, for: .normal)
+        })
+        .disposed(by: disposeBag)
+    }
+    
+    func btnBind() {
+        // 현재위치로 이동
+        didMoveCurrentLocation()
+        
+        // 북마크 추가 버튼
+        didOpenAddBookmark()
+        
+        // 검색 버튼
+        didOpenSearchView()
+        
+        // 퀵리스트 토글
+        didSlideQuickList()
+        
+        // 네이버, 구글 맵 토글
+        didSwitchMap()
+        
+        didSwitchLaguageButtonTap()
     }
     
     // Present the Autocomplete view controller when the button is pressed.
@@ -202,24 +275,6 @@ class PlaceViewController: UIViewController {
         // Display the autocomplete view controller.
         present(autocompleteController, animated: true, completion: nil)
       }
-    
-    func addTarget() {
-        layoutModel._SUBMENU_SEGMENT.addTarget(self, action: #selector(self.segmentedValueChanged(_:)), for: UIControl.Event.valueChanged)
-    }
-    
-    @objc func segmentedValueChanged(_ sender : UISegmentedControl) {
-        print(self.layoutModel._MAP_CONTAINER.frame.origin , self.layoutModel._NAVER_MAP_CONTAINER.frame.origin)
-        switch sender.selectedSegmentIndex {
-        case 0 :
-            //구글
-            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._MAP_CONTAINER.frame.origin, animated: true)
-        case 1 :
-            //네이버
-            self.layoutModel._MAP_SCROLL_CONTAINER.setContentOffset(self.layoutModel._NAVER_MAP_CONTAINER.frame.origin, animated: true)
-        default:
-            return
-        }
-    }
 }
 
 extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
@@ -257,6 +312,9 @@ extension PlaceViewController : GMSMapViewDelegate {
         print(gesture)
     }
     
+    public func selectBookMark() {
+        
+    }
     
     public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
@@ -274,7 +332,7 @@ extension PlaceViewController : GMSMapViewDelegate {
     
     public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
         print(mapView.camera.target)
-        googleService?.setLocation(position: mapView.camera.target)
+        mapService?.setLocation(position: mapView.camera.target)
     }
     
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {
@@ -293,10 +351,22 @@ extension PlaceViewController: UITableViewDataSource {
         return viewModel.mapData.count
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        guard let setLocation = self.mapService else {
+            return
+        }
+        
+        self.viewModel.didSelectBookmark(indexPath: indexPath, completion: setLocation.setLocation)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+            self.layoutModel._BOOK_MARK_TOOL_TIP.isHidden = false
+        })
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell                      = UITableViewCell()
-        
+       
         if #available(iOS 14.0, *) {
             // IOS 14 : UIListContentConfiguration
             // IOS 14 : UIBackgroundConfiguration
@@ -305,6 +375,7 @@ extension PlaceViewController: UITableViewDataSource {
             let row                               = viewModel.mapData[indexPath.row]
                 content.text                      = row.date + " " + row.distance
                 content.textProperties.color = .white.withAlphaComponent(0.5)
+            
             let containerView                     = content.makeContentView()
                 cell.contentView.addSubview(containerView)
                 containerView.snp.makeConstraints{
@@ -316,10 +387,6 @@ extension PlaceViewController: UITableViewDataSource {
                 backgroundConfig.cornerRadius = 5
                 backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
                 cell.backgroundConfiguration = backgroundConfig
-            print(cell.inputView)
-            print(cell.backgroundView)
-            print(cell.accessoryView)
-            
         } else {
             // Fallback on earlier versions
             cell.textLabel?.text = viewModel.mapData[indexPath.row].contents

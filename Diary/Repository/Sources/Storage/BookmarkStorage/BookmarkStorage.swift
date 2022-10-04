@@ -115,6 +115,7 @@ public class BookmarkStorage {
         }
     }
     
+    /// 데이터 전체 삭제
     func deleteAll()-> Result<Void, Error> {
         switch database.deleteAll() {
         case.success():

@@ -13,21 +13,40 @@ import UIKit
 
 final class CommonFormatDIContainer {
     
+    // MARK: - Persistent Storage
+    lazy var bookmarkStorage = BookmarkStorage()
+    
     init() {}
     
     // MARK: Repository
-    func makeCurrentWeatherRepository()-> CurrentWeatherRepository {
-        return CurrentWeatherRepository()
-    }
     
     // MARK: Usecases
     func makeRequestCurrentWeatherUsecase()-> RequestCurrentWeatherUsecase {
         return RequestCurrentWeatherService(currentWeatherRepository: makeCurrentWeatherRepository())
     }
     
+    func makeAddBookmarkUseCase() -> AddBookmarkUseCase {
+        return DefaultAddBookmarkUseCase(bookmarkRepository: BookmarkRepository(storage: bookmarkStorage))
+    }
+    
+    func makeUpdateBookmarkUseCase() -> UpdateBookmarkUseCase {
+        return DefaultUpdateBookmarkUseCase(bookmarkRepository: BookmarkRepository(storage: bookmarkStorage))
+    }
+    
+    func makeCurrentWeatherRepository() -> CurrentWeatherRepository {
+        return CurrentWeatherRepository()
+    }
+    
+    func makeCommonUseCase() -> CommonFormatBookmarkUseCase {
+        return CommonFormatBookmarkUseCase(weatherUsecase: makeRequestCurrentWeatherUsecase(),
+                                           addBookmarkUsecase: makeAddBookmarkUseCase(),
+                                           updateBookmarkUseCase: makeUpdateBookmarkUseCase())
+    }
+    
     // MARK: ViewModel
-    func makeCommonFormatViewModel()-> BookmarkViewModel {
-        return BookmarkViewModel(usecase: makeRequestCurrentWeatherUsecase())
+    
+    func makeCommonFormatViewModel() -> CommonFormatViewModel {
+        return CommonFormatViewModel(commonFormatBookmarkUseCase: makeCommonUseCase())
     }
     
     // MARK: Coordinator
@@ -37,8 +56,8 @@ final class CommonFormatDIContainer {
 }
 
 extension CommonFormatDIContainer: CommonForrmatCoordinatorDependencies {
-    // MARK: Viewcontroller
-    func makeCommonFormatCoordinator(type: CommonFormatController.BehaviorType, bookmark: Bookmark? = nil) -> CommonFormatController {
-        return CommonFormatController.create(with: type)
+    func makeCommonFormatController(type: Presantation.CommonFormatController.BehaviorType, bookmark: Domain.Bookmark?) -> Presantation.CommonFormatController {
+        return CommonFormatController.create(viewModel: makeCommonFormatViewModel(), with: type)
     }
 }
+

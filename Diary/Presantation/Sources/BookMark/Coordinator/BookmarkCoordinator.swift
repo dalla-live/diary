@@ -7,6 +7,7 @@
 
 import UIKit
 import Util
+import Domain
 
 // 의존성 주입을 위한 Coordinator Dependency
 public protocol BookmarkCoordinatorDependencies {
@@ -42,10 +43,10 @@ public class BookmarkCoordinator: Coordinator {
         childCoordinator.append(commonFormatCoordinator)
     }
     
-    public func presentCommonFormatViewController(type: CommonFormatController.BehaviorType) {
+    public func presentCommonFormatViewController(type: CommonFormatController.BehaviorType, bookmark: Bookmark? = nil) {
         guard let commonFormatCoordinator =  childCoordinator.filter({ $0 is CommonFormatCoordinator }).first as? CommonFormatCoordinator else { return }
         
-        commonFormatCoordinator.start(to: self.navigationController, type: .bookmarkAdd)
+        commonFormatCoordinator.start(to: self.navigationController, type: type, bookmark: bookmark)
     }
     
     deinit {

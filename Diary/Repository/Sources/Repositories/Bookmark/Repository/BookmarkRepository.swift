@@ -9,22 +9,22 @@ import Foundation
 import Domain
 import Util
 
-class BookmarkRepository: BookmarkRepositoryProtocol {
+public class BookmarkRepository: BookmarkRepositoryProtocol {
     
     private let storage: BookmarkStorage
     
-    init(storage: BookmarkStorage) {
+    public init(storage: BookmarkStorage) {
         self.storage = storage
     }
     
-    func fetchBookmarkList(query: BookmarkQuery, page: Int, completion: @escaping (Domain.BookmarkList) -> Void) {
+    public func fetchBookmarkList(query: BookmarkQuery, page: Int, completion: @escaping (Domain.BookmarkList) -> Void) {
         let requestDto = BookmarkFetchDTO(query: query, page: page)
         let responseData = storage.read(requestDto)
         
         completion(responseData.toDomain())
     }
     
-    func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
+    public func addBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
         
         switch storage.add(data: bookmark.toDTO()) {
         case .success(let dto):
@@ -34,7 +34,7 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         }
     }
     
-    func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
+    public func updateBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Domain.Bookmark, Error>) -> Void) {
         switch storage.update(data: bookmark.toDTO()) {
         case .success(let dto):
             completion(.success(dto.toDomain()))
@@ -43,7 +43,7 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         }
     }
     
-    func deleteBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Void, Error>) -> Void) {
+    public func deleteBookmark(bookmark: Domain.Bookmark, completion: @escaping (Result<Void, Error>) -> Void) {
 
         switch storage.delete(bookmark.toDTO()) {
         case .success():
@@ -51,5 +51,9 @@ class BookmarkRepository: BookmarkRepositoryProtocol {
         case .failure(let error):
             completion(.failure(error))
         }
+    }
+    
+    public func deleteAllData() {
+        storage.deleteAll()
     }
 }

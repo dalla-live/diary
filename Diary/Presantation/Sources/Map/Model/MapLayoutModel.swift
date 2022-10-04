@@ -66,7 +66,6 @@ struct MapLayoutModel {
             $0.center.equalToSuperview()
         }
         
-//        $0.backgroundColor = .blue
         $0.isUserInteractionEnabled = false
     }
     
@@ -82,6 +81,7 @@ struct MapLayoutModel {
         $0.backgroundColor = .clear
     }
     
+    
     let _SUBMENU_SEGMENT : UISegmentedControl  = {
         var segmentControl = UISegmentedControl(items: ["google".localized, "naver".localized])
         segmentControl.isUserInteractionEnabled = true
@@ -92,18 +92,20 @@ struct MapLayoutModel {
         return segmentControl
     }()
     
+    
     let _QUICK_BUTTON           = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
     }
 
+    
     let _QUICK_LIST_BUTTON           = UIView(frame:.zero).then{
-        $0.backgroundColor = .clear
-        
         let imgView             = UIImageView(image: UIImage(systemName: "arrowtriangle.left.square.fill"))
             imgView.tag         = 12
             imgView.contentMode = .scaleAspectFit
             imgView.tintColor   = .gray
-            $0.addSubview(imgView)
+        
+        $0.addSubview(imgView)
+        $0.backgroundColor = .clear
         
         imgView.snp.makeConstraints{
             $0.edges.equalToSuperview()
@@ -112,11 +114,13 @@ struct MapLayoutModel {
         $0.isUserInteractionEnabled = true
     }
     
+    
     let _QUICK_LIST = UIView(frame: .zero).then{
         $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0.2).cgColor
 //        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
         $0.isUserInteractionEnabled = true
     }
+    
     
     var _QUICK_LIST_TABLE = UITableView().then {
         $0.backgroundColor = .clear
@@ -124,16 +128,19 @@ struct MapLayoutModel {
         $0.register(BookmarkCell.self, forCellReuseIdentifier: BookmarkCell.identifier)
     }
     
+    
     let _BOOK_MARK_FLAG         = UIView(frame:.zero).then{
         $0.backgroundColor = .magenta
         $0.isUserInteractionEnabled = true
     }
+    
     
     let _BOOK_MARK_TOOL_TIP     = UIView(frame: .zero).then{
         $0.backgroundColor = .red
         $0.isUserInteractionEnabled = true
         $0.isHidden = true
     }
+    
     
     let _FLOATING_SEARCH_BUTTON = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "magnifyingglass.circle"))
@@ -156,6 +163,7 @@ struct MapLayoutModel {
             }
     }
     
+    
     let _FLOATING_ADD_BUTTON    = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "plus.bubble"))
             imgView.contentMode = .scaleAspectFit
@@ -175,9 +183,9 @@ struct MapLayoutModel {
             imgView.snp.makeConstraints{
                 $0.edges.equalToSuperview().inset(6)
             }
-
-            
     }
+    
+    
     
     let _FLOATING_EXTEND_BUTTON = UIView(frame:.zero).then{
         let imgView = UIImageView(image: UIImage(systemName: "text.justify"))
@@ -200,26 +208,22 @@ struct MapLayoutModel {
             }
     }
     
-    let googleLabel = UILabel().then {
-        $0.text = "google".localized
-        $0.font = .systemFont(ofSize: 15)
-        $0.textColor = .black
+    let _LANGUAGE_CHANGE_BUTTON = UIButton(frame: .zero).then {
+        $0.setTitle("changeLanguageBtn".localized, for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 10
+        $0.titleLabel?.font = .systemFont(ofSize: 13)
+        $0.titleLabel?.numberOfLines = 0
+        $0.titleLabel?.textAlignment = .center
     }
     
-    let naverLabel = UILabel().then {
-        $0.text = "naver".localized
-        $0.font = .systemFont(ofSize: 15)
-        $0.textColor = .black
-    }
-    
-    func setLayout(container: UIView) {
+    func viewDidLoad(container: UIView) {
         container.addSubview(_MAP_CONTENT_CONTAINER)
-        
         
         _MAP_CONTENT_CONTAINER.addSubview(_MAP_SCROLL_CONTAINER)
         _MAP_SCROLL_CONTAINER.addSubview(_MAP_CONTAINER)
         _MAP_SCROLL_CONTAINER.addSubview(_NAVER_MAP_CONTAINER)
-        
         
         container.addSubview(_SUBMENU_SEGMENT)
         container.addSubview(_BOOK_MARK_TOOL_TIP)
@@ -232,7 +236,10 @@ struct MapLayoutModel {
         container.addSubview(_QUICK_LIST_BUTTON)
         container.addSubview(_QUICK_LIST)
         _QUICK_LIST.addSubview(_QUICK_LIST_TABLE)
+        
+        container.addSubview(_LANGUAGE_CHANGE_BUTTON)
     }
+    
     
     func setConstraint(container: UIView){
         
@@ -244,13 +251,14 @@ struct MapLayoutModel {
         
         _MAP_CONTAINER.snp.makeConstraints{
             $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
-            $0.left.equalTo(_MAP_SCROLL_CONTAINER.snp.left)
             $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview()
         }
+        
         _NAVER_MAP_CONTAINER.snp.makeConstraints{
             $0.height.width.equalTo(_MAP_SCROLL_CONTAINER)
-            $0.right.equalTo(_MAP_SCROLL_CONTAINER.snp.right)
             $0.centerY.equalToSuperview()
+            $0.left.equalTo(_MAP_CONTAINER.snp.right)
         }
         
         
@@ -279,8 +287,6 @@ struct MapLayoutModel {
             $0.right.equalToSuperview().offset(-5)
             $0.bottom.equalTo(_FLOATING_ADD_BUTTON.snp.top).offset(-20)
         }
-        
-        
         
         _FLOATING_ADD_BUTTON.snp.makeConstraints{
             $0.width.height.equalTo(40)
@@ -317,17 +323,52 @@ struct MapLayoutModel {
             $0.left.equalTo(_QUICK_LIST_BUTTON.snp.right)
             $0.centerY.equalToSuperview()
         }
+        
+        _LANGUAGE_CHANGE_BUTTON.snp.makeConstraints {
+            $0.width.equalTo(100)
+            $0.height.equalTo(50)
+            $0.right.equalToSuperview()
+            $0.top.equalTo(container.safeAreaLayoutGuide)
+        }
     }
     
-    func setAnimation(toOriginX: CGFloat) {
-        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
+    
+    func setTransformAction(toOriginX: CGFloat, state: UIGestureRecognizer.State,  isFirst: inout Bool) {
+        switch state {
+        case .ended:
+            
+//            // 열린다면
+//            if toOriginX != 0 {
+//                isFirst = true
+////                _QUICK_LIST_TABLE.visibleCells.enumerated().forEach{ idx, cell  in
+////                    UIView.animate(withDuration: 0.3 , delay: Double(idx) * 0.1 , animations: {
+////                        cell.transform = .identity
+////                    })
+////                }
+//            } else {
+//                isFirst = true
+////                _QUICK_LIST_TABLE.visibleCells.enumerated().reversed().forEach{ idx, cell  in
+////                    UIView.animate(withDuration: 0.3 , delay: Double(idx) * 0.3 , animations: {
+////                        cell.transform = CGAffineTransform(translationX: 100, y: 0)
+////                    })
+////                }
+//            }
+//
+            UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseIn, animations:  {
+                _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
+                _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
+            }, completion: { isComplete in
+                let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
+                let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
+                
+                imgView?.image = UIImage(systemName: imageName)
+            })
+        default:
+            isFirst = false
+            
             _QUICK_LIST_BUTTON.transform = CGAffineTransform(translationX: toOriginX, y: 0)
             _QUICK_LIST.transform        = CGAffineTransform(translationX: toOriginX, y: 0)
-        }, completion: { isComplete in
-            let imgView = self._QUICK_LIST_BUTTON.viewWithTag(12) as? UIImageView
-            let imageName = toOriginX == 0 ? "arrowtriangle.left.square.fill" : "arrowtriangle.right.square.fill"
-            imgView?.image = UIImage(systemName: imageName)
-        })
+        }
     }
     
 }
