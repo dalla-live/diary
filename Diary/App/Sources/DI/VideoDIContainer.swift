@@ -14,9 +14,19 @@ import UIKit
 final class VideoDIContainer {
     init() { }
     
+    // MARK: Repository
+    func makeVideoSubtitleRepository()-> VideoSubtitleRepository {
+        return VideoSubtitleRepository()
+    }
+    
+    // MARK: Usecases
+    func makeRequestVideoSubtitleUseCase()-> RequestVideoSubtitleUseCase {
+        return RequestVideoSubtitleService(videoSubtitleRepository: makeVideoSubtitleRepository())
+    }
+    
     // MARK: ViewModel
     func makeVideoViewModel()-> VideoViewModel {
-        return VideoViewModel()
+        return VideoViewModel(usecase: makeRequestVideoSubtitleUseCase())
     }
     
     func makeVideoCoordinator(navigationController: UINavigationController) -> VideoCoordinator {

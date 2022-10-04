@@ -36,6 +36,8 @@ public final class VideoViewController: ProgrammaticallyViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         imagePickerViewController.delegate = self
+        
+        viewModelOutputBind()
     }
     
     public override func addComponent() {
@@ -75,6 +77,13 @@ public final class VideoViewController: ProgrammaticallyViewController {
         
     }
     
+    public func viewModelOutputBind() {
+        viewModel.subtitleData.subscribe(onNext: {[weak self] model in
+            Log.d(model)
+            Log.d(model["segments"])
+        })
+    }
+    
     deinit {
         print("VideoViewController deinit")
     }
@@ -82,6 +91,10 @@ public final class VideoViewController: ProgrammaticallyViewController {
 
 extension VideoViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        print("고름")
+        
+        if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL{
+            Log.d(videoURL)
+            viewModel.requestVideoSubtitle(url: videoURL)
+        }
     }
 }

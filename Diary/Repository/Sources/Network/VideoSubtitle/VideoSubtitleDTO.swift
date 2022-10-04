@@ -9,9 +9,10 @@ import Foundation
 
 public struct VideoSubtitleDTO: Codable {
     // 동영상 파일 로컬 경로
-    var media: String
+    var media: URL
     // 요청 파라미터
     var params: VideoReqInfo
+    
 }
 
 public struct VideoReqInfo: Codable {

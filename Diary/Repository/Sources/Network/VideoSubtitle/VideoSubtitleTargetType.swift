@@ -50,19 +50,21 @@ extension VideoSubtitleTargetType: BaseTargetType {
         case .requestVideoSubtitle(let request):
             // 파라미터를 딕셔너리형태로 만들어서 넣어도 되고
             // Encodable DTO를 만들어서 넣어도 됩니다
-            let request: [String: Any] = [
-                "media": request.media,
-                "params": request.params
-            ]
-            return .requestParameters(parameters: request, encoding: URLEncoding.queryString)
-//            return .requestJSONEncodable(request)
+            let media = MultipartFormData(provider: .file(request.media), name: "media")
+            
+            let paramsDict = request.params.toDictionary
+            let paramsData = try? JSONSerialization.data(withJSONObject: paramsDict as Any)
+            let params = MultipartFormData(provider: .data(paramsData!), name: "params")
+
+            return .uploadMultipart([media, params])
         }
     }
     
     public var headers: [String : String]? {
         switch self {
         case .requestVideoSubtitle(_):
-            return ["Content-Type": "multipart/form-data"]
+            return ["Content-Type": "multipart/form-data",
+                    "X-CLOVASPEECH-API-KEY": "e557951cbc4048ddb126a5a0fa44aaf8"]
         }
         
     }
