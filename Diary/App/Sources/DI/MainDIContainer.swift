@@ -38,4 +38,9 @@ extension MainDIContainer: MainCoordinatorDependencies {
     func makeMapCoordinator(navigationController: UINavigationController) -> MapCoordinator {
         return MapCoordinator(navigation: navigationController)
     }
+    
+    func makeVideoCoordinator(navigationController: UINavigationController) -> VideoCoordinator {
+        let diContainer = VideoDIContainer()
+        return diContainer.makeVideoCoordinator(navigationController: navigationController)
+    }
 }
