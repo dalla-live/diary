@@ -48,8 +48,7 @@ extension VideoSubtitleTargetType: BaseTargetType {
     public var task: Moya.Task {
         switch self {
         case .requestVideoSubtitle(let request):
-            // 파라미터를 딕셔너리형태로 만들어서 넣어도 되고
-            // Encodable DTO를 만들어서 넣어도 됩니다
+            // 멀티파트폼 데이터 형식 request
             let media = MultipartFormData(provider: .file(request.media), name: "media")
             
             let paramsDict = request.params.toDictionary
