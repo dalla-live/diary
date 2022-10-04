@@ -217,6 +217,28 @@ class PlaceViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    fileprivate func didSwitchLaguageButtonTap() {
+        layoutModel._LANGUAGE_CHANGE_BUTTON.rx.tap
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                let picker = LocalizePickerView()
+                self.tabBarController?.view?.addSubview(picker)
+                picker.snp.makeConstraints {
+                    $0.height.equalTo(250)
+                    $0.left.right.bottom.equalToSuperview()
+                }
+            })
+            .disposed(by: disposeBag)
+        
+        Localize.newState.subscribe(onNext: { [weak self] language in
+            guard let self = self else { return }
+            self.layoutModel._SUBMENU_SEGMENT.setTitle("google".localized, forSegmentAt: 0)
+            self.layoutModel._SUBMENU_SEGMENT.setTitle("naver".localized, forSegmentAt: 1)
+            self.layoutModel._LANGUAGE_CHANGE_BUTTON.setTitle("changeLanguageBtn".localized, for: .normal)
+        })
+        .disposed(by: disposeBag)
+    }
+    
     func btnBind() {
         // 현재위치로 이동
         didMoveCurrentLocation()
@@ -232,6 +254,8 @@ class PlaceViewController: UIViewController {
         
         // 네이버, 구글 맵 토글
         didSwitchMap()
+        
+        didSwitchLaguageButtonTap()
     }
     
     // Present the Autocomplete view controller when the button is pressed.

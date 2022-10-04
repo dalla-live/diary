@@ -22,3 +22,4 @@
 // Button
 "okBtn" = "確認";
 "cancelBtn" = "取り消す";
+"changeLanguageBtn" = "言葉を変える";

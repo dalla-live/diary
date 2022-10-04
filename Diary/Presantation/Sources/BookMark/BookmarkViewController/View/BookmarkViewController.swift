@@ -17,7 +17,7 @@ public final class BookmarkViewController: UIViewController {
     var bookmarkListView: BookmarkListView!
     
     let bookmarkListTitle = UILabel().then {
-        $0.text = "북마크 리스트"
+        $0.text = "bookmark".localized
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 36, weight: .bold)
     }
@@ -40,6 +40,11 @@ public final class BookmarkViewController: UIViewController {
         
         commonInit()
         setBookmarkListView()
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        bookmarkListTitle.text = "bookmark".localized
     }
     
     private func commonInit() {
