@@ -21,4 +21,6 @@
 //Button
 "okBtn" = "확인";
 "cancelBtn" = "취소";
-"changeLanguageBtn" = "언어 변경";
+"chageLanguageBtn" = "언어 변경";
+"Hello" = "안녕하세요";
+"Hello" = "안녕하세요";
