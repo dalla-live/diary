@@ -110,8 +110,8 @@ public class GoogleTranslater {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "key", value: apiKey))
         queryItems.append(URLQueryItem(name: "q", value: q))
-        queryItems.append(URLQueryItem(name: "target", value: targetLanguage))
-        queryItems.append(URLQueryItem(name: "source", value: source))
+        queryItems.append(URLQueryItem(name: "target", value: source))
+        queryItems.append(URLQueryItem(name: "source", value: targetLanguage))
         queryItems.append(URLQueryItem(name: "format", value: format))
         queryItems.append(URLQueryItem(name: "model", value: model))
         urlComponents.queryItems = queryItems
