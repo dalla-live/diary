@@ -18,6 +18,10 @@ import GoogleMapsUtils
 import GoogleMaps
 
 
+protocol NaverMapProtocol {
+    func reqNaverMapAddress(_ loc : Location)
+}
+
 // 무엇을 했다
 protocol PlaceViewModelInput {
     func didLoadList(startLocation : CLLocationCoordinate2D, endLocation : CLLocationCoordinate2D)            // 리스트 로드
@@ -148,7 +152,7 @@ extension PlaceViewModel: PlaceViewModelInput{
 
 extension PlaceViewModel : NaverMapProtocol {
     func reqNaverMapAddress(_ loc : Location) {
-        mapUseCase.reqNaverMapAddress(location: loc, completion: { result in
+        placeUseCase.reqNaverMapAddress(location: loc, completion: { result in
             
             print("\(#function):\(result)")
             
