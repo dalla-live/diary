@@ -17,12 +17,12 @@ protocol VideoSubtitleViewModelInput {
 }
 // output
 protocol VideoSubtitleViewModelOutput {
-    var subtitleData: PublishSubject<JSON> {get}
+    var subtitleData: PublishSubject<(SubtitleData,URL)> {get}
 }
 
 
 public class VideoViewModel: VideoSubtitleViewModelOutput{
-    var subtitleData: PublishSubject<JSON> = .init()
+    var subtitleData: PublishSubject<(SubtitleData,URL)> = .init()
     
     private var usecase: RequestVideoSubtitleUseCase
     
@@ -36,7 +36,9 @@ extension VideoViewModel: VideoSubtitleViewModelInput{
         usecase.execute(request: url) {[weak self] (result) in
             switch result {
             case .success(let model):
-                self?.subtitleData.onNext(model)
+                
+                guard let subtitles = try? JSONDecoder().decode(SubtitleData.self, from: model.rawData()) else { return }
+                self?.subtitleData.onNext((subtitles, url))
             case .failure(let error):
                 Log.e(error)
             }

@@ -44,26 +44,10 @@ public extension AVPlayerViewController {
         // Create label
         addSubtitleLabel()
     }
-    func addSubtitles1(_ completion: () -> Void ) {
-        // Create label
-        addSubtitleLabel()
-        completion()
-    }
-    
-    func open1(fileFromLocal filePath: URL, encoding: String.Encoding = .utf8) {
-        let contents = try! String(contentsOf: filePath, encoding: encoding)
-        show(subtitles: contents)
-//        if let contents = contents {
-//            show(subtitles: contents)
-//        }
-    }
     
     func open(fileFromLocal filePath: URL, encoding: String.Encoding = .utf8) throws {
         let contents = try String(contentsOf: filePath, encoding: encoding)
         show(subtitles: contents)
-//        if let contents = contents {
-//            show(subtitles: contents)
-//        }
     }
     
     func open(fileFromRemote filePath: URL, encoding: String.Encoding = .utf8) {
@@ -88,6 +72,13 @@ public extension AVPlayerViewController {
             }
         }
         dataTask.resume()
+    }
+    
+    func show(subtitles data: [Segment]) {
+        parsedPayload = try? Subtitles.parseSubRip(data)
+        if let parsedPayload = parsedPayload {
+            addPeriodicNotification(parsedPayload: parsedPayload)
+        }
     }
     
     func show(subtitles string: String) {

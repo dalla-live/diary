@@ -7,6 +7,7 @@
 //
 
 import AVKit
+import SwiftyJSON
 
 public class Subtitles {
 
@@ -26,6 +27,11 @@ public class Subtitles {
     public init(subtitles string: String) throws {
         // Parse string
         parsedPayload = try Subtitles.parseSubRip(string)
+    }
+    
+    // JSON Subtitle
+    public init(segments : [Segment]) throws {
+        parsedPayload = try? Subtitles.parseSubRip(segments)
     }
     
     /// Search subtitles at time
@@ -152,6 +158,26 @@ extension Subtitles {
             final["text"] = text
             parsed[index] = final
         }
+        
+        return parsed
+    }
+    
+    // MARK: - Static methods
+        
+    /// Subtitle parser
+    ///
+    /// - Parameter payload: Input Subtitle
+    /// - Returns: NSDictionary
+    static func parseSubRip(_ segments: [Segment]) throws -> NSDictionary? {
+        let parsed = NSMutableDictionary()
+        
+        segments.enumerated().forEach({ (index, item) in
+            let final = NSMutableDictionary()
+            final["from"] = Double(item.start / 1000)
+            final["to"] = Double(item.end / 1000)
+            final["text"] = item.text
+            parsed[index + 1] = final
+        })
         
         return parsed
     }

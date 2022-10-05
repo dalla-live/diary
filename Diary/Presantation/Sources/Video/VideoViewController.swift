@@ -9,6 +9,8 @@ import Foundation
 import UIKit
 import RxSwift
 import Util
+import AVKit
+import Domain
 
 public final class VideoViewController: ProgrammaticallyViewController {
     private var viewModel: VideoViewModel!
@@ -78,10 +80,30 @@ public final class VideoViewController: ProgrammaticallyViewController {
     }
     
     public func viewModelOutputBind() {
-        viewModel.subtitleData.subscribe(onNext: {[weak self] model in
-            Log.d(model)
-            Log.d(model["segments"])
-        })
+        viewModel.subtitleData.subscribe(onNext: {[weak self] subtitleData, fileUrl in
+            guard let self = self else { return }
+            self.dismissImagePicker()
+            self.presentAVPlayer(subtitleData, fileUrl)
+        }).disposed(by: disposeBag)
+    }
+    
+    func presentAVPlayer(_ subtitleData: SubtitleData, _ url: URL){
+        let moviePlayer = AVPlayerViewController()
+        moviePlayer.player = AVPlayer(url: url)
+        self.present(moviePlayer, animated: true, completion: nil)
+        
+        moviePlayer.addSubtitles()
+        moviePlayer.show(subtitles: subtitleData.segments)
+        
+        // Change text properties
+        moviePlayer.subtitleLabel?.textColor = UIColor.red
+        // Play
+        moviePlayer.player?.play()
+    }
+    
+    func dismissImagePicker(){
+        self.imagePickerViewController.view.hideToastActivity()
+        self.imagePickerViewController.dismiss(animated: false)
     }
     
     deinit {
@@ -95,6 +117,7 @@ extension VideoViewController: UIImagePickerControllerDelegate, UINavigationCont
         if let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL{
             Log.d(videoURL)
             viewModel.requestVideoSubtitle(url: videoURL)
+            picker.view.makeToastActivity(.center)
         }
     }
 }
