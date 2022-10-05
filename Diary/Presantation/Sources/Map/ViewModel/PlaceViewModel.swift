@@ -28,17 +28,6 @@ protocol PlaceViewModelInput {
 //    func didOpenBookmarkDetail()                       // 북마크 상세보기 선택
 }
 
-public struct PlaceViewModelAction {
-    var addedList : () -> Void
-}
-
-struct TestPlace {
-    let date: String
-    let contents: String
-    let distance: String
-    let location : CLLocationCoordinate2D
-}
-
 protocol PlaceViewModelOutput {
     var mapData : [Bookmark] {get}
     var didItemLoaded: PublishSubject<Void> { get }
