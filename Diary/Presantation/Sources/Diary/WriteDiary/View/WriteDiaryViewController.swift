@@ -18,6 +18,62 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     var speechRecognizer : SpeechRecognizer?
     
     // MARK: Component
+    let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.distribution = .fillEqually
+    }
+    
+    var dateTitle = UILabel().then {
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 25, weight: .bold)
+    }
+    
+    var weatherView = UIView().then {
+        $0.backgroundColor = .white
+    }
+    
+    var weatherLabel = UILabel().then {
+        $0.text = AddBookmarkView.Const.ToBeLocalized.weather.text
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 16, weight: .bold)
+    }
+    
+    var weather = UILabel().then {
+        $0.textColor = .black
+        $0.textAlignment = .center
+    }
+    
+    var addressView = UIView().then{
+        $0.backgroundColor = .white
+    }
+    
+    var addressLabel = UILabel().then {
+        $0.text = "주소"
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 16, weight: .bold)
+    }
+    
+    var address = UILabel().then {
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
+        $0.textAlignment = .center
+    }
+    
+    var moodView = UIView().then{
+        $0.backgroundColor = .white
+    }
+    
+    var moodLabel = UILabel().then {
+        $0.text = AddBookmarkView.Const.ToBeLocalized.mood.text
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 16, weight: .bold)
+    }
+    
+    var mood = UILabel().then {
+        $0.textColor = .black
+        $0.textAlignment = .center
+    }
+    
     let recordButton = UIButton().then{
         $0.setTitle("음성인식", for: .normal)
         $0.setTitleColor(.black, for: .normal)
@@ -80,18 +136,68 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     public override func addComponent() {
         fileName = #file.fileName
         
-        [recordButton, textView, translateButton].forEach(view.addSubview)
+        [stackView , recordButton, textView, translateButton].forEach(view.addSubview)
+        
+        [dateTitle, weatherView, addressView, moodView].forEach{ stackView.addArrangedSubview($0) }
+        
+        [weatherLabel, weather].forEach(weatherView.addSubview)
+        
+        [addressLabel, address].forEach(addressView.addSubview)
+        
+        [moodLabel, mood].forEach(moodView.addSubview)
     }
     
     public override func setConstraints() {
+        stackView.snp.makeConstraints{
+            $0.height.equalTo(200)
+            $0.top.equalToSuperview().offset(50)
+            $0.right.equalToSuperview()
+            $0.left.equalToSuperview().inset(16)
+        }
+        
+        weatherLabel.snp.makeConstraints{
+            $0.top.equalTo(weatherView.snp.top)
+            $0.leading.bottom.equalToSuperview()
+            $0.width.equalTo(100)
+        }
+        
+        weather.snp.makeConstraints{
+            $0.leading.equalTo(weatherLabel.snp.trailing)
+            $0.top.bottom.trailing.equalToSuperview()
+        }
+        
+        addressLabel.snp.makeConstraints{
+            $0.top.equalTo(addressView.snp.top)
+            $0.leading.bottom.equalToSuperview()
+            $0.width.equalTo(100)
+        }
+        
+        address.snp.makeConstraints{
+            $0.leading.equalTo(addressLabel.snp.trailing)
+            $0.top.bottom.trailing.equalToSuperview()
+        }
+        
+        moodLabel.snp.makeConstraints{
+            $0.top.equalTo(moodView.snp.top)
+            $0.leading.bottom.equalToSuperview()
+            $0.width.equalTo(100)
+        }
+        
+        mood.snp.makeConstraints{
+            $0.leading.equalTo(moodLabel.snp.trailing)
+            $0.top.bottom.trailing.equalToSuperview()
+        }
+    
+        
         recordButton.snp.makeConstraints {
             $0.width.equalTo(100)
             $0.height.equalTo(30)
-            $0.top.left.equalTo(view.safeAreaLayoutGuide).inset(10)
+            $0.top.equalTo(stackView.snp.bottom).offset(20)
+            $0.left.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
         
         textView.snp.makeConstraints {
-            $0.left.right.equalToSuperview().inset(10)
+            $0.left.right.equalToSuperview().inset(16)
             $0.top.equalTo(recordButton.snp.bottom).offset(10)
             $0.height.equalTo(150)
         }
@@ -99,7 +205,8 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         translateButton.snp.makeConstraints {
             $0.width.equalTo(100)
             $0.height.equalTo(30)
-            $0.top.right.equalTo(view.safeAreaLayoutGuide).inset(10)
+            $0.top.equalTo(stackView.snp.bottom).offset(20)
+            $0.right.equalTo(view.safeAreaLayoutGuide).inset(16)
         }
     }
     
@@ -115,11 +222,22 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         translateButton.rx.tapGesture()
             .when(.recognized)
             .bind {[weak self] _ in
-//                self?.translate(self?.textView.text ?? "")
+                self?.translate(self?.textView.text ?? "")
 //                self?.detect(self?.textView.text ?? "")
-                self?.translateAfterDetect(self?.textView.text ?? "")
+//                self?.translateAfterDetect(self?.textView.text ?? "")
             }
             .disposed(by: disposeBag)
+        
+        viewModel.bookmark.bind{ [weak self] data in
+            guard let self = self else { return }
+            
+            self.dateTitle.text = data.date
+            self.mood.text = data.mood.mood.emoticon
+            self.address.text = data.location.address
+            self.weather.text = data.weather.weather.emoticon
+            self.textView.text = data.note
+        }.disposed(by: disposeBag)
+        
     }
     
     public func recognizeStop() {
