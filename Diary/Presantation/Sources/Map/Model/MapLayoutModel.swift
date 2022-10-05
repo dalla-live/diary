@@ -207,23 +207,15 @@ struct MapLayoutModel {
             }
     }
     
-    
-    
-    let googleLabel = UILabel().then {
-        $0.text = "google".localized
-        $0.font = .systemFont(ofSize: 15)
-        $0.textColor = .black
+    let _LANGUAGE_CHANGE_BUTTON = UIButton(frame: .zero).then {
+        $0.setTitle("changeLanguageBtn".localized, for: .normal)
+        $0.setTitleColor(.black, for: .normal)
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 10
+        $0.titleLabel?.font = .systemFont(ofSize: 13)
+        $0.titleLabel?.numberOfLines = 0
+        $0.titleLabel?.textAlignment = .center
     }
-    
-    
-    
-    let naverLabel = UILabel().then {
-        $0.text = "naver".localized
-        $0.font = .systemFont(ofSize: 15)
-        $0.textColor = .black
-    }
-    
-    
     
     func viewDidLoad(container: UIView) {
         container.addSubview(_MAP_CONTENT_CONTAINER)
@@ -243,6 +235,8 @@ struct MapLayoutModel {
         container.addSubview(_QUICK_LIST_BUTTON)
         container.addSubview(_QUICK_LIST)
         _QUICK_LIST.addSubview(_QUICK_LIST_TABLE)
+        
+        container.addSubview(_LANGUAGE_CHANGE_BUTTON)
     }
     
     
@@ -327,6 +321,13 @@ struct MapLayoutModel {
             $0.height.equalToSuperview()
             $0.left.equalTo(_QUICK_LIST_BUTTON.snp.right)
             $0.centerY.equalToSuperview()
+        }
+        
+        _LANGUAGE_CHANGE_BUTTON.snp.makeConstraints {
+            $0.width.equalTo(100)
+            $0.height.equalTo(50)
+            $0.right.equalToSuperview()
+            $0.top.equalTo(container.safeAreaLayoutGuide)
         }
     }
     
