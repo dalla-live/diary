@@ -8,7 +8,7 @@
 import UIKit
 
 public enum TabMenu: Int {
-    case bookMark = 0, map = 1, diary = 2
+    case bookMark = 0, map = 1, diary = 2, video = 3
     public var title : String {
         switch self {
         case .bookMark:
@@ -16,6 +16,8 @@ public enum TabMenu: Int {
         case .map:
             return ""
         case .diary :
+            return ""
+        case .video :
             return ""
         }
     }

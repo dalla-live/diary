@@ -10,4 +10,6 @@ import Foundation
 
 
 public protocol PlaceRepositoryProtocol: BookmarkRepositoryProtocol {
+    func fetchList()
+    func requestAddress(request: Location , completion : @escaping (Result<String, Error>) -> Void)
 }

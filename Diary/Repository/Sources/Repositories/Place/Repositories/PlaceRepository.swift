@@ -57,5 +57,15 @@ public class PlaceRepository: PlaceRepositoryProtocol {
     public func deleteAllData() {
         storage.deleteAll()
     }
+    
+    public func fetchList() {
+        
+    }
+    
+    public func requestAddress(request: Location, completion: @escaping (Result<String, Error>) -> Void) {
+        PlaceAPI.requestAddress(request: NaverPlaceRequestDTO(lat: request.lat, lng: request.lon), completion: { (result) in
+            completion(result)
+        })
+    }
+    
 }
-

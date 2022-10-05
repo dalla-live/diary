@@ -7,10 +7,11 @@
 
 import UIKit
 import Util
+import Domain
 
 public protocol DiaryCoordinatorDependencies {
     func makeCalenderViewController(action : CalendarViewModelAction ) -> CalendarViewController
-    func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController
+    func makeWriteDiaryViewController(coordinator: DiaryCoordinator, bookmark : Bookmark) -> WriteDiaryViewController
 }
 
 public class DiaryCoordinator: Coordinator {
@@ -33,8 +34,8 @@ public class DiaryCoordinator: Coordinator {
         print(#file)
     }
     
-    public func writeDiaryViewControllerStart() {
-        let vc = dependencies.makeWriteDiaryViewController(coordinator: self)
+    public func writeDiaryViewControllerStart(_ bookmark : Bookmark) {
+        let vc = dependencies.makeWriteDiaryViewController(coordinator: self, bookmark : bookmark)
         
         self.navigationController.present(vc, animated: true)
 //        self.navigationController.pushViewController(vc, animated: false)

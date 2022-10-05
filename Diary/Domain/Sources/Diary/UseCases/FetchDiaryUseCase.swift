@@ -9,8 +9,8 @@ import Foundation
 
 public protocol FetchDiaryUseCase {
     func execute(completion: @escaping ((Result<DiaryList, Error>) -> Void))
-    func getListByDate(_ query : String , completion : @escaping ((Result<DiaryList, Error>) -> Void))
-    func getListByMonth(_ month : String , completion : @escaping (([String]) -> Void))
+    func getListByDate(_ query : String , completion : @escaping ((BookmarkList) -> Void))
+    func getListByMonth(_ month : String , completion : @escaping ((BookmarkList) -> Void))
 }
 
 public final class DefaultFetchDiaryService: FetchDiaryUseCase {
@@ -26,13 +26,14 @@ public final class DefaultFetchDiaryService: FetchDiaryUseCase {
         }
     }
     
-    public func getListByDate(_ query: String, completion: @escaping ((Result<DiaryList, Error>) -> Void)) {
+    public func getListByDate(_ query: String, completion: @escaping ((BookmarkList) -> Void)) {
         diaryRepository.fetchListByDate(query){ result in
+            print("result :: \(result)")
             completion(result)
         }
     }
     
-    public func getListByMonth(_ month: String, completion: @escaping (([String]) -> Void)) {
+    public func getListByMonth(_ month: String, completion: @escaping ((BookmarkList) -> Void)) {
         diaryRepository.fetchDateofContents(month){ result in
             completion(result)
         }

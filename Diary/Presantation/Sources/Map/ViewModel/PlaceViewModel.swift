@@ -146,3 +146,12 @@ extension PlaceViewModel: PlaceViewModelInput{
     }
 }
 
+extension PlaceViewModel : NaverMapProtocol {
+    func reqNaverMapAddress(_ loc : Location) {
+        mapUseCase.reqNaverMapAddress(location: loc, completion: { result in
+            
+            print("\(#function):\(result)")
+            
+        })
+    }
+}

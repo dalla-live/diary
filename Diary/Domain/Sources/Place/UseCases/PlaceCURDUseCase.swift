@@ -53,3 +53,8 @@ public protocol DeletePlaceUseCase {
     func delete(requestVo: DeletePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void)
 //    func delete(id: String) -> Bool
 }
+
+// 네이버 지도 위도 경도에 따른 위치 정보
+public protocol GetPlaceUseCase {
+    func reqNaverMapAddress(location : Location, completion: @escaping (Result<String, Error>) -> Void)
+}

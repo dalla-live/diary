@@ -14,6 +14,7 @@ import GoogleMaps
 import Service
 import GooglePlaces
 import Util
+import NMapsMap
 import Domain
 
 public class PlaceViewController: UIViewController {
@@ -36,8 +37,10 @@ public class PlaceViewController: UIViewController {
     public init ( dependency: PlaceViewModel ) {
         self.viewModel = dependency
         super.init(nibName: nil, bundle: nil)
+
         self.googleService = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
-        self.naverService  = NaverMapServiceProvider(service:  GPSLocationServiceProvider(), delegate: nil)
+        self.naverService  = NaverMapServiceProvider(service:  GPSLocationServiceProvider())
+
         GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
         GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
@@ -302,6 +305,7 @@ extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
      public func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
 //         print("place \(place.coordinate)")
          self.googleService?.setLocation(position: place.coordinate)
+         self.naverService?.setLocation(position: place.coordinate)
        dismiss(animated: true, completion: nil)
      }
 

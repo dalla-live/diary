@@ -77,7 +77,14 @@ struct MapLayoutModel {
     let _NAVER_MAP_CONTAINER        = UIView(frame: .zero).then {
         $0.backgroundColor = .clear
     }
-
+    
+    let _NAVER_MAP_ADDRESS_LABEL    = UILabel(frame: .zero).then{
+        $0.backgroundColor = .clear
+        $0.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        $0.text = "주소"
+        $0.textColor = .black
+    }
+    
     let _BUTTON_CONTAINER            = UIView(frame: .zero).then{
         $0.backgroundColor = .clear
     }
@@ -330,6 +337,11 @@ struct MapLayoutModel {
             $0.right.equalToSuperview()
             $0.top.equalTo(container.safeAreaLayoutGuide)
         }
+        
+//        _NAVER_MAP_ADDRESS_LABEL.snp.makeConstraints{
+//            $0.top.equalTo(_SUBMENU_SEGMENT.snp.bottom).offset(15)
+//            $0.left.equalToSuperview().offset(16)
+//        }
     }
     
     func setToolTipWith(weather: Weather?){
