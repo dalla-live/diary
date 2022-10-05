@@ -18,11 +18,13 @@ protocol VideoSubtitleViewModelInput {
 // output
 protocol VideoSubtitleViewModelOutput {
     var subtitleData: PublishSubject<(SubtitleData,URL)> {get}
+    var errorMessage: PublishSubject<String> {get}
 }
 
 
 public class VideoViewModel: VideoSubtitleViewModelOutput{
     var subtitleData: PublishSubject<(SubtitleData,URL)> = .init()
+    var errorMessage: PublishSubject<String> = .init()
     
     private var usecase: RequestVideoSubtitleUseCase
     
@@ -41,6 +43,7 @@ extension VideoViewModel: VideoSubtitleViewModelInput{
                 self?.subtitleData.onNext((subtitles, url))
             case .failure(let error):
                 Log.e(error)
+                self?.errorMessage.onNext("자막 생성작업을 실패하였습니다.\n 잠시 후 다시 시도해주세요.")
             }
         }
     }

@@ -85,6 +85,11 @@ public final class VideoViewController: ProgrammaticallyViewController {
             self.dismissImagePicker()
             self.presentAVPlayer(subtitleData, fileUrl)
         }).disposed(by: disposeBag)
+        
+        viewModel.errorMessage.subscribe(onNext: {[weak self] message in
+            self?.dismissImagePicker()
+            self?.view.makeToast(message)
+        }).disposed(by: disposeBag)
     }
     
     func presentAVPlayer(_ subtitleData: SubtitleData, _ url: URL){
