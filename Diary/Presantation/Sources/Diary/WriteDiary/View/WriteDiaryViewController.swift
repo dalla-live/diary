@@ -88,6 +88,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         $0.textContainerInset = UIEdgeInsets(top: 10,left: 10,bottom: 10,right: 10)
         $0.addBorder(width: 1, color: .black)
         $0.layer.cornerRadius = 8
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
     
     let translateButton = UIButton().then{
