@@ -18,6 +18,17 @@ final class PlaceDIContainer {
         return PlaceRepository(storage: .init())
     }
     
+    // MARK: Repository
+    func makeCurrentWeatherRepository()-> CurrentWeatherRepository {
+        return CurrentWeatherRepository()
+    }
+    
+    // MARK: Usecases
+    func makeRequestCurrentWeatherUsecase()-> RequestCurrentWeatherUsecase {
+        return RequestCurrentWeatherService(currentWeatherRepository: makeCurrentWeatherRepository())
+    }
+    
+    
     // MARK: Usecases
     func makePlaceUseCase() -> PlaceUseCase {
         return  PlaceUseCaseProvider(placeRepo:  makePlaceRepository())
@@ -25,11 +36,9 @@ final class PlaceDIContainer {
     
     // MARK: ViewModel
     func makePlaceViewModel() -> PlaceViewModel {
-        let placeViewModel    = PlaceViewModel(placeUseCase: makePlaceUseCase())
+        let placeViewModel    = PlaceViewModel(placeUseCase: makePlaceUseCase(), weatherUseCase: makeRequestCurrentWeatherUsecase())
         return placeViewModel
     }
-    
-    
     
     func makePlaceCoordinator(navigationController: UINavigationController) -> Presantation.PlaceCoordinator {
         let placeCoordinator = PlaceCoordinator(navigation: navigationController, dependencies: self)

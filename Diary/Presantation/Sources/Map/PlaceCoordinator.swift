@@ -44,12 +44,6 @@ public class PlaceCoordinator: Coordinator {
         self.navigationController.pushViewController(mapVc, animated: false)
     }
     
-    private func makeCommonFormatCoordinator() {
-        let commonFormatCoordinator = dependencies.makeCommonFormatCoordinator(navigationController: self.navigationController)
-        childCoordinator.append(commonFormatCoordinator)
-    }
-    
-    
     deinit {
         print(#file)
     }
@@ -63,7 +57,15 @@ extension PlaceCoordinator: PlaceDelegate {
         guard let commonVC = self.navigationController.visibleViewController as? CommonFormatController else {
             return
         }
-        commonVC.dismiss(animated: true)
+        
+        commonVC.dismiss(animated: true, completion: {
+            guard let placeVC = self.navigationController.visibleViewController as? PlaceViewController else {
+                return
+            }
+            placeVC.reloadList()
+        })
+        
+        
     }
     
     public func openMapViewEdit() {

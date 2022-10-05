@@ -14,6 +14,7 @@ import GoogleMaps
 import Service
 import GooglePlaces
 import Util
+import Domain
 
 public class PlaceViewController: UIViewController {
     
@@ -66,10 +67,26 @@ public class PlaceViewController: UIViewController {
     }
     
     public func bindToViewModel() {
-        self.viewModel.didItemLoaded.subscribe(onNext: { [weak self] isLoaded in
-            self?.layoutModel._QUICK_LIST_TABLE.reloadData()
+        
+        // 테이블 로드
+        self.viewModel.didItemLoaded.subscribe(onNext: { [weak self] _ in
+            self?.reloadList()
             Log.d("reloaded")
         }).disposed(by: disposeBag)
+        
+        // 위치의 날씨
+        self.viewModel.weatherLoded.subscribe(onNext: { [weak self] _ in
+            self?.layoutModel.setToolTipWith(weather: self?.viewModel.weather)
+        }).disposed(by: disposeBag)
+        
+        
+        // 셀이 선택된 경우
+        self.viewModel.didBookmarkSelected.subscribe(onNext: { [weak self] _ in
+            let mapData = self?.viewModel.selectedBookmarkData
+            
+            self?.layoutModel.setToolTipWith(weather: mapData?.weather, mood: mapData?.mood)
+        }).disposed(by: disposeBag)
+        
     }
     
     
@@ -256,6 +273,11 @@ public class PlaceViewController: UIViewController {
         didSwitchLaguageButtonTap()
     }
     
+    
+    func reloadList() {
+        self.viewModel.fetchList()
+    }
+    
     // Present the Autocomplete view controller when the button is pressed.
       func autocompleteClicked() {
         let autocompleteController = GMSAutocompleteViewController()
@@ -305,21 +327,12 @@ extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
 
 extension PlaceViewController : GMSMapViewDelegate {
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
+        layoutModel._BOOK_MARK_TOOL_TIP.subviews.forEach{$0.removeFromSuperview()}
         layoutModel._BOOK_MARK_TOOL_TIP.isHidden = true
-        
-//        layoutModel._MAP_CENTER_MARKER.isHidden = false
-        print(gesture)
-    }
-    
-    public func selectBookMark() {
-        
     }
     
     public func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            self.layoutModel._BOOK_MARK_TOOL_TIP.isHidden = false
-        })
-        
+        self.viewModel.didSelectMarker(location: marker.position)
         mapView.animate(toLocation: marker.position)
         return true
     }
@@ -350,17 +363,40 @@ extension PlaceViewController: UITableViewDataSource {
         return viewModel.mapData.count
     }
     
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    
+    
+    public func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        // 먼저 선택한 셀이 있다
+        if let row = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: row) {
+            UIView.animate(withDuration: 0.3 , delay: 0, animations: {
+                cell.transform = .identity
+            })
+            
+            if row == indexPath {
+                return nil
+            }
+        }
         
-        guard let setLocation = self.mapService else {
+        return indexPath
+    }
+    
+    
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let mapService = self.mapService else {
             return
         }
         
-        self.viewModel.didSelectBookmark(indexPath: indexPath, completion: setLocation.setLocation)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-            self.layoutModel._BOOK_MARK_TOOL_TIP.isHidden = false
-        })
+        if let row = tableView.indexPathForSelectedRow, let cell = tableView.cellForRow(at: row) {
+            UIView.animate(withDuration: 0.3 , delay: 0, animations: {
+                cell.transform = .init(translationX: 20, y: 0)
+            })
+        }
+        
+        self.viewModel.didSelectBookmark(indexPath: indexPath, completion: mapService.setLocation)
     }
+    
+    
+    
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -372,7 +408,8 @@ extension PlaceViewController: UITableViewDataSource {
             var content                           = cell.defaultContentConfiguration()
 
             let row                               = viewModel.mapData[indexPath.row]
-                content.text                      = row.date + " " + row.location.address
+            Log.d(row.mood.mood.text)
+                content.text                      = row.date + "\n\(row.mood.mood.emoticon) \(row.weather.weather.emoticon)" + "\n\(row.note)"
                 content.textProperties.color = .white.withAlphaComponent(0.5)
             
             let containerView                     = content.makeContentView()

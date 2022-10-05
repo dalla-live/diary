@@ -20,13 +20,18 @@ import GoogleMaps
 
 // 무엇을 했다
 protocol PlaceViewModelInput {
-    func didLoadList(startLocation : CLLocationCoordinate2D, endLocation : CLLocationCoordinate2D)
+    func didLoadList(startLocation : CLLocationCoordinate2D, endLocation : CLLocationCoordinate2D)            // 리스트 로드
+    func didSelectBookmark(indexPath: IndexPath, completion: @escaping (CLLocationCoordinate2D) -> Void)      // 북마크 깃발
+    func didSelectMarker(location: CLLocationCoordinate2D)                                                     //
 //    func didSubMenu(selected: MapSubMenu)          // 상단 서브메뉴 토글
-//    func showQuickBookmark()                           // 빠른 북마크 보기
 //    func didFloating(selected: MapQuickMenu)   // 하단 플루팅 버튼
-    func didSelectBookmark(indexPath: IndexPath, completion: @escaping (CLLocationCoordinate2D) -> Void)                       // 북마크 깃발
 //    func didOpenBookmarkDetail()                       // 북마크 상세보기 선택
 }
+
+public struct PlaceViewModelAction {
+    var addedList : () -> Void
+}
+
 struct TestPlace {
     let date: String
     let contents: String
@@ -37,6 +42,8 @@ struct TestPlace {
 protocol PlaceViewModelOutput {
     var mapData : [Bookmark] {get}
     var didItemLoaded: PublishSubject<Void> { get }
+    var weatherLoded: PublishSubject<Void> { get }
+    var didBookmarkSelected: PublishSubject<Void> { get }
 }
 
 enum MapType {
@@ -55,7 +62,11 @@ enum MapQuickMenu {
 
 
 public class PlaceViewModel: NSObject , PlaceViewModelOutput{
-    var didItemLoaded: PublishSubject<Void> = .init()
+    
+    /// Output
+    var didItemLoaded: PublishSubject<Void>        = .init()
+    var weatherLoded: PublishSubject<Void>         = .init()
+    var didBookmarkSelected: PublishSubject<Void>  = .init()
     
     // 엔티티 리스트
     var mapData : [Bookmark] = [] {
@@ -64,12 +75,26 @@ public class PlaceViewModel: NSObject , PlaceViewModelOutput{
             }
         }
     
+    var weather: Weather? = nil {
+        didSet {
+            self.weatherLoded.onNext(())
+        }
+    }
+    
+    // 선택당했다
+    var selectedBookmarkData: Bookmark? = nil {
+        didSet {
+            self.didBookmarkSelected.onNext(())
+        }
+    }
     
     // for Repository
     var placeUseCase : PlaceUseCase!
+    var weatherUseCase: RequestCurrentWeatherUsecase!
     
-    public init(placeUseCase: PlaceUseCase) {
-        self.placeUseCase      = placeUseCase
+    public init(placeUseCase: PlaceUseCase, weatherUseCase: RequestCurrentWeatherUsecase) {
+        self.placeUseCase   = placeUseCase
+        self.weatherUseCase = weatherUseCase
     }
     
     
@@ -110,29 +135,25 @@ extension PlaceViewModel: PlaceViewModelInput{
     }
     
     func didSelectBookmark(indexPath: IndexPath, completion: @escaping ((CLLocationCoordinate2D) -> Void) ) {
-        let location = CLLocationCoordinate2D(latitude: self.mapData[indexPath.row].location.lat, longitude: self.mapData[indexPath.row].location.lon)
+        let data = self.mapData[indexPath.row]
+        let location = CLLocationCoordinate2D(latitude: data.location.lat, longitude: data.location.lon)
+            
         completion(location)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+            self.selectedBookmarkData = data
+        })
+        
     }
     
-    
-//    func didSubMenu(selected: MapSubMenu) {
-//        
-//    }
-//    
-//    func showQuickBookmark() {
-//        
-//    }
-//    
-//    func didFloating(selected: MapQuickMenu) {
-//        
-//    }
-//    
-//    func didSelectBookmarkFlag() {
-//        
-//    }
-//    
-//    func didOpenBookmarkDetail() {
-//        
-//    }
+    func didSelectMarker(location: CLLocationCoordinate2D) {
+        self.weatherUseCase.excute(request: .init(lat: location.latitude, lon: location.longitude, address: ""), completion:{ result in
+            switch result {
+            case .success(let weather):
+                self.weather = Weather(en: weather)
+            case .failure(let err):
+                print(err)
+            }
+        })
+    }
 }
 

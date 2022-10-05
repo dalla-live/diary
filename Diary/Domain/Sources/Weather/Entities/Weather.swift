@@ -29,6 +29,18 @@ public struct Weather {
             }
         }
         
+        public var textEng: String {
+            switch self {
+            case .clear: return "clear"
+            case .rain: return "rain"
+            case .clouds: return "clouds"
+            case .snow: return "snow"
+            case .atmosphere: return "atmosphere"
+            case .thunderstorm: return "thunderstorm"
+            case .drizzle: return "drizzle"
+            }
+        }
+        
         public var emoticon: String {
             switch self {
             case .clear: return "☀️"
@@ -48,7 +60,21 @@ public struct Weather {
         self.weather = weather
     }
     
+    public init(emoticon: String) {
+        switch emoticon {
+        case "☀️": self.weather = .clear
+        case "🌧": self.weather = .rain
+        case "☁️": self.weather = .clouds
+        case "❄️": self.weather = .snow
+        case "🌫": self.weather = .atmosphere
+        case "🌪": self.weather = .thunderstorm
+        case "☔️": self.weather = .drizzle
+        default: self.weather = .clear
+        }
+    }
+    
     public init(string weather: String) {
+        print(weather)
         var weatherCase: WeatherCase {
             switch weather {
             case WeatherCase.clear.text: return .clear
@@ -62,6 +88,25 @@ public struct Weather {
             }
         }
         
+        self.weather = weatherCase
+    }
+    
+    // 영문 날씨 문자열
+    public init(en weather: String) {
+
+        var weatherCase: WeatherCase {
+            switch weather.lowercased() {
+            case WeatherCase.clear.textEng: return .clear
+            case WeatherCase.rain.textEng: return .rain
+            case WeatherCase.clouds.textEng: return .clouds
+            case WeatherCase.snow.textEng: return .snow
+            case WeatherCase.atmosphere.textEng: return .atmosphere
+            case WeatherCase.thunderstorm.textEng: return .thunderstorm
+            case WeatherCase.drizzle.textEng: return .drizzle
+            default: return .clear
+            }
+        }
+
         self.weather = weatherCase
     }
 }

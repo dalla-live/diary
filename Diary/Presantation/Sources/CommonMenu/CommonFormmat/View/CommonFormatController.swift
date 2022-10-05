@@ -424,16 +424,18 @@ public class CommonFormatController: UIViewController {
         
         storeButton.rx.tap
             .bind { [weak self] in
-                
+                let date = DateFormatter()
+                    date.dateFormat = "yyyy.MM.dd"
+
                 guard let map = self?.mapView else { return }
                 
                 self?.viewModel?.didTapStore(bookmark: Bookmark(id: 0,
-                                                                mood: Mood(mood: .amazed),
-                                                                weather: Weather(weather: .clear),
-                                                                date: "2022.09.30",
+                                                                mood: Mood(emoticon: self?.moodTooltip.text ?? ""),
+                                                                weather: Weather(emoticon: self?.weatherTooltip.text ?? ""),
+                                                                date: date.string(from: Date()),
                                                                 location: Location(lat: map.camera.target.latitude, lon: map.camera.target.longitude, address: ""),
                                                                 hasWritten: false,
-                                                                note: ""))
+                                                                note: self?.noteTextView.text ?? "메모 없음"))
             }
             .disposed(by: disposeBag)
         
