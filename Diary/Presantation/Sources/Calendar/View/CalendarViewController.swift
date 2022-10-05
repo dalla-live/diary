@@ -11,11 +11,6 @@ import Util
 import RxSwift
 import RxCocoa
 
-struct testBookMark {
-    var type : CalendarType
-    var contents : String
-}
-
 public final class CalendarViewController : UIViewController, UITableViewDelegate {
     
     var calendarView = UIView().then {
@@ -78,9 +73,7 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
     var viewModel : CalendarViewModel!
     var visibleDateInfo : Date = Date()
     var lastSelectedIndexPath : IndexPath?
-    
-    var bookMark : BehaviorRelay<[testBookMark]> = .init(value: [])
-    
+
     var disposeBag : DisposeBag = DisposeBag()
     
     public static func create(with viewModel: CalendarViewModel) -> CalendarViewController {
@@ -97,12 +90,6 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
         setConstraint()
         bind()
         addGesture()
-        
-        let testArr : [testBookMark] = [testBookMark(type: .Diary, contents: "다이어리1"),
-                                         testBookMark(type: .Diary, contents: "다이어리이이이이"),
-                                         testBookMark(type: .BookMark, contents: "북마크크"),
-                                        testBookMark(type: .Diary, contents: "다이어리2")]
-        bookMark.accept(testArr)
     }
     
     private func configWeekStackView() {

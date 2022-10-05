@@ -16,8 +16,9 @@ extension CalendarViewController {
         viewModel.monthStruct.bind(to: collectionView.rx.items(cellIdentifier: CalendarCollectionViewCell.identifier, cellType: CalendarCollectionViewCell.self)) { [weak self] row, data , cell in
             guard let self = self else {return }
             
-            cell.eventMark.isHidden = !self.viewModel.dateList.value.contains(data.getDate())
-            
+            let dateList = self.viewModel.dateList.value
+    
+            cell.eventMark.isHidden = !dateList.contains(data.getDate())
             cell.configUI(data)
             cell.isSelected = false
             
@@ -66,27 +67,18 @@ extension CalendarViewController {
             
         }.disposed(by: disposeBag)
         
-        bookMark.bind(to: tableView.rx.items(cellIdentifier: CalendarMarkCell.identifier, cellType: CalendarMarkCell.self)) { [weak self] row, model, cell in
+        viewModel.contentsList.bind(to: tableView.rx.items(cellIdentifier: CalendarMarkCell.identifier, cellType: CalendarMarkCell.self)) { [weak self] row, model, cell in
             guard let _ = self else { return }
-            cell.configUI(model.type)
-            cell.bookMarkTitle.text = model.contents
+            cell.configUI(model.hasWritten)
+            cell.bookMarkTitle.text = model.note
             cell.selectionStyle = .none
         }.disposed(by: disposeBag)
         
         tableView.rx.itemSelected.bind{ [weak self] indexPath in
             guard let self = self else { return }
             
-            self.viewModel.openDiaryViewController()
-            
+            self.viewModel.openDiaryViewController(self.viewModel.contentsList.value[indexPath.row])
         }.disposed(by: disposeBag)
         
-        addDiaryBtn.rx.tapGesture()
-            .when(.recognized)
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in
-                guard let self = self else { return }
-            
-                self.viewModel.openDiaryViewController()
-        }).disposed(by: disposeBag)
     }
 }

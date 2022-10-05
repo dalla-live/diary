@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 
 public struct CalendarViewModelAction {
-    let showDiaryVC : () -> Void
+    let showDiaryVC : (Bookmark) -> Void
 }
 
 protocol CalendarInput {
@@ -23,7 +23,8 @@ protocol CalendarInput {
 protocol CalendarOutput {
     var monthOfDate : BehaviorRelay<String> { get }
     var monthStruct : BehaviorRelay<[MonthStruct]> { get }
-    var contentsList : PublishRelay<DiaryList> { get }
+    var contentsList : BehaviorRelay<[Bookmark]> { get }
+    var bookmarkList : BehaviorRelay<BookmarkList> { get }
     var dateList : BehaviorRelay<[String]> { get }
 }
 
@@ -40,8 +41,9 @@ public class CalendarViewModel : CalendarInput , CalendarOutput {
     //Output
     var monthOfDate: BehaviorRelay<String> = .init(value: "")
     var monthStruct: BehaviorRelay<[MonthStruct]> = .init(value: [])
-    var contentsList : PublishRelay<DiaryList> = .init()
-    var dateList: BehaviorRelay<[String]> = .init(value: [])
+    var contentsList : BehaviorRelay<[Bookmark]> = .init(value: [])
+    var bookmarkList: BehaviorRelay<BookmarkList> = .init(value: BookmarkList() )
+    var dateList : BehaviorRelay<[String]> = .init(value: [])
     
     var model : Dependency      = .init()
     
@@ -53,32 +55,33 @@ public class CalendarViewModel : CalendarInput , CalendarOutput {
         self.action = action
     }
     
-    func openDiaryViewController() {
-        action.showDiaryVC()
+    func openDiaryViewController(_ bookmark : Bookmark) {
+        action.showDiaryVC(bookmark)
     }
     
     func getContentofList(date: String) {
         print("date :: \(date)")
         usecase.getListByDate(date) { [weak self] result in
             guard let self = self else { return }
-            
-            switch result {
-            case .success(let data):
-                self.contentsList.accept(data)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
+            self.contentsList.accept(result.bookmarks)
         }
     }
     
     func getMonth(month: String){
-        self.dateList.accept([])
+        self.bookmarkList.accept(BookmarkList())
+        var list : [String] = []
         
         usecase.getListByMonth(month) { [weak self] data in
             guard let self = self else { return }
-            print("month :: \(data)")
-            self.dateList.accept(data)
+            data.bookmarks.forEach{ data in
+                if !list.contains(data.date) {
+                    list.append(data.date)
+                }
+            }
+            self.bookmarkList.accept(data)
         }
+        
+        self.dateList.accept(list)
     }
     
     func getDate(date: Date) {
