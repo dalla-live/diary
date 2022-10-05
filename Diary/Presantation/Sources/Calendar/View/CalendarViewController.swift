@@ -11,11 +11,6 @@ import Util
 import RxSwift
 import RxCocoa
 
-struct testBookMark {
-    var type : CalendarType
-    var contents : String
-}
-
 public final class CalendarViewController : UIViewController, UITableViewDelegate {
     
     var calendarView = UIView().then {
@@ -62,14 +57,9 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
         $0.backgroundColor = .white
     }
     
-    var addDiaryBtn = UIButton().then {
-        $0.setImage(UIImage(systemName: "plus.circle"), for: .normal)
-        $0.tintColor = .black
-    }
-    
     var tableView = UITableView().then{
         $0.backgroundColor = .white
-        $0.isScrollEnabled = false
+        $0.isScrollEnabled = true
         $0.rowHeight = 50
         $0.separatorInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
         $0.register(CalendarMarkCell.self, forCellReuseIdentifier: "CalendarMarkCell")
@@ -78,9 +68,7 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
     var viewModel : CalendarViewModel!
     var visibleDateInfo : Date = Date()
     var lastSelectedIndexPath : IndexPath?
-    
-    var bookMark : BehaviorRelay<[testBookMark]> = .init(value: [])
-    
+
     var disposeBag : DisposeBag = DisposeBag()
     
     public static func create(with viewModel: CalendarViewModel) -> CalendarViewController {
@@ -97,12 +85,6 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
         setConstraint()
         bind()
         addGesture()
-        
-        let testArr : [testBookMark] = [testBookMark(type: .Diary, contents: "다이어리1"),
-                                         testBookMark(type: .Diary, contents: "다이어리이이이이"),
-                                         testBookMark(type: .BookMark, contents: "북마크크"),
-                                        testBookMark(type: .Diary, contents: "다이어리2")]
-        bookMark.accept(testArr)
     }
     
     private func configWeekStackView() {
@@ -122,7 +104,7 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
     
     func setUI() {
         view.backgroundColor = .white
-        [calendarView, markView, addDiaryBtn].forEach{ self.view.addSubview($0) }
+        [calendarView, markView].forEach{ self.view.addSubview($0) }
         [monthOfDate, weekStackView, collectionView].forEach{ calendarView.addSubview($0)}
         
         [monthLabel, prevButton, nextButton].forEach{ monthOfDate.addSubview($0)}
@@ -180,19 +162,13 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
             $0.left.right.equalToSuperview()
         }
         
-        addDiaryBtn.snp.makeConstraints{
-            $0.top.equalTo(calendarView.snp.bottom).offset(20)
-            $0.right.equalToSuperview().offset(-16)
-            $0.width.height.equalTo(40)
-        }
-        
         markView.snp.makeConstraints{
-            $0.top.equalTo(addDiaryBtn.snp.bottom).offset(5)
+            $0.top.equalTo(calendarView.snp.bottom).offset(20)
             $0.left.right.bottom.equalToSuperview()
         }
     
         tableView.snp.makeConstraints{
-            $0.top.equalTo(addDiaryBtn.snp.bottom).offset(10)
+            $0.top.equalTo(calendarView.snp.bottom).offset(20)
             $0.left.right.bottom.equalToSuperview()
         }
     }

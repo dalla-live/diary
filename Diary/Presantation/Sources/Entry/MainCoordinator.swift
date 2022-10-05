@@ -15,8 +15,9 @@ import Util
 
 public protocol MainCoordinatorDependencies {
     func makeBookmarkCoordinator(navigationController: UINavigationController)-> BookmarkCoordinator
-    func makeMapCoordinator(navigationController: UINavigationController)-> MapCoordinator
+    func makePlaceCoordinator(navigationController: UINavigationController)-> PlaceCoordinator
     func makeDiaryCoordinator(navigationController: UINavigationController)-> DiaryCoordinator
+    func makeVideoCoordinator(navigationController: UINavigationController)-> VideoCoordinator
 }
 
 public class MainCoordinator: Coordinator {
@@ -56,11 +57,13 @@ public class MainCoordinator: Coordinator {
         let vc1 = getNavigation()
         let vc2 = getNavigation()
         let vc3 = getNavigation()
+        let vc4 = getNavigation()
         
         let bookMarkCoordinator = dependencies.makeBookmarkCoordinator(navigationController: vc1)
-        let mapCoordinator      = dependencies.makeMapCoordinator(navigationController: vc2)
+        let mapCoordinator      = dependencies.makePlaceCoordinator(navigationController: vc2)
             mapCoordinator.coordinator = self
         let diaryCoordinator    = dependencies.makeDiaryCoordinator(navigationController: vc3)
+        let videoCoordinator    = dependencies.makeVideoCoordinator(navigationController: vc4)
         
         var image: (deselected: UIImage?, selected: UIImage?) {
             if #available(iOS 15.0, *) {
@@ -73,18 +76,20 @@ public class MainCoordinator: Coordinator {
         vc1.tabBarItem = UITabBarItem(title: TabMenu.bookMark.title, image: UIImage(systemName: "bookmark"), selectedImage: UIImage(systemName: "bookmark.fill"))
         vc2.tabBarItem = UITabBarItem(title: TabMenu.map.title, image: image.deselected, selectedImage: image.selected)
         vc3.tabBarItem = UITabBarItem(title: TabMenu.diary.title, image: UIImage(systemName: "pencil.circle"), selectedImage: UIImage(systemName: "pencil.circle.fill"))
+        vc4.tabBarItem = UITabBarItem(title: TabMenu.video.title, image: UIImage(systemName: "video"), selectedImage: UIImage(systemName: "video.fill"))
         
         
         
-        childCoordinator = [bookMarkCoordinator, mapCoordinator, diaryCoordinator]
+        childCoordinator = [bookMarkCoordinator, mapCoordinator, diaryCoordinator, videoCoordinator]
         
-        coordinator.viewControllers = [vc1, vc2, vc3]
+        coordinator.viewControllers = [vc1, vc2, vc3, vc4]
         coordinator.modalPresentationStyle = .fullScreen
         coordinator.selectedIndex          = 1
         
         bookMarkCoordinator.start()
         mapCoordinator.start()
         diaryCoordinator.start()
+        videoCoordinator.start()
     }
 }
 class TestSubView: UIView {

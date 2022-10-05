@@ -10,6 +10,7 @@ import Then
 import SnapKit
 import RxCocoa
 import RxSwift
+import Domain
 
 // 디자인 소스 분리 테스트..
 //  맵 뷰컨 레이아웃 부분을 따로 뗀것
@@ -76,7 +77,14 @@ struct MapLayoutModel {
     let _NAVER_MAP_CONTAINER        = UIView(frame: .zero).then {
         $0.backgroundColor = .clear
     }
-
+    
+    let _NAVER_MAP_ADDRESS_LABEL    = UILabel(frame: .zero).then{
+        $0.backgroundColor = .clear
+        $0.font = UIFont.systemFont(ofSize: 15, weight: .bold)
+        $0.text = "주소"
+        $0.textColor = .black
+    }
+    
     let _BUTTON_CONTAINER            = UIView(frame: .zero).then{
         $0.backgroundColor = .clear
     }
@@ -116,8 +124,7 @@ struct MapLayoutModel {
     
     
     let _QUICK_LIST = UIView(frame: .zero).then{
-        $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0.2).cgColor
-//        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0).cgColor
         $0.isUserInteractionEnabled = true
     }
     
@@ -136,7 +143,7 @@ struct MapLayoutModel {
     
     
     let _BOOK_MARK_TOOL_TIP     = UIView(frame: .zero).then{
-        $0.backgroundColor = .red
+        $0.backgroundColor = .darkGray.withAlphaComponent(0.5)
         $0.isUserInteractionEnabled = true
         $0.isHidden = true
     }
@@ -330,12 +337,60 @@ struct MapLayoutModel {
             $0.right.equalToSuperview()
             $0.top.equalTo(container.safeAreaLayoutGuide)
         }
+        
+//        _NAVER_MAP_ADDRESS_LABEL.snp.makeConstraints{
+//            $0.top.equalTo(_SUBMENU_SEGMENT.snp.bottom).offset(15)
+//            $0.left.equalToSuperview().offset(16)
+//        }
     }
     
+    func setToolTipWith(weather: Weather?){
+        _BOOK_MARK_TOOL_TIP.subviews.forEach{$0.removeFromSuperview()}
+        
+        let view = EmoticonView()
+            view.emotionLabel.text = weather?.weather.emoticon
+        
+        _BOOK_MARK_TOOL_TIP.addSubview(view)
+
+        view.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        _BOOK_MARK_TOOL_TIP.isHidden = false
+    }
+    
+    func setToolTipWith(weather: Weather?, mood: Mood?) {
+        _BOOK_MARK_TOOL_TIP.subviews.forEach{$0.removeFromSuperview()}
+        
+        let weatherView = EmoticonView()
+        let moodView = EmoticonView()
+        
+        weatherView.emotionLabel.text = weather?.weather.emoticon
+        moodView.emotionLabel.text = mood?.mood.emoticon
+        
+        _BOOK_MARK_TOOL_TIP.addSubview(weatherView)
+        _BOOK_MARK_TOOL_TIP.addSubview(moodView)
+        
+        weatherView.snp.makeConstraints{
+            $0.width.equalToSuperview().dividedBy(2)
+            $0.left.top.bottom.equalToSuperview()
+        }
+        
+        moodView.snp.makeConstraints{
+            $0.width.equalToSuperview().dividedBy(2)
+            $0.right.top.bottom.equalToSuperview()
+        }
+        _BOOK_MARK_TOOL_TIP.isHidden = false
+    }
     
     func setTransformAction(toOriginX: CGFloat, state: UIGestureRecognizer.State,  isFirst: inout Bool) {
         switch state {
         case .ended:
+            if let row = _QUICK_LIST_TABLE.indexPathForSelectedRow, let cell = _QUICK_LIST_TABLE.cellForRow(at: row) {
+                UIView.animate(withDuration: 0.3 , delay: 0, animations: {
+                    cell.transform = .identity
+                })
+                _QUICK_LIST_TABLE.deselectRow(at: row, animated: true)
+            }
             
 //            // 열린다면
 //            if toOriginX != 0 {

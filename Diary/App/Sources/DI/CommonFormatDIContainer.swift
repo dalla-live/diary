@@ -11,6 +11,9 @@ import Repository
 import Presantation
 import UIKit
 
+
+
+
 final class CommonFormatDIContainer {
     
     // MARK: - Persistent Storage
@@ -49,10 +52,21 @@ final class CommonFormatDIContainer {
         return CommonFormatViewModel(commonFormatBookmarkUseCase: makeCommonUseCase())
     }
     
+    
+    // 클로져가 있는 경우
+    func makeCommonFormatViewModel(actions: CommonAction?) -> CommonFormatViewModel {
+        return CommonFormatViewModel(commonFormatBookmarkUseCase: makeCommonUseCase(), actions: actions)
+    }
+    
     // MARK: Coordinator
     func makeCommonFormatCoordinator(navigationController: UINavigationController) -> CommonFormatCoordinator {
         return CommonFormatCoordinator(navigation: navigationController, dependencies: self)
     }
+    
+    func makeCommonFormatController(type: Presantation.CommonFormatController.BehaviorType, actions: CommonAction, bookmark: Domain.Bookmark?) -> Presantation.CommonFormatController {
+        return CommonFormatController.create(viewModel: makeCommonFormatViewModel(actions: actions), with: type)
+    }
+    
 }
 
 extension CommonFormatDIContainer: CommonForrmatCoordinatorDependencies {

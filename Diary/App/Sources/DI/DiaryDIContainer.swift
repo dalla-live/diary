@@ -23,7 +23,7 @@ final class DiaryDIContainer {
     }
     
     func makeDiaryRepository()-> DiaryRepository {
-        return DiaryRepository()
+        return DiaryRepository(storage: BookmarkStorage())
     }
     
     // MARK: Usecase
@@ -48,9 +48,10 @@ final class DiaryDIContainer {
     }
     
     // MARK: ViewModel
-    func makeWriteDiaryViewModel() -> WriteDiaryViewModel {
+    func makeWriteDiaryViewModel(bookmark : Bookmark) -> WriteDiaryViewModel {
         return WriteDiaryViewModel(weatherUsecase: makeRequestCurrentWeatherUsecase(),
-                                   updateDiaryUsecase: makeUpdateDiaryUseCase())
+                                   updateDiaryUsecase: makeUpdateDiaryUseCase(),
+                                   bookmark : bookmark)
     }
     
     func makeCalendarViewModel(action : CalendarViewModelAction) -> CalendarViewModel {
@@ -70,8 +71,8 @@ final class DiaryDIContainer {
 
 extension DiaryDIContainer: DiaryCoordinatorDependencies {
 
-    func makeWriteDiaryViewController(coordinator: DiaryCoordinator) -> WriteDiaryViewController {
-        return WriteDiaryViewController.create(viewModel: makeWriteDiaryViewModel(), coordinator: coordinator, speechRecognizer: makeSpeechRecognizer())
+    func makeWriteDiaryViewController(coordinator: DiaryCoordinator, bookmark : Bookmark ) -> WriteDiaryViewController {
+        return WriteDiaryViewController.create(viewModel: makeWriteDiaryViewModel(bookmark: bookmark), coordinator: coordinator, speechRecognizer: makeSpeechRecognizer())
     }
     
     func makeCalenderViewController(action : CalendarViewModelAction) -> CalendarViewController {

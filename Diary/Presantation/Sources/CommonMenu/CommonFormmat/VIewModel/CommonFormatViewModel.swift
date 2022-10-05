@@ -9,6 +9,10 @@ import Foundation
 import Domain
 import RxSwift
 
+public struct CommonAction {
+    var didSuccess: () -> Void
+}
+
 
 protocol CommonFormatViewModelInput {
     var type: CommonFormatController.BehaviorType { get }
@@ -34,11 +38,18 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
     }
     
     var type: CommonFormatController.BehaviorType
+    var actions: CommonAction?
     
     let location = BehaviorSubject<Location>(value: Location(lat: 0, lon: 0, address: ""))
     
     public init(commonFormatBookmarkUseCase: CommonFormatBookmarkUseCase) {
         self.commonFormatUseCase = commonFormatBookmarkUseCase
+        self.type = .bookmarkAdd
+    }
+    
+    public init(commonFormatBookmarkUseCase: CommonFormatBookmarkUseCase, actions: CommonAction?) {
+        self.commonFormatUseCase = commonFormatBookmarkUseCase
+        self.actions = actions
         self.type = .bookmarkAdd
     }
     
@@ -66,6 +77,7 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
             switch result {
             case .success(let success):
                 print(success.id)
+                self.actions?.didSuccess()
             case .failure(let error):
                 print(error)
             }

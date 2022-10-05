@@ -27,6 +27,15 @@ public struct Bookmark {
         self.hasWritten = hasWritten
         self.note       = note
     }
+    public init() {
+        self.id = 0
+        self.mood = .init(mood: .angry)
+        self.weather = .init(weather: .clear)
+        self.date = ""
+        self.location = .init(lat: 0, lon: 0)
+        self.hasWritten = false
+        self.note = ""
+    }
 }
 
 public struct BookmarkList {
@@ -35,6 +44,11 @@ public struct BookmarkList {
     public init(bookmarks: [Bookmark], hasNext: Bool) {
         self.bookmarks = bookmarks
         self.hasNext = hasNext
+    }
+    
+    public init() {
+        self.bookmarks = []
+        self.hasNext = false
     }
 }
 
@@ -73,6 +87,17 @@ public struct Mood {
         self.mood = mood
     }
     
+    public init(emoticon: String) {
+        switch emoticon {
+            case  "😀": self.mood = .happy
+            case  "😢": self.mood = .sad
+            case  "😡": self.mood = .angry
+            case  "🤩": self.mood = .amazed
+            case  "☺️": self.mood = .shameful
+            default : self.mood = .happy
+        }
+    }
+    
     public init(string mood: String) {
         var moodCase: MoodCase {
             switch mood {
@@ -97,5 +122,11 @@ public struct Location {
         self.lat     = lat
         self.lon     = lon
         self.address = address
+    }
+    
+    public init(lat: Double, lon: Double) {
+        self.lat = lat
+        self.lon = lon
+        self.address = ""
     }
 }
