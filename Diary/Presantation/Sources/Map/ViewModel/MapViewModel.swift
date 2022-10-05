@@ -17,6 +17,9 @@ import Service
 import GoogleMapsUtils
 import GoogleMaps
 
+protocol NaverMapProtocol {
+    func reqNaverMapAddress(_ loc : Location)
+}
 //struct MapUseCases {
 //    var
 //}
@@ -145,3 +148,12 @@ extension MapViewModel: MapViewModelInput{
 //    }
 }
 
+extension MapViewModel : NaverMapProtocol {
+    func reqNaverMapAddress(_ loc : Location) {
+        mapUseCase.reqNaverMapAddress(location: loc, completion: { result in
+            
+            print("\(#function):\(result)")
+            
+        })
+    }
+}

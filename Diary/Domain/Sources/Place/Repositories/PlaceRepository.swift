@@ -8,22 +8,7 @@
 import Foundation
 
 
-
-public protocol PlaceRepository {
+public protocol PlaceRepositoryProtocol {
     func fetchList()
-}
-
-
-// repository project로 이동 할예정
-public class PlaceRepositoryProvider: PlaceRepository {
-    public init() {
-        
-    }
-    public func fetchList() {
-        
-    }
-    
-    
-
-
+    func requestAddress(request: Location , completion : @escaping (Result<String, Error>) -> Void)
 }

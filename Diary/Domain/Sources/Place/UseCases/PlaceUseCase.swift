@@ -24,13 +24,13 @@ public struct SearchPlaceRequestModel {
     var limit: Int = 1
 }
 
-public protocol PlaceUseCase : SearchPlaceUseCase,  AddPlaceUseCase, UpdatePlaceUseCase, DeletePlaceUseCase{
+public protocol PlaceUseCase : SearchPlaceUseCase,  AddPlaceUseCase, UpdatePlaceUseCase, DeletePlaceUseCase, GetPlaceUseCase{
 //    func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void)
 }
 
 public class MapUseCaseProvider: PlaceUseCase {
     
-    private let placeRepository: PlaceRepository!
+    private let placeRepository: PlaceRepositoryProtocol!
     
     func excute(completion: @escaping (BookmarkList) -> Void) {
         
@@ -61,6 +61,12 @@ public class MapUseCaseProvider: PlaceUseCase {
         
     }
     
+    public func reqNaverMapAddress(location : Location, completion: @escaping (Result<String, Error>) -> Void) {
+        placeRepository.requestAddress(request: location, completion: { result in
+            print("result")
+        })
+    }
+    
     
     
 //    public func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void) {
@@ -81,7 +87,7 @@ public class MapUseCaseProvider: PlaceUseCase {
 //        }
 //    }
     
-    public init(placeRepo: PlaceRepository) {
+    public init(placeRepo: PlaceRepositoryProtocol) {
         self.placeRepository = placeRepo
     }
 }

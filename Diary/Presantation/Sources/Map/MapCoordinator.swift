@@ -13,7 +13,7 @@ import RxGesture
 import Util
 import Domain
 import Service
-
+import Repository
 
 public protocol MapViewDelegate: AnyObject {
     func openMapViewEdit()
@@ -43,7 +43,7 @@ public class MapCoordinator: Coordinator {
     func getMapViewModel() -> MapViewModel {
         
         let mapViewModel    = MapViewModel(
-            mapUseCase: MapUseCaseProvider(placeRepo: PlaceRepositoryProvider()))
+            mapUseCase: MapUseCaseProvider(placeRepo: PlaceRepository()))
         return mapViewModel
     }
     
