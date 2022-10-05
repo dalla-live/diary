@@ -25,6 +25,11 @@ final class MainDIContainer {
 }
 
 extension MainDIContainer: MainCoordinatorDependencies {
+    func makePlaceCoordinator(navigationController: UINavigationController) -> Presantation.PlaceCoordinator {
+        let diContainer = PlaceDIContainer()
+        return diContainer.makePlaceCoordinator(navigationController: navigationController)
+    }
+    
     func makeBookmarkCoordinator(navigationController: UINavigationController) -> BookmarkCoordinator {
         let diContainer = BookmarkDIContainer()
         return diContainer.makeBookmarkCoordinator(navigationController: navigationController)
@@ -33,9 +38,5 @@ extension MainDIContainer: MainCoordinatorDependencies {
     func makeDiaryCoordinator(navigationController: UINavigationController) -> DiaryCoordinator {
         let diContainer = DiaryDIContainer()
         return diContainer.makeDiaryCoordinator(navigationController: navigationController)
-    }
-    
-    func makeMapCoordinator(navigationController: UINavigationController) -> MapCoordinator {
-        return MapCoordinator(navigation: navigationController)
     }
 }

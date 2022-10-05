@@ -15,11 +15,11 @@ import Service
 import GooglePlaces
 import Util
 
-class PlaceViewController: UIViewController {
+public class PlaceViewController: UIViewController {
     
-    var coordinator: MapViewDelegate?
+    var coordinator: PlaceDelegate?
     var disposeBag: DisposeBag = .init()
-    var viewModel : MapViewModel
+    var viewModel : PlaceViewModel
     var mapService : (any MapService)?
     
     var googleService: (any MapService)?
@@ -32,11 +32,11 @@ class PlaceViewController: UIViewController {
      }()
     
     
-    init ( dependency: MapViewModel) {
+    public init ( dependency: PlaceViewModel ) {
         self.viewModel = dependency
         super.init(nibName: nil, bundle: nil)
-        self.googleService   = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
-        self.naverService   = NaverMapServiceProvider(service:  GPSLocationServiceProvider(), delegate: nil)
+        self.googleService = GoogleMapServiceProvider(service: GPSLocationServiceProvider(), delegate: self)
+        self.naverService  = NaverMapServiceProvider(service:  GPSLocationServiceProvider(), delegate: nil)
         GMSPlacesClient.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
         GMSServices.provideAPIKey("AIzaSyCufAiUM6o1EKSLquAZtZGa8WVRgr2iEiY")
     }
@@ -56,20 +56,19 @@ class PlaceViewController: UIViewController {
         
         self.viewModel.viewDidLoad()
         
-        
         bindToViewModel()
         btnBind()
-        layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
-        self.mapService = googleService
-        bindToViewModel()
         
-        self.viewModel.didLoadList(startLocation: .init(latitude: 0, longitude: 0), endLocation: .init(latitude: 1, longitude: 1))
+        layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
+        self.mapService                                   = googleService
+        
+        bindToViewModel()
     }
     
     public func bindToViewModel() {
-        
         self.viewModel.didItemLoaded.subscribe(onNext: { [weak self] isLoaded in
             self?.layoutModel._QUICK_LIST_TABLE.reloadData()
+            Log.d("reloaded")
         }).disposed(by: disposeBag)
     }
     
@@ -85,7 +84,7 @@ class PlaceViewController: UIViewController {
     
     func setLayout() {
         guard let googleView = googleService?.getMapView() as? UIView else { return }
-        guard let naverView = naverService?.getMapView() as? UIView else { return }
+        guard let naverView  = naverService?.getMapView() as? UIView else { return }
         
         layoutModel._MAP_CONTAINER.addSubview(googleView)
         layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView)
@@ -93,7 +92,7 @@ class PlaceViewController: UIViewController {
     
     func setConstraint() {
         guard let googleView = googleService?.getMapView() as? UIView else { return }
-        guard let naverView = naverService?.getMapView() as? UIView else { return }
+        guard let naverView  = naverService?.getMapView() as? UIView else { return }
         
         layoutModel._MAP_CONTENT_CONTAINER.snp.makeConstraints{
             $0.edges.equalToSuperview()
@@ -114,7 +113,7 @@ class PlaceViewController: UIViewController {
         layoutModel.setConstraint(container: self.view)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
     
@@ -135,7 +134,6 @@ class PlaceViewController: UIViewController {
             .throttle(.microseconds(500), latest: false, scheduler: MainScheduler.instance)
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
-                print("add tap \(self?.coordinator)")
                 self?.coordinator?.openMapViewEdit()
             })
             .disposed(by: disposeBag)
@@ -255,31 +253,32 @@ class PlaceViewController: UIViewController {
 
 extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
     
-     func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+     public func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
 //         print("place \(place.coordinate)")
          self.googleService?.setLocation(position: place.coordinate)
        dismiss(animated: true, completion: nil)
      }
 
-     func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+    public func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
        // TODO: handle the error.
        print("Error: ", error.localizedDescription)
      }
 
      // User canceled the operation.
-     func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+    public func wasCancelled(_ viewController: GMSAutocompleteViewController) {
        dismiss(animated: true, completion: nil)
      }
 
      // Turn the network activity indicator on and off again.
-     func didRequestAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+    public func didRequestAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
 //       UIApplication.shared.isNetworkActivityIndicatorVisible = true
      }
 
-     func didUpdateAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
+    public func didUpdateAutocompletePredictions(_ viewController: GMSAutocompleteViewController) {
 //       UIApplication.shared.isNetworkActivityIndicatorVisible = false
      }
 }
+
 extension PlaceViewController : GMSMapViewDelegate {
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         layoutModel._BOOK_MARK_TOOL_TIP.isHidden = true
@@ -323,11 +322,11 @@ extension PlaceViewController: UITableViewDelegate {
 }
 
 extension PlaceViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.mapData.count
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         guard let setLocation = self.mapService else {
             return
@@ -339,7 +338,7 @@ extension PlaceViewController: UITableViewDataSource {
         })
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell                      = UITableViewCell()
        
@@ -349,7 +348,7 @@ extension PlaceViewController: UITableViewDataSource {
             var content                           = cell.defaultContentConfiguration()
 
             let row                               = viewModel.mapData[indexPath.row]
-                content.text                      = row.date + " " + row.distance
+                content.text                      = row.date + " " + row.location.address
                 content.textProperties.color = .white.withAlphaComponent(0.5)
             
             let containerView                     = content.makeContentView()
@@ -358,14 +357,14 @@ extension PlaceViewController: UITableViewDataSource {
                     $0.edges.equalToSuperview()
                 }
             
-            var backgroundConfig = UIBackgroundConfiguration.listPlainCell()
-                backgroundConfig.backgroundColor = UIColor(r: 51, g: 51, b: 51)
-                backgroundConfig.cornerRadius = 5
+            var backgroundConfig                  = UIBackgroundConfiguration.listPlainCell()
+                backgroundConfig.backgroundColor  = UIColor(r: 51, g: 51, b: 51)
+                backgroundConfig.cornerRadius     = 5
                 backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 5, leading: 5, bottom: 5, trailing: 5)
-                cell.backgroundConfiguration = backgroundConfig
+                cell.backgroundConfiguration      = backgroundConfig
         } else {
             // Fallback on earlier versions
-            cell.textLabel?.text = viewModel.mapData[indexPath.row].contents
+            cell.textLabel?.text = viewModel.mapData[indexPath.row].note
         }
             
 

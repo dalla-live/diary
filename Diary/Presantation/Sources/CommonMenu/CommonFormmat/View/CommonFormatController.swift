@@ -424,11 +424,14 @@ public class CommonFormatController: UIViewController {
         
         storeButton.rx.tap
             .bind { [weak self] in
+                
+                guard let map = self?.mapView else { return }
+                
                 self?.viewModel?.didTapStore(bookmark: Bookmark(id: 0,
                                                                 mood: Mood(mood: .amazed),
                                                                 weather: Weather(weather: .clear),
                                                                 date: "2022.09.30",
-                                                                location: Location(lat: 0, lon: 0, address: ""),
+                                                                location: Location(lat: map.camera.target.latitude, lon: map.camera.target.longitude, address: ""),
                                                                 hasWritten: false,
                                                                 note: ""))
             }

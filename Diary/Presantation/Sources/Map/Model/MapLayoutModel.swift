@@ -116,8 +116,7 @@ struct MapLayoutModel {
     
     
     let _QUICK_LIST = UIView(frame: .zero).then{
-        $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0.2).cgColor
-//        $0.backgroundColor = UIColor.white.withAlphaComponent(0.2)
+        $0.layer.backgroundColor = UIColor.white.withAlphaComponent(0).cgColor
         $0.isUserInteractionEnabled = true
     }
     

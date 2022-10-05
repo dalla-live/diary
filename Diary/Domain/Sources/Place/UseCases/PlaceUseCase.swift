@@ -10,7 +10,7 @@ import CoreLocation
 //import Service
 import UIKit
 
-public enum MapUseCaseRequestWrapper {
+public enum PlaceUseCaseRequestWrapper {
     case add(entity: PlaceEntity)
     case update(entity: PlaceEntity)
     case deleteBy(id: String)
@@ -25,31 +25,38 @@ public struct SearchPlaceRequestModel {
 }
 
 public protocol PlaceUseCase : SearchPlaceUseCase,  AddPlaceUseCase, UpdatePlaceUseCase, DeletePlaceUseCase{
-//    func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void)
 }
 
-public class MapUseCaseProvider: PlaceUseCase {
+public class PlaceUseCaseProvider: PlaceUseCase {
     
-    private let placeRepository: PlaceRepository!
+    private let placeRepository: PlaceRepositoryProtocol!
+    
+    
+    
+    public init(placeRepo: PlaceRepositoryProtocol) {
+        self.placeRepository = placeRepo
+    }
     
     func excute(completion: @escaping (BookmarkList) -> Void) {
         
     }
     
-    public func search(requestVo: SearchPlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
-//        switch requestVo.type {
-//        case .byId(id: let idd) :
-//
-//            break
-//        case .list:
-//            break
-//        case .byPlace(name: let namee ):
-//            break
-//        }
-            
+    public func search(requestVo: SearchPlaceReqValue, completion: @escaping (Result<BookmarkList, Error>) -> Void) {
+        switch requestVo.type {
+        case .all:
+            self.placeRepository.fetchBookmarkList(query: requestVo.type, page: 0) { list in
+                completion(.success(list))
+            }
+        case .month(_):
+            print("mon")
+        case .id(_):
+            print("id")
+        case .location(_, _):
+            print("lo")
+        }
     }
     
-    public func add(requestVo: AddUpdatePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
+    public func add(requestVo: SearchPlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
         
     }
     
@@ -59,30 +66,6 @@ public class MapUseCaseProvider: PlaceUseCase {
     
     public func delete(requestVo: DeletePlaceReqValue, completion: @escaping (Result<PlacePage, Error>) -> Void) {
         
-    }
-    
-    
-    
-//    public func excute(requestModel: MapUseCaseRequestWrapper, completion: @escaping (Result<PlacePage, Error>) -> Void) {
-//        switch requestModel {
-//
-//        case .add(entity: let entity):
-//            <#code#>
-//        case .update(entity: let entity):
-//            <#code#>
-//        case .deleteBy(id: let id):
-//            <#code#>
-//        case .select(isAll: let isAll, page: let page):
-//            <#code#>
-//        case .selectBy(id: let id):
-//            <#code#>
-//        case .searchBy(placeName: let placeName):
-//            <#code#>
-//        }
-//    }
-    
-    public init(placeRepo: PlaceRepository) {
-        self.placeRepository = placeRepo
     }
 }
 
