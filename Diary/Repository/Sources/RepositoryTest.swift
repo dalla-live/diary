@@ -43,6 +43,16 @@ public class RepositoryTest {
         //            }
         //        })
         
+        // MARK: VideoSubtitle
+        //        VideoSubtitleAPI.requestVideoSubtitle(request: VideoSubtitleDTO(media: urlrrl, params: VideoReqInfo())) { (result) in
+        //            switch result {
+        //            case .success(let model):
+        //                Log.d(model)
+        //            case .failure(let error):
+        //                Log.e(error)
+        //            }
+        //        }
+        
         // MARK: RealmTestCode
         let repo = BookmarkRepository(storage: BookmarkStorage())
         //        repo.fetchBookmarkList(query: .month("2022.11"), page: 0, completion: {
