@@ -18,22 +18,83 @@ PODS:
     - GoogleMaps
   - Google-Maps-iOS-Utils/QuadTree (4.1.0):
     - GoogleMaps
+  - GoogleDataTransport (9.2.0):
+    - GoogleUtilities/Environment (~> 7.7)
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+    - PromisesObjC (< 3.0, >= 1.2)
   - GoogleMaps (4.1.0):
     - GoogleMaps/Maps (= 4.1.0)
   - GoogleMaps/Base (4.1.0)
   - GoogleMaps/Maps (4.1.0):
     - GoogleMaps/Base
+  - GoogleMLKit/MLKitCore (3.2.0):
+    - MLKitCommon (~> 8.0.0)
+  - GoogleMLKit/Translate (3.2.0):
+    - GoogleMLKit/MLKitCore
+    - MLKitTranslate (~> 2.2.0)
   - GooglePlaces (7.1.0)
+  - GoogleToolboxForMac/DebugUtils (2.3.2):
+    - GoogleToolboxForMac/Defines (= 2.3.2)
+  - GoogleToolboxForMac/Defines (2.3.2)
+  - GoogleToolboxForMac/Logger (2.3.2):
+    - GoogleToolboxForMac/Defines (= 2.3.2)
+  - "GoogleToolboxForMac/NSData+zlib (2.3.2)":
+    - GoogleToolboxForMac/Defines (= 2.3.2)
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.3.2)":
+    - GoogleToolboxForMac/DebugUtils (= 2.3.2)
+    - GoogleToolboxForMac/Defines (= 2.3.2)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.3.2)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.3.2)"
+  - GoogleToolboxForMac/StringEncoding (2.3.2):
+    - GoogleToolboxForMac/Defines (= 2.3.2)
+  - GoogleUtilities/Environment (7.8.0):
+    - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleUtilities/Logger (7.8.0):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/UserDefaults (7.8.0):
+    - GoogleUtilities/Logger
+  - GoogleUtilitiesComponents (1.1.0):
+    - GoogleUtilities/Logger
+  - GTMSessionFetcher/Core (1.7.2)
+  - MLKitCommon (8.0.0):
+    - GoogleDataTransport (~> 9.0)
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - GoogleUtilities/UserDefaults (~> 7.0)
+    - GoogleUtilitiesComponents (~> 1.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - Protobuf (~> 3.12)
+  - MLKitNaturalLanguage (4.2.0):
+    - GoogleToolboxForMac/Logger (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
+    - GoogleToolboxForMac/StringEncoding (~> 2.1)
+    - GTMSessionFetcher/Core (~> 1.1)
+    - MLKitCommon (~> 8.0)
+    - Protobuf (~> 3.12)
+  - MLKitTranslate (2.2.0):
+    - MLKitNaturalLanguage (~> 4.2)
+    - SSZipArchive (~> 2.1)
+  - nanopb (2.30909.0):
+    - nanopb/decode (= 2.30909.0)
+    - nanopb/encode (= 2.30909.0)
+  - nanopb/decode (2.30909.0)
+  - nanopb/encode (2.30909.0)
   - NMapsMap (3.16.0)
+  - PromisesObjC (2.1.1)
+  - Protobuf (3.21.7)
   - Realm (10.29.0):
     - Realm/Headers (= 10.29.0)
   - Realm/Headers (10.29.0)
   - RealmSwift (10.29.0):
     - Realm (= 10.29.0)
+  - SSZipArchive (2.4.3)
 
 DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - GoogleMaps
+  - GoogleMLKit/Translate (= 3.2.0)
   - GooglePlaces (= 7.1.0)
   - NMapsMap
   - RealmSwift
@@ -41,20 +102,46 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Google-Maps-iOS-Utils
+    - GoogleDataTransport
     - GoogleMaps
+    - GoogleMLKit
     - GooglePlaces
+    - GoogleToolboxForMac
+    - GoogleUtilities
+    - GoogleUtilitiesComponents
+    - GTMSessionFetcher
+    - MLKitCommon
+    - MLKitNaturalLanguage
+    - MLKitTranslate
+    - nanopb
     - NMapsMap
+    - PromisesObjC
+    - Protobuf
     - Realm
     - RealmSwift
+    - SSZipArchive
 
 SPEC CHECKSUMS:
   Google-Maps-iOS-Utils: 3343332b18dfd5be8f1f44edd7d481ace3da4d9a
+  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleMaps: 008e2c80e38605b56b560e8deb73d4194ff30bef
+  GoogleMLKit: 0017a6a8372e1a182139b9def4d89be5d87ca5a7
   GooglePlaces: 187946335ec3dc624de71c0a9ddcc712f19b0ee1
+  GoogleToolboxForMac: 8bef7c7c5cf7291c687cf5354f39f9db6399ad34
+  GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
+  GoogleUtilitiesComponents: 679b2c881db3b615a2777504623df6122dd20afe
+  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
+  MLKitCommon: f6da6c5659618c070b50a80db01248ebe2964175
+  MLKitNaturalLanguage: 3350ebe7436046cd3146b8df9a2e06d6ba7a6439
+  MLKitTranslate: e2998053668911b4de2cebe5ce072fd035189686
+  nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   NMapsMap: a2593320fca2bb09e521c05b4dffee4da42e96ed
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
+  Protobuf: f4128517d7a42302e106cc3afe614ee3a7513e94
   Realm: 5596770daeff1ad76c8eb10d5947dc10472da779
   RealmSwift: 35d8d318b7e5a8dbc7096c2a243184e4d19abcc0
+  SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
 
-PODFILE CHECKSUM: b6d9e65fcb13f7630b20a8f9a32a63fe8a4f14ce
+PODFILE CHECKSUM: f05112f028884bcd67edbf09c6d68396b234261f
 
 COCOAPODS: 1.11.3
