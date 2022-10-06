@@ -40,4 +40,5 @@ public extension Package {
     static let swiftyJson: Package    = .remote(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", requirement: .upToNextMajor(from: "4.0.0"))
     static let toast: Package         = .remote(url: "https://github.com/scalessec/Toast-Swift", requirement: .branch("master"))
 //    static let reSwift: Package       = .remote(url: "https://github.com/ReSwift/ReSwift.git", requirement: .upToNextMajor(from: "5.0.0"))
+    static let firebase: Package      = .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.0.0"))
 }

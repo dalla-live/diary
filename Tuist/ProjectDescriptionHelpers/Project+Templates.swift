@@ -111,5 +111,6 @@ public extension TargetDependency {
     static let swiftyJson: TargetDependency      = .external(name: "SwiftyJSON")
     static let toast: TargetDependency           = .external(name: "Toast")
 //    static let reSwift: TargetDependency         = .external(name: "ReSwift")
+    static let firebaseAnalytics: TargetDependency = .external(name: "FirebaseAnalytics")
 }
 
