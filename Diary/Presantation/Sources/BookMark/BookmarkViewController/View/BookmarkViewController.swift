@@ -8,6 +8,9 @@
 import Foundation
 import UIKit
 import RxSwift
+import Domain
+import CoreLocation
+import Util
 
 public final class BookmarkViewController: UIViewController {
     var coordinator: BookmarkCoordinator?
@@ -27,6 +30,11 @@ public final class BookmarkViewController: UIViewController {
         $0.setImage(UIImage(systemName: "plus.circle"), for: .normal)
     }
     
+    let updateBookmarkButton = UIButton().then {
+        $0.roundCorners(.allCorners, radius: 25)
+        $0.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
+    }
+    
     /// ViewController 의존성 주입을 위한 Create 함수
     public static func create(with viewModel: BookmarkViewModel)-> BookmarkViewController {
         let vc = BookmarkViewController()
@@ -40,6 +48,10 @@ public final class BookmarkViewController: UIViewController {
         
         commonInit()
         setBookmarkListView()
+        viewModel.viewDidload() {
+            self.bookmarkListView.bookmakrList = $0
+            self.bookmarkListView.listTableView.reloadData()
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
@@ -55,7 +67,8 @@ public final class BookmarkViewController: UIViewController {
     
     private func addComponent() {
         [bookmarkListTitle,
-         addBookmarkButton].forEach(view.addSubview)
+         addBookmarkButton,
+         updateBookmarkButton].forEach(view.addSubview)
     }
     
     private func setConstraints() {
@@ -69,16 +82,31 @@ public final class BookmarkViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(50)
         }
+        
+        updateBookmarkButton.snp.makeConstraints {
+            $0.top.height.equalTo(addBookmarkButton)
+            $0.trailing.equalTo(addBookmarkButton.snp.leading).offset(-16)
+        }
     }
     
     private func bind() {
         addBookmarkButton.rx.tap
+            .filter { [unowned self] _ in !bookmarkListView.listTableView.isDragging }
             .bind { [weak self] in
                 self?.coordinator?.presentCommonFormatViewController(type: .bookmarkAdd)
             }
             .disposed(by: disposeBag)
+        
+        updateBookmarkButton.rx.tap
+            .bind { [weak self] in
+                self?.viewModel.updateButtonTap() {
+                    self?.bookmarkListView.listTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                    self?.bookmarkListView.bookmakrList = $0
+                    self?.bookmarkListView.listTableView.reloadData()
+                }
+            }
+            .disposed(by: disposeBag)
     }
-    
     
     private func setBookmarkListView() {
         self.bookmarkListView = BookmarkListView()
