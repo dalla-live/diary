@@ -155,6 +155,9 @@ public class CommonFormatController: UIViewController {
         setLayout()
         bind()
         addNotification()
+        viewModel?.viewDidload(location: Location(lat: mapView.camera.target.latitude, lon: mapView.camera.target.longitude, address: "")) {
+            self.selectItem(for: self.weatherStackView, index: $0)
+        }
         viewModel?.viewDidload()
     }
     
@@ -424,18 +427,23 @@ public class CommonFormatController: UIViewController {
         
         storeButton.rx.tap
             .bind { [weak self] in
-                let date = DateFormatter()
-                    date.dateFormat = "yyyy.MM.d"
-
-                guard let map = self?.mapView else { return }
+                guard let mood = self?.getMood(),
+                      let weather = self?.getWeather(),
+                      let location = self?.mapView.camera.target else { return }
                 
-                self?.viewModel?.didTapStore(bookmark: Bookmark(id: 0,
-                                                                mood: Mood(emoticon: self?.moodTooltip.text ?? ""),
-                                                                weather: Weather(emoticon: self?.weatherTooltip.text ?? ""),
-                                                                date: date.string(from: Date()),
-                                                                location: Location(lat: map.camera.target.latitude, lon: map.camera.target.longitude, address: ""),
+                let placeholder = self?.noteTextView.viewWithTag(100) as? UILabel
+                let note = self?.noteTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count == 0 ? placeholder?.text: self?.noteTextView.text
+                
+                self?.viewModel?.didTapSave(bookmark: Bookmark(id: 0,
+                                                                mood: mood,
+                                                                weather: weather,
+                                                                date: CalendarHelper.shared.getDate(),
+                                                                location: Location(lat: location.latitude, lon: location.longitude, address: ""),
                                                                 hasWritten: false,
-                                                                note: self?.noteTextView.text ?? "메모 없음"))
+                                                                note: note ?? "")) { ResourceManager.shared.saveImage(imageNo: "\($0 - 1)", from: self?.mapView ?? UIView())
+                    
+                    self?.dismiss(animated: true)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -450,6 +458,23 @@ public class CommonFormatController: UIViewController {
     private func addNotification() {
         NotificationCenter.default.addObserver(self, selector: #selector(adjustOnKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(adjustOnKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func getWeather() -> Weather? {
+        guard let weatherText = weatherTooltip.text else { return nil }
+        
+        return Weather(emoticon: weatherText)
+    }
+    
+    private func getMood() -> Mood? {
+        guard let moodText = moodTooltip.text else {
+            moodView.shakeAnimation() {
+                self.view.makeToast("기분을 선택해주세요!")
+            }
+            return nil
+        }
+        
+        return Mood(emoticon: moodText)
     }
     
     deinit {

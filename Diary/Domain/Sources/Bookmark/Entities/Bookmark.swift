@@ -87,17 +87,6 @@ public struct Mood {
         self.mood = mood
     }
     
-    public init(emoticon: String) {
-        switch emoticon {
-            case  "😀": self.mood = .happy
-            case  "😢": self.mood = .sad
-            case  "😡": self.mood = .angry
-            case  "🤩": self.mood = .amazed
-            case  "☺️": self.mood = .shameful
-            default : self.mood = .happy
-        }
-    }
-    
     public init(string mood: String) {
         var moodCase: MoodCase {
             switch mood {
@@ -110,6 +99,10 @@ public struct Mood {
             }
         }
         self.mood = moodCase
+    }
+    
+    public init(emoticon mood: String) {
+        self.mood = MoodCase.allCases.filter { $0.emoticon == mood }.first ?? .happy
     }
 }
 

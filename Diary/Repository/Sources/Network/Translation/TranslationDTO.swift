@@ -13,4 +13,10 @@ public struct TranslationDTO: Codable {
     var source: String
     // 타겟 언어의 언어코드
     var target: String
+    
+    public init(text: String, source: String, target: String) {
+        self.text = text
+        self.source = source
+        self.target = target
+    }
 }

@@ -13,7 +13,7 @@ import RxSwift
 import CoreLocation
 
 public struct CommonAction {
-    var didSuccess: () -> Void
+    var didSuccess: (() -> Void)?
     var defaultLocation: Location?
 }
 
@@ -21,9 +21,11 @@ public struct CommonAction {
 protocol CommonFormatViewModelInput {
     var type: CommonFormatController.BehaviorType { get }
     func viewDidload()
+    func viewDidload(location: Location, completion: ((Weather.WeatherCase.RawValue) -> ())?)
+    
     func didChangeLocation()
     func didTapCancel()
-    func didTapStore(bookmark: Bookmark)
+    func didTapSave(bookmark: Bookmark, completion: ((Int) -> ())?)
 }
 
 protocol CommonFormatViewModelOutput {
@@ -58,15 +60,21 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
     }
     
     func viewDidload() {
-        // type에 따라서 분기처리해야함
-//        switch type {
-//        case .bookmarkAdd, .diaryAdd:
-//
-//        case .bookmarkEdit, .diaryEdit:
-//        }
         self.location = self.actions?.defaultLocation
         
         print("CommonFormatViewviewDidload \(self.actions?.defaultLocation)")
+    }
+    
+    func viewDidload(location: Location, completion: ((Weather.WeatherCase.RawValue) -> ())? = nil) {
+        commonFormatUseCase.weatherUsecase.excute(request: location) { result in
+            switch result {
+            case .success(let success):
+                guard let tag = Weather(english: success)?.weather.rawValue else { return }
+                completion?(tag)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
     
     func didChangeLocation() {
@@ -77,15 +85,18 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
 
     }
     
-    func didTapStore(bookmark: Bookmark) {
+    func didTapSave(bookmark: Bookmark, completion: ((Int) -> ())? = nil) {
         print(bookmark)
         self.commonFormatUseCase.addBookmarkUsecase.excute(bookmark: bookmark) { result in
             switch result {
             case .success(let success):
                 print(success.id)
-                self.actions?.didSuccess()
+                completion?(success.id)
+                self.actions?.didSuccess?()
+                completion?(success.id)
             case .failure(let error):
-                print(error)
+                print(error.localizedDescription)
+                completion?(-1)
             }
         }
     }

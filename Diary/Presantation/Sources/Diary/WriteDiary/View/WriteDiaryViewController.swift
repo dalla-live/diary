@@ -132,6 +132,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         
         self.speechRecognizer?.delegate = self
         self.view.backgroundColor = .white
+        addNotification()
     }
     
     public override func addComponent() {
@@ -294,6 +295,32 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         }
     }
     
+    private func addNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(adjustOnKeyboard), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(adjustOnKeyboard), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func adjustOnKeyboard(notification: NSNotification) {
+        guard let keyboardRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+              let keyboardDuration = (notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double) else { return }
+        let keyboardHeight = self.view.safeAreaInsets.bottom - keyboardRect.height + 150
+        
+        switch notification.name {
+        case UIResponder.keyboardWillShowNotification:
+            keyboardAnimation(duration: keyboardDuration, keyboardHeight: keyboardHeight)
+            
+        case UIResponder.keyboardWillHideNotification:
+            keyboardAnimation(duration: keyboardDuration)
+        default:
+            break
+        }
+    }
+    
+    private func keyboardAnimation(duration: Double, keyboardHeight: CGFloat = 0.0) {
+        UIView.animate(withDuration: duration) {
+            self.view.frame.origin.y = keyboardHeight
+        }
+    }
     
     public override func moreAction() {
         
@@ -301,6 +328,10 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     
     public override func deinitAction() {
         
+    }
+    
+    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
     deinit {
