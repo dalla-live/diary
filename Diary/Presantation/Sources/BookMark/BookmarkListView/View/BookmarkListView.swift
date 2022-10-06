@@ -38,7 +38,7 @@ class BookmarkListView: ProgrammaticallyView {
     
     var bookmakrList: BookmarkList = BookmarkList(bookmarks: [], hasNext: false)
     var readMoreIndexPathList: Set<IndexPath> = []
-    var translateIndexPathList: Set<IndexPath> = []
+    var translateIndexPathList: [Int: String] = [:]
     var recentTouchReadMoreButton = true
     
     override func addComponent() {
@@ -61,10 +61,25 @@ class BookmarkListView: ProgrammaticallyView {
         listTableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    private func translateButtonAction(indexPath: IndexPath) {
+    private func translateButtonAction(id: Int, kr: String?) {
         recentTouchReadMoreButton = false
-        translateIndexPathList.insert(indexPath)
-        listTableView.reloadRows(at: [indexPath], with: .automatic)
+        
+        let indexPath = IndexPath(row:  bookmakrList.bookmarks.count - id, section: 0)
+        if let _ = translateIndexPathList[id] {
+            listTableView.reloadRows(at: [indexPath], with: .automatic)
+        } else {
+            let translationDTO = TranslationDTO(text: kr ?? "", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue)
+
+            TranslationAPI.requestTraslation(request: translationDTO) { [unowned self] result in
+                switch result {
+                case .success(let success):
+                    translateIndexPathList.updateValue(success, forKey: id)
+                    listTableView.reloadRows(at: [indexPath], with: .automatic)
+                case .failure(_):
+                    makeToast("쿼리 한도를 초과했습니다.")
+                }
+            }
+        }
     }
 }
 
@@ -87,18 +102,9 @@ extension BookmarkListView: UITableViewDataSource {
         switch indexPath.row {
         case let readRow where readMoreIndexPathList.contains(where: { $0.row == readRow }) && recentTouchReadMoreButton:
             cell.contentsLabel.numberOfLines = 0
-        case let translateRow where translateIndexPathList.contains(where: { $0.row == translateRow }):
+        case let translateRow where translateIndexPathList[bookmakrList.bookmarks[translateRow].id] != nil:
             cell.contentsLabel.numberOfLines = 0
-            let translationDTO = TranslationDTO(text: cell.contentsLabel.text ?? "", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue)
-
-            TranslationAPI.requestTraslation(request: translationDTO) { [unowned self] result in
-                switch result {
-                case .success(let success):
-                    cell.contentsLabel.text = success
-                case .failure(_):
-                    makeToast("쿼리 한도를 초과했습니다.")
-                }
-            }
+            cell.contentsLabel.text = translateIndexPathList[bookmakrList.bookmarks[indexPath.row].id]
         default: cell.contentsLabel.numberOfLines = 1
         }
 
@@ -107,7 +113,11 @@ extension BookmarkListView: UITableViewDataSource {
             .disposed(by: cell.disposeBag)
         
         cell.translateButton.rx.tap
-            .bind { [unowned self] in translateButtonAction(indexPath: indexPath) }
+            .bind { [unowned self] in translateButtonAction(id: bookmakrList.bookmarks[indexPath.row].id, kr: cell.contentsLabel.text) }
+            .disposed(by: cell.disposeBag)
+        
+        cell.moreActionButton.rx.tap
+            .bind { [unowned self] in print(bookmakrList.bookmarks[indexPath.row].id) }
             .disposed(by: cell.disposeBag)
         
         return cell
