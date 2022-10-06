@@ -184,7 +184,6 @@ extension Subtitles {
                 final["text"] = item.text
             }
             
-//            final["text"] = isTranslate ? translateSubtitle(item.text) : item.text
             parsed[index + 1] = final
         })
         
