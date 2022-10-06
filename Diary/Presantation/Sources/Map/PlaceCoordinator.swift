@@ -22,7 +22,7 @@ public protocol PlaceCoordinatorDependencies {
 }
 
 public protocol PlaceDelegate: AnyObject {
-    func openMapViewEdit()
+    func openMapViewEditWith(location: Location?)
 }
 
 public class PlaceCoordinator: Coordinator {
@@ -52,6 +52,7 @@ public class PlaceCoordinator: Coordinator {
 }
 
 extension PlaceCoordinator: PlaceDelegate {
+    
     public func didSuccessAddBookMark() {
         
         guard let commonVC = self.navigationController.visibleViewController as? CommonFormatController else {
@@ -68,9 +69,9 @@ extension PlaceCoordinator: PlaceDelegate {
         
     }
     
-    public func openMapViewEdit() {
+    public func openMapViewEditWith(location: Location?) {
         // 델리게잇 클로저 전달
-        let action = CommonAction(didSuccess: didSuccessAddBookMark)
+        let action = CommonAction(didSuccess: didSuccessAddBookMark, defaultLocation: location)
         let vc = dependencies.makeCommonFormatController(actions: action)
         self.navigationController.present(vc, animated: true)
     }

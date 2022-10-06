@@ -8,8 +8,13 @@
 import Foundation
 import UIKit
 import NMapsMap
+import CoreLocation
 
 public class NaverMapServiceProvider : NSObject , MapService {
+    public func getCameraLocation() -> CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    }
+    
 
     public typealias Map = NMFNaverMapView
     

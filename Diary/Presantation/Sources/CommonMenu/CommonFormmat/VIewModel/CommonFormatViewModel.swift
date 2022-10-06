@@ -7,10 +7,14 @@
 
 import Foundation
 import Domain
+import RxCocoa
 import RxSwift
+
+import CoreLocation
 
 public struct CommonAction {
     var didSuccess: () -> Void
+    var defaultLocation: Location?
 }
 
 
@@ -40,7 +44,7 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
     var type: CommonFormatController.BehaviorType
     var actions: CommonAction?
     
-    let location = BehaviorSubject<Location>(value: Location(lat: 0, lon: 0, address: ""))
+    var location: Location? = nil
     
     public init(commonFormatBookmarkUseCase: CommonFormatBookmarkUseCase) {
         self.commonFormatUseCase = commonFormatBookmarkUseCase
@@ -60,7 +64,9 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
 //
 //        case .bookmarkEdit, .diaryEdit:
 //        }
-        print("CommonFormatViewviewDidload")
+        self.location = self.actions?.defaultLocation
+        
+        print("CommonFormatViewviewDidload \(self.actions?.defaultLocation)")
     }
     
     func didChangeLocation() {

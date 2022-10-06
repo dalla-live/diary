@@ -478,6 +478,7 @@ extension CommonFormatController: GMSMapViewDelegate {
     //
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         print(gesture)
+        
     }
     
     
@@ -497,7 +498,18 @@ extension CommonFormatController: GMSMapViewDelegate {
     
     
     public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        service?.setLocation(position: position.target)
+        if self.viewModel?.location == nil {
+            service?.setLocation(position: position.target)
+        } else {
+            guard let target = viewModel?.location else {
+                service?.setLocation(position: position.target)
+                viewModel?.location = nil
+                return 
+            }
+            viewModel?.location = nil
+            service?.setLocation(position: .init(latitude: target.lat, longitude: target.lon))
+        }
+        
     }
     
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {

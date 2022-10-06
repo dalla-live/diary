@@ -17,6 +17,7 @@ public protocol MapService: AnyObject {
 
     func getMapView()-> Map
     func search(place: String)
+    func getCameraLocation() -> CLLocationCoordinate2D
     func getLocation() -> CLLocationCoordinate2D
     func setCurrentLocation() -> CLLocationCoordinate2D
     func setLocation(position: CLLocationCoordinate2D)
@@ -115,7 +116,9 @@ public class GoogleMapServiceProvider : NSObject, MapService {
     
     public func setLocation(position: CLLocationCoordinate2D) {
         mapView.animate(toLocation: position)
-        marker.position = position
+        if marker != nil  {
+            marker.position = position
+        }
     }
     
     public func setLocation(position: [CLLocationCoordinate2D]) {
@@ -130,7 +133,7 @@ public class GoogleMapServiceProvider : NSObject, MapService {
         return currentPosition
     }
     
-    public func getMarkerLocation() -> CLLocationCoordinate2D {
+    public func getCameraLocation() -> CLLocationCoordinate2D {
         return self.mapView.camera.target
     }
     

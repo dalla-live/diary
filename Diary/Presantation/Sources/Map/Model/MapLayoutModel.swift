@@ -426,4 +426,8 @@ struct MapLayoutModel {
         }
     }
     
+    func reloadTable(){
+        self._QUICK_LIST_TABLE.reloadData()
+    }
+    
 }

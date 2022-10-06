@@ -51,6 +51,7 @@ public class PlaceViewController: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        print("didLoad")
         setDelegate()
         
         setLayout()
@@ -65,31 +66,19 @@ public class PlaceViewController: UIViewController {
         
         layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex = 0
         self.mapService                                   = googleService
-        
-        bindToViewModel()
     }
     
+
+    
     public func bindToViewModel() {
-        
         // 테이블 로드
-        self.viewModel.didItemLoaded.subscribe(onNext: { [weak self] _ in
-            self?.reloadList()
-            Log.d("reloaded")
-        }).disposed(by: disposeBag)
+        self.viewModel.didItemLoaded.subscribe(onNext: reloadData).disposed(by: disposeBag)
         
         // 위치의 날씨
-        self.viewModel.weatherLoded.subscribe(onNext: { [weak self] _ in
-            self?.layoutModel.setToolTipWith(weather: self?.viewModel.weather)
-        }).disposed(by: disposeBag)
-        
+        self.viewModel.weatherLoded.subscribe(onNext: setWeatherToolTip).disposed(by: disposeBag)
         
         // 셀이 선택된 경우
-        self.viewModel.didBookmarkSelected.subscribe(onNext: { [weak self] _ in
-            let mapData = self?.viewModel.selectedBookmarkData
-            
-            self?.layoutModel.setToolTipWith(weather: mapData?.weather, mood: mapData?.mood)
-        }).disposed(by: disposeBag)
-        
+        self.viewModel.didBookmarkSelected.subscribe(onNext: setWeatherTooltipWithData).disposed(by: disposeBag)
     }
     
     
@@ -137,6 +126,23 @@ public class PlaceViewController: UIViewController {
         super.viewDidAppear(animated)
     }
     
+    // 데이터 리로드
+    public func reloadData() {
+        layoutModel.reloadTable()
+    }
+    
+    // 툴팁 세팅 : 해당 위치의 날씨로
+    public func setWeatherToolTip(){
+        self.layoutModel.setToolTipWith(weather: self.viewModel.weather)
+    }
+    
+    // 툴팁 세팅 : 선택된 북마크의 데이터로
+    public func setWeatherTooltipWithData(){
+        let mapData = self.viewModel.selectedBookmarkData
+        
+        layoutModel.setToolTipWith(weather: mapData?.weather, mood: mapData?.mood)
+    }
+    
     // 현재 위치로
     func didMoveCurrentLocation(){
         layoutModel._CURRENT_LOCATION_BUTTON.rx.tapGesture()
@@ -154,7 +160,11 @@ public class PlaceViewController: UIViewController {
             .throttle(.microseconds(500), latest: false, scheduler: MainScheduler.instance)
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
-                self?.coordinator?.openMapViewEdit()
+                guard let target = self?.mapService?.getCameraLocation() else {
+                    return
+                }
+                let location = Location(lat: target.latitude, lon: target.longitude, address: "")
+                self?.coordinator?.openMapViewEditWith(location: location)
             })
             .disposed(by: disposeBag)
     }
