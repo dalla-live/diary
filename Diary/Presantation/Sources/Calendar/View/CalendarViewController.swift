@@ -87,6 +87,10 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
         addGesture()
     }
     
+    public override func viewDidAppear(_ animated: Bool) {
+        viewModel.getContentofList(date: CalendarHelper.shared.getDate())
+    }
+    
     private func configWeekStackView() {
         let dayofWeek = ["일", "월", "화", "수", "목", "금", "토"]
         dayofWeek.forEach{ data in

@@ -26,6 +26,7 @@ extension CalendarViewController {
                 cell.isSelected = true
                 let indexPath = IndexPath(row: row, section: 0)
                 self.collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .init())
+                self.viewModel.getContentofList(date: data.getDate())
             }
         
         }.disposed(by: disposeBag)
