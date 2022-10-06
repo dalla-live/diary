@@ -104,10 +104,13 @@ public final class BookmarkViewController: UIViewController {
     }
     
     private func reloadTable(){
-        self.viewModel.updateButtonTap() {
-            self.bookmarkListView.listTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-            self.bookmarkListView.bookmakrList = $0
-            self.bookmarkListView.listTableView.reloadData()
+        self.viewModel.updateButtonTap() { list in
+            if list.bookmarks.count > 0 {
+                
+                self.bookmarkListView.bookmakrList = list
+                self.bookmarkListView.listTableView.reloadData()
+                self.bookmarkListView.listTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            }
         }
     }
     
