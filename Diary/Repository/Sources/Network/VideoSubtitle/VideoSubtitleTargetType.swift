@@ -63,7 +63,7 @@ extension VideoSubtitleTargetType: BaseTargetType {
         switch self {
         case .requestVideoSubtitle(_):
             return ["Content-Type": "multipart/form-data",
-                    "X-CLOVASPEECH-API-KEY": "e557951cbc4048ddb126a5a0fa44aaf8"]
+                    "X-CLOVASPEECH-API-KEY": "b29ccbd7e57f4f99a0a49f8e21991b19"]
         }
         
     }
