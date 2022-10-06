@@ -89,6 +89,8 @@ public class PlaceViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.viewModel.fetchList()
+        print("view will appear")
     }
     
     

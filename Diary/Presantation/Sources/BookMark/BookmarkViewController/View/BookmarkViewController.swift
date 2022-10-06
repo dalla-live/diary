@@ -56,6 +56,7 @@ public final class BookmarkViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        reloadTable()
         bookmarkListTitle.text = "bookmark".localized
     }
     
@@ -98,14 +99,19 @@ public final class BookmarkViewController: UIViewController {
             .disposed(by: disposeBag)
         
         updateBookmarkButton.rx.tap
-            .bind { [weak self] in
-                self?.viewModel.updateButtonTap() {
-                    self?.bookmarkListView.listTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                    self?.bookmarkListView.bookmakrList = $0
-                    self?.bookmarkListView.listTableView.reloadData()
-                }
-            }
+            .bind(onNext: reloadTable)
             .disposed(by: disposeBag)
+    }
+    
+    private func reloadTable(){
+        self.viewModel.updateButtonTap() { list in
+            if list.bookmarks.count > 0 {
+                
+                self.bookmarkListView.bookmakrList = list
+                self.bookmarkListView.listTableView.reloadData()
+                self.bookmarkListView.listTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+            }
+        }
     }
     
     private func setBookmarkListView() {

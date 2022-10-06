@@ -440,7 +440,7 @@ public class CommonFormatController: UIViewController {
                                                                 date: CalendarHelper.shared.getDate(),
                                                                 location: Location(lat: location.latitude, lon: location.longitude, address: ""),
                                                                 hasWritten: false,
-                                                                note: note ?? "")) { ResourceManager.shared.saveImage(imageNo: "\($0)", from: self?.mapView ?? UIView())
+                                                                note: note ?? "")) { ResourceManager.shared.saveImage(imageNo: "\($0 - 1)", from: self?.mapView ?? UIView())
                     
                     self?.dismiss(animated: true)
                 }
