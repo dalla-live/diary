@@ -91,6 +91,7 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
             switch result {
             case .success(let success):
                 print(success.id)
+                completion?(success.id)
                 self.actions?.didSuccess?()
             case .failure(let error):
                 print(error.localizedDescription)
