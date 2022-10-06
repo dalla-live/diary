@@ -151,6 +151,7 @@ public class PlaceViewController: UIViewController {
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
                 let _ = self?.googleService?.setCurrentLocation()
+                let _ = self?.naverService?.setCurrentLocation()
             }).disposed(by: disposeBag)
     }
     
