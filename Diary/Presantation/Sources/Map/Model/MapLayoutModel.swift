@@ -249,6 +249,9 @@ struct MapLayoutModel {
     
     
     func setConstraint(container: UIView){
+        _MAP_CONTENT_CONTAINER.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
         
         _MAP_SCROLL_CONTAINER.contentSize = CGSize(width: UIScreen.main.bounds.width * 2, height: UIScreen.main.bounds.height)
         

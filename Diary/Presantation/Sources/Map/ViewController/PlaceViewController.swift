@@ -18,20 +18,23 @@ import NMapsMap
 import Domain
 
 public class PlaceViewController: UIViewController {
-    
+    // 코디네이터 델리게잇
     var coordinator: PlaceDelegate?
-    var disposeBag: DisposeBag = .init()
-    var viewModel : PlaceViewModel
-    var mapService : (any MapService)?
     
+    var disposeBag: DisposeBag = .init()
+    
+    // 현재 화면의 맵서비스
+    var mapService : (any MapService)?
+    // 탭 별 맵 서비스
     var googleService: (any MapService)?
     var naverService : (any MapService)?
     
+    // 레이아웃
     var layoutModel = MapLayoutModel()
     
-    private lazy var contentView: UIImageView = {
-       return UIImageView(image: UIImage(named: "plus.app"))
-     }()
+    // 뷰 모델
+    var viewModel : PlaceViewModel
+    
     
     
     public init ( dependency: PlaceViewModel ) {
@@ -49,18 +52,15 @@ public class PlaceViewController: UIViewController {
          fatalError("init(coder:) is not supported")
      }
     
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         print("didLoad")
         setDelegate()
-        
         setLayout()
         layoutModel.viewDidLoad(container: self.view)
-        
         setConstraint()
-        
         self.viewModel.viewDidLoad()
-        
         bindToViewModel()
         btnBind()
         
@@ -68,8 +68,35 @@ public class PlaceViewController: UIViewController {
         self.mapService                                   = googleService
     }
     
-
+    func btnBind() {
+        // 현재위치로 이동
+        didMoveCurrentLocation()
+        
+        // 북마크 추가 버튼
+        didOpenAddBookmark()
+        
+        // 검색 버튼
+        didOpenSearchView()
+        
+        // 퀵리스트 토글
+        didSlideQuickList()
+        
+        // 네이버, 구글 맵 토글
+        didSwitchMap()
+        
+        didSwitchLaguageButtonTap()
+    }
     
+    public override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
+    
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
+    // MARK: @ bind
     public func bindToViewModel() {
         // 테이블 로드
         self.viewModel.didItemLoaded.subscribe(onNext: reloadData).disposed(by: disposeBag)
@@ -82,14 +109,13 @@ public class PlaceViewController: UIViewController {
     }
     
     
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
     func setDelegate() {
         layoutModel._QUICK_LIST_TABLE.delegate   = self
         layoutModel._QUICK_LIST_TABLE.dataSource = self
     }
+    
+    
+    // MARK: @ 레이아웃
     
     func setLayout() {
         guard let googleView = googleService?.getMapView() as? UIView else { return }
@@ -99,17 +125,10 @@ public class PlaceViewController: UIViewController {
         layoutModel._NAVER_MAP_CONTAINER.addSubview(naverView)
     }
     
+    
     func setConstraint() {
         guard let googleView = googleService?.getMapView() as? UIView else { return }
         guard let naverView  = naverService?.getMapView() as? UIView else { return }
-        
-        layoutModel._MAP_CONTENT_CONTAINER.snp.makeConstraints{
-            $0.edges.equalToSuperview()
-        }
-        
-        layoutModel._MAP_SCROLL_CONTAINER.snp.makeConstraints{
-            $0.edges.equalToSuperview()
-        }
         
         googleView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -122,27 +141,7 @@ public class PlaceViewController: UIViewController {
         layoutModel.setConstraint(container: self.view)
     }
     
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-    }
-    
-    // 데이터 리로드
-    public func reloadData() {
-        layoutModel.reloadTable()
-    }
-    
-    // 툴팁 세팅 : 해당 위치의 날씨로
-    public func setWeatherToolTip(){
-        self.layoutModel.setToolTipWith(weather: self.viewModel.weather)
-    }
-    
-    // 툴팁 세팅 : 선택된 북마크의 데이터로
-    public func setWeatherTooltipWithData(){
-        let mapData = self.viewModel.selectedBookmarkData
-        
-        layoutModel.setToolTipWith(weather: mapData?.weather, mood: mapData?.mood)
-    }
-    
+    // MARK: @ Tap bind
     // 현재 위치로
     func didMoveCurrentLocation(){
         layoutModel._CURRENT_LOCATION_BUTTON.rx.tapGesture()
@@ -150,9 +149,9 @@ public class PlaceViewController: UIViewController {
             .when(.recognized)
             .subscribe(onNext: { [weak self] _ in
                 let _ = self?.googleService?.setCurrentLocation()
-            })
-            .disposed(by: disposeBag)
+            }).disposed(by: disposeBag)
     }
+    
     
     // 마커 위치 북마크에 추가
     fileprivate func didOpenAddBookmark() {
@@ -168,6 +167,8 @@ public class PlaceViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
+    
+    
     
     // 장소 점색
     fileprivate func didOpenSearchView() {
@@ -215,7 +216,17 @@ public class PlaceViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    
+    fileprivate func didSwitchMap() {
+        layoutModel._SUBMENU_SEGMENT.rx.controlEvent(.valueChanged)
+            .subscribe(onNext: { [weak self] _ in
+                // 약한참조 처리
+                guard let `self` = self else {
+                    return
+                }
+                self.toggleMapView(selectedIndex: self.layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex)
+            })
+            .disposed(by: disposeBag)
+    }
     
     func toggleMapView(selectedIndex: Int) {
         
@@ -233,17 +244,7 @@ public class PlaceViewController: UIViewController {
         }
     }
     
-    fileprivate func didSwitchMap() {
-        layoutModel._SUBMENU_SEGMENT.rx.controlEvent(.valueChanged)
-            .subscribe(onNext: { [weak self] _ in
-                // 약한참조 처리
-                guard let `self` = self else {
-                    return
-                }
-                self.toggleMapView(selectedIndex: self.layoutModel._SUBMENU_SEGMENT.selectedSegmentIndex)
-            })
-            .disposed(by: disposeBag)
-    }
+    
     
     fileprivate func didSwitchLaguageButtonTap() {
         layoutModel._LANGUAGE_CHANGE_BUTTON.rx.tap
@@ -267,29 +268,43 @@ public class PlaceViewController: UIViewController {
         .disposed(by: disposeBag)
     }
     
-    func btnBind() {
-        // 현재위치로 이동
-        didMoveCurrentLocation()
-        
-        // 북마크 추가 버튼
-        didOpenAddBookmark()
-        
-        // 검색 버튼
-        didOpenSearchView()
-        
-        // 퀵리스트 토글
-        didSlideQuickList()
-        
-        // 네이버, 구글 맵 토글
-        didSwitchMap()
-        
-        didSwitchLaguageButtonTap()
+    
+    
+    
+    
+    // MARK: @ util method
+    // 데이터 리로드
+    public func reloadData() {
+        layoutModel.reloadTable()
     }
+    
+    
+    // 툴팁 세팅 : 해당 위치의 날씨로
+    public func setWeatherToolTip() {
+        self.layoutModel.setToolTipWith(weather: self.viewModel.weather)
+    }
+    
+    
+    // 툴팁 세팅 : 선택된 북마크의 데이터로
+    public func setWeatherTooltipWithData() {
+        let mapData = self.viewModel.selectedBookmarkData
+        
+        layoutModel.setToolTipWith(weather: mapData?.weather, mood: mapData?.mood)
+    }
+    
+    
+    
+    
+    
+    
+    
     
     
     func reloadList() {
         self.viewModel.fetchList()
     }
+    
+    
     
     // Present the Autocomplete view controller when the button is pressed.
       func autocompleteClicked() {
@@ -314,8 +329,7 @@ extension PlaceViewController: GMSAutocompleteViewControllerDelegate {
     
      public func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
 //         print("place \(place.coordinate)")
-         self.googleService?.setLocation(position: place.coordinate)
-         self.naverService?.setLocation(position: place.coordinate)
+         self.mapService?.setLocation(position: place.coordinate)
        dismiss(animated: true, completion: nil)
      }
 
