@@ -1,5 +1,5 @@
 //
-//  MLKitTranslateService.swift
+//  MLKitTranslator.swift
 //  ServiceTests
 //
 //  Created by cheonsong on 2022/10/06.
@@ -58,10 +58,10 @@ public class MLKitTranslator {
         )
         translator.downloadModelIfNeeded(with: conditions) { [weak self] error in
             guard let self = self, error == nil else {
-                Log.e("번역 모델 다운로드에 실패했습니다.")
+                Log.e("번역 모델 로드에 실패했습니다.")
                 return
             }
-            Log.d("번역 모델 다운로드에 성공했습니다.")
+            Log.d("번역 모델 로드에 성공했습니다.")
             
             self.translator.translate(source, completion: completion)
         }
