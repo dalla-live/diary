@@ -9,8 +9,27 @@ import Foundation
 import Util
 import MLKitTranslate
 
-public class MLKitTranslator {
+public class MLKitTranslator: Translatable {
+    // MARK: Translatable
+    var source: LaguageCode = .ko
     
+    var target: LaguageCode = .en
+    
+    func set(source: LaguageCode, target: LaguageCode) {
+        self.source = source
+        self.target = target
+        
+        set(source: source.mlKit, target: target.mlKit)
+    }
+    
+    func translate(text: String, _ completion: @escaping ((String)-> Void))  {
+        translate(source: text) { translated, error in
+            guard let translated = translated else { return }
+            completion(translated)
+        }
+    }
+    
+    // ================================================================
     public static let shared = MLKitTranslator()
     
     var option: TranslatorOptions!
@@ -47,6 +66,8 @@ public class MLKitTranslator {
             
             Log.e("\(model.name) 다운로드에 실패했습니다.")
         }
+        
+        set(source: self.source.mlKit, target: self.target.mlKit)
     }
     
     /// MLKit를 사용한 번역

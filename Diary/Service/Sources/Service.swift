@@ -6,16 +6,32 @@
 //
 
 import Foundation
+import Util
 
 public class ServiceTest {
     
-    var translator = MLKitTranslator.shared
+    var provider: TranslateServiceProvider
+    
     public init() {
         print("ServiceTest Success")
         
-        translator.set(source: .korean, target: .english)
-        translator.translate(source: "안녕하세요", completion: { text, error in
-            print("번역 완료!! ---> \(text!)")
-        })
+        provider = TranslateServiceProvider(service: PapagoTranslator.shared)
+        
+        provider.translate(text: "안녕하세요") { text in
+            Log.d("Papago:: \(text)")
+        }
+        
+        provider = TranslateServiceProvider(service: GoogleTranslator.shared)
+        
+        provider.translate(text: "안녕하세요") { text in
+            Log.d("Google:: \(text)")
+        }
+        
+        provider = TranslateServiceProvider(service: MLKitTranslator.shared)
+        
+        provider.translate(text: "안녕하세요") { text in
+            Log.d("MLKit:: \(text)")
+        }
+        
     }
 }
