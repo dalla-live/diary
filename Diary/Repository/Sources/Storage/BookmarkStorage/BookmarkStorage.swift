@@ -79,6 +79,10 @@ public class BookmarkStorage {
             if dto.page == 0 {
                 let dto = data.map { $0.toDTO() }
                 return BookmarkResponseDTO(bookmarks: dto, hasNext: false)
+            } else if dto.page == -1 {
+                // revers
+                let dto = data.reversed().map { $0.toDTO() }
+                return BookmarkResponseDTO(bookmarks: dto, hasNext: false)
             }
             
             // 페이징 처리 10개 단위로

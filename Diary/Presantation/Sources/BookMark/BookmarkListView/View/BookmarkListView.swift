@@ -12,6 +12,8 @@ import SnapKit
 import Then
 import RxSwift
 import Domain
+import CoreLocation
+import Repository
 
 class BookmarkListView: ProgrammaticallyView {
     enum ContentButtonType {
@@ -34,18 +36,10 @@ class BookmarkListView: ProgrammaticallyView {
         $0.delegate = self
     }
     
-    let testArray: [TestBK] = [TestBK(date: "1997-03-18", contents: "이것은 일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 일기이것은 일기이것은\n 일기이것은 일기이것은 일기\n?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기?", distance: "장성 40km"),
-                               TestBK(date: "1997-03-18", contents: "이것은 일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 \n일기이것은 일기이것은 일기이것은 일기이것은\n 일기이것은 일기이것은 일기\n?", distance: "장성 40km")]
-    var testIndexPathList: Set<IndexPath> = []
+    var bookmakrList: BookmarkList = BookmarkList(bookmarks: [], hasNext: false)
+    var readMoreIndexPathList: Set<IndexPath> = []
+    var translateIndexPathList: Set<IndexPath> = []
+    var recentTouchReadMoreButton = true
     
     override func addComponent() {
         fileName = #file.fileName
@@ -61,39 +55,59 @@ class BookmarkListView: ProgrammaticallyView {
     override func bind() {
     }
     
-    private func buttonAction(buttonTitle: String?, indexPath: IndexPath) {
-        print(indexPath.row)
-        switch buttonTitle {
-        case ContentButtonType.readMore.title:
-            testIndexPathList.insert(indexPath)
-            listTableView.reloadRows(at: [indexPath], with: .automatic)
-        case ContentButtonType.translate.title:
-            removeFromSuperview()
-        default: break
-        }
+    private func readMoreButtonAction(indexPath: IndexPath) {
+        recentTouchReadMoreButton = true
+        readMoreIndexPathList.insert(indexPath)
+        listTableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    private func translateButtonAction(indexPath: IndexPath) {
+        recentTouchReadMoreButton = false
+        translateIndexPathList.insert(indexPath)
+        listTableView.reloadRows(at: [indexPath], with: .automatic)
     }
 }
 
 extension BookmarkListView: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return testArray.count
+        return bookmakrList.bookmarks.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = listTableView.dequeueReusableCell(withIdentifier: BookmarkCell.identifier) as? BookmarkCell else { return UITableViewCell() }
+        let location = CLLocationCoordinate2D(latitude: bookmakrList.bookmarks[indexPath.row].location.lat,
+                                              longitude: bookmakrList.bookmarks[indexPath.row].location.lon),
+            distance = Int(CLLocationCoordinate2D(latitude: 35.1466323, longitude: 126.8473066).distance(from: location).rounded(.up)).withComma
         
-        cell.dateLabel.text = testArray[indexPath.row].date
-        cell.contentsLabel.text = testArray[indexPath.row].contents
-        cell.distanceLabel.text = testArray[indexPath.row].distance
-        cell.mapView.image = ResourceManager.shared.getImage(imageNo: "\(indexPath.row)")
+        cell.dateLabel.text = bookmakrList.bookmarks[indexPath.row].date
+        cell.contentsLabel.text = bookmakrList.bookmarks[indexPath.row].note
+        cell.distanceLabel.text = "\(distance)m"
+        cell.mapView.image = ResourceManager.shared.getImage(imageNo: "\(indexPath.row + 1)")
         
         switch indexPath.row {
-        case let row where testIndexPathList.contains(where: { $0.row == row }): cell.contentsLabel.numberOfLines = 0
+        case let readRow where readMoreIndexPathList.contains(where: { $0.row == readRow }) && recentTouchReadMoreButton:
+            cell.contentsLabel.numberOfLines = 0
+        case let translateRow where translateIndexPathList.contains(where: { $0.row == translateRow }):
+            cell.contentsLabel.numberOfLines = 0
+//            let translationDTO = TranslationDTO(text: cell.contentsLabel.text ?? "", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue)
+//            
+//            TranslationAPI.requestTraslation(request: translationDTO) { [unowned self] result in
+//                switch result {
+//                case .success(let success):
+//                    cell.contentsLabel.text = success
+//                case .failure():
+//                    makeToast("쿼리 한도를 초과했습니다.")
+//                }
+//            }
         default: cell.contentsLabel.numberOfLines = 1
         }
 
         cell.readMoreButton.rx.tap
-            .bind { [unowned self] in buttonAction(buttonTitle: cell.readMoreButton.title(for: .normal), indexPath: indexPath) }
+            .bind { [unowned self] in readMoreButtonAction(indexPath: indexPath) }
+            .disposed(by: cell.disposeBag)
+        
+        cell.translateButton.rx.tap
+            .bind { [unowned self] in translateButtonAction(indexPath: indexPath) }
             .disposed(by: cell.disposeBag)
         
         return cell
@@ -102,10 +116,4 @@ extension BookmarkListView: UITableViewDataSource {
 
 extension BookmarkListView: UITableViewDelegate {
     
-}
-
-struct TestBK {
-    let date: String
-    let contents: String
-    let distance: String
 }

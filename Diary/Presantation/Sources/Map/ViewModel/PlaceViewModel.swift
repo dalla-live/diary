@@ -142,7 +142,7 @@ extension PlaceViewModel: PlaceViewModelInput{
         self.weatherUseCase.excute(request: .init(lat: location.latitude, lon: location.longitude, address: ""), completion:{ result in
             switch result {
             case .success(let weather):
-                self.weather = Weather(en: weather)
+                self.weather = Weather(english: weather)
             case .failure(let err):
                 print(err)
             }

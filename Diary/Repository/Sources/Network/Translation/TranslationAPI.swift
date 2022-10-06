@@ -9,12 +9,12 @@ import Foundation
 import Moya
 import SwiftyJSON
 
-struct TranslationAPI: Networkable {
+public struct TranslationAPI: Networkable {
     // Networkable 프로토콜에서 MoyaTarget을 기반으로 MoyaProvider를 생성합니다
     // Target 을 지정해줘야 합니다
     typealias Target = TranslationTargetType
     
-    static func requestTraslation(request: TranslationDTO, completion: @escaping (Result<String,Error>) -> Void) {
+    public static func requestTraslation(request: TranslationDTO, completion: @escaping (Result<String,Error>) -> Void) {
         // JSON형태로 디코딩
         makeProvider().request(.requestTranslation(request)) { (result) in
             switch ResponseData<JSON>.processJSONResponse(result) {
