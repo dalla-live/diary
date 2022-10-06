@@ -82,7 +82,7 @@ extension BookmarkListView: UITableViewDataSource {
         cell.dateLabel.text = bookmakrList.bookmarks[indexPath.row].date
         cell.contentsLabel.text = bookmakrList.bookmarks[indexPath.row].note
         cell.distanceLabel.text = "\(distance)m"
-        cell.mapView.image = ResourceManager.shared.getImage(imageNo: "\(indexPath.row + 1)")
+        cell.mapView.image = ResourceManager.shared.getImage(imageNo: "\(indexPath.row)")
         
         switch indexPath.row {
         case let readRow where readMoreIndexPathList.contains(where: { $0.row == readRow }) && recentTouchReadMoreButton:
