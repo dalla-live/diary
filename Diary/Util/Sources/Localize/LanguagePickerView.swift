@@ -19,6 +19,7 @@ public class LocalizePickerView: UIView {
     public let pickerView = UIPickerView().then {
         $0.backgroundColor = .white
         $0.isUserInteractionEnabled = true
+        $0.setValue(UIColor.black, forKeyPath: "textColor")
     }
     
     // 현재 언어
