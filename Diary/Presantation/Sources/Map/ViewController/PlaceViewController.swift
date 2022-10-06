@@ -231,7 +231,8 @@ public class PlaceViewController: UIViewController {
     }
     
     func toggleMapView(selectedIndex: Int) {
-        
+        layoutModel._BOOK_MARK_TOOL_TIP.subviews.forEach{$0.removeFromSuperview()}
+        layoutModel._BOOK_MARK_TOOL_TIP.isHidden = true
         switch selectedIndex {
         case 0 :
             //구글
