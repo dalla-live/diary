@@ -1,6 +1,6 @@
-// App
-
-// Weather
+//Description
+"Keys" = "영어 (en)";
+//Weather
 "Thunderstorm" = "Thunderstorm";
 "Drizzle" = "Drizzle";
 "Rain" = "Rain";
@@ -8,18 +8,17 @@
 "Atmosphere" = "Mist";
 "Clear" = "Clear";
 "Clouds" = "Clouds";
-
-// Menu
+//Menu
 "map" = "Map";
 "list" = "List";
 "bookmark" = "Bookmark";
 "modify" = "Modify";
 "translation" = "Translation";
 "delete" = "Delete";
+"help" = "Help";
 "google" = "Google";
 "naver" = "Naver";
-
-// Button
+//Button
 "okBtn" = "Done";
 "cancelBtn" = "Cancel";
-"changeLanguageBtn" = "Change\nLaguage";
+"changeLanguageBtn" = "Change";

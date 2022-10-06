@@ -1,0 +1,20 @@
+Description,Keys,영어 (en),한국어 (ko),일본어 (ja)
+Weather,Thunderstorm,Thunderstorm,폭풍,暴風
+,Drizzle,Drizzle,이슬비,霧雨
+,Rain,Rain,비,雨
+,Snow,Snow,눈,雪
+,Atmosphere,Mist,안개,霧
+,Clear,Clear,맑음,晴れ
+,Clouds,Clouds,구름,雲
+Menu,map,Map,지도,指導
+,list,List,리스트,リスト
+,bookmark,Bookmark,북마크,ブックマーク
+,modify,Modify,수정,修整
+,translation,Translation,번역,翻訳
+,delete,Delete,삭제,削除する
+,help,Help,살려주세요!,ang
+,google,Google,구글,グーグル
+,naver,Naver,네이버,ネイバー
+Button,okBtn,Done,확인,確認
+,cancelBtn,Cancel,취소,取り消す
+,changeLanguageBtn,Change,언어 변경,言葉を変える

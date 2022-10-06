@@ -1,0 +1,26 @@
+//Description
+"Keys" = "일본어 (ja)";
+//Weather
+"Thunderstorm" = "暴風";
+"Drizzle" = "霧雨";
+"Rain" = "雨";
+"Snow" = "雪";
+"Atmosphere" = "霧";
+"Clear" = "晴れ";
+"Clouds" = "雲";
+//Menu
+"map" = "指導";
+"list" = "リスト";
+"bookmark" = "ブックマーク";
+"modify" = "修整";
+"translation" = "翻訳";
+"delete" = "削除する";
+"help" = "다..다ㅏ..다스케테 구다사이!!!!";
+"google" = "グーグル";
+"naver" = "ネイバー";
+//Button
+"okBtn" = "確認";
+"cancelBtn" = "取り消す";
+"chageLanguageBtn" = "言葉を変える";
+"Hello" = "hi";
+"Hello" = "hi";

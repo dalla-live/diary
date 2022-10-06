@@ -16,7 +16,7 @@ struct WeatherAPI: Networkable {
         makeProvider().request(.requestCurrentWeather(request)) { (result) in
             switch ResponseData<JSON>.processJSONResponse(result) {
             case .success(let model):
-                completion(.success(model["weather"].arrayValue.first?["description"].stringValue ?? ""))
+                completion(.success(model["weather"].arrayValue.first?["main"].stringValue ?? ""))
             case .failure(let error):
                 completion(.failure(error))
             }

@@ -15,7 +15,7 @@ import Util
 
 public protocol MainCoordinatorDependencies {
     func makeBookmarkCoordinator(navigationController: UINavigationController)-> BookmarkCoordinator
-    func makeMapCoordinator(navigationController: UINavigationController)-> MapCoordinator
+    func makePlaceCoordinator(navigationController: UINavigationController)-> PlaceCoordinator
     func makeDiaryCoordinator(navigationController: UINavigationController)-> DiaryCoordinator
     func makeVideoCoordinator(navigationController: UINavigationController)-> VideoCoordinator
 }
@@ -60,7 +60,7 @@ public class MainCoordinator: Coordinator {
         let vc4 = getNavigation()
         
         let bookMarkCoordinator = dependencies.makeBookmarkCoordinator(navigationController: vc1)
-        let mapCoordinator      = dependencies.makeMapCoordinator(navigationController: vc2)
+        let mapCoordinator      = dependencies.makePlaceCoordinator(navigationController: vc2)
             mapCoordinator.coordinator = self
         let diaryCoordinator    = dependencies.makeDiaryCoordinator(navigationController: vc3)
         let videoCoordinator    = dependencies.makeVideoCoordinator(navigationController: vc4)

@@ -1,14 +1,11 @@
 project:
 	tuist clean
 	tuist fetch
-	tuist generate
-	pod install
+	tuist generate --no-open && pod install &&  open Diary.xcworkspace
+	
+open: 
+	tuist generate --no-open && pod install &&  open Diary.xcworkspace
 
-open:
-	tuist generate
-
-clean:
-	tuist clean
 asset:
 	tuist generate
 	pod install

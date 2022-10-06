@@ -8,20 +8,22 @@
 import Foundation
 import UIKit
 import NMapsMap
+import CoreLocation
 
 public class NaverMapServiceProvider : NSObject , MapService {
+    public func getCameraLocation() -> CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    }
+    
 
     public typealias Map = NMFNaverMapView
     
     var service: LocationService?
-    var marker : NMFMarker!
-    let coord = NMGLatLng(lat: 35.1798159, lng: 129.0750222)
+    var moving : Bool = false
     
-    public weak var delegate : NMFMapViewCameraDelegate?
-    
-    lazy var naverMapView : NMFNaverMapView = {
+    public var naverMapView : NMFNaverMapView = {
         let mapView = NMFNaverMapView(frame: .zero)
-        mapView.showLocationButton = true
+        mapView.showLocationButton = false
         mapView.showZoomControls = true
         mapView.mapView.isZoomGestureEnabled = true
         mapView.mapView.isScrollGestureEnabled = true
@@ -30,18 +32,22 @@ public class NaverMapServiceProvider : NSObject , MapService {
         return mapView
     }()
     
-    public init(service: LocationService? = nil, delegate : NMFMapViewCameraDelegate? ) {
+    lazy var marker : NMFMarker = {
+      let marker = NMFMarker()
+        marker.position = NMGLatLng()
+        marker.iconImage = .init(image: UIImage(systemName: "mappin.and.ellipse")!)
+        return marker
+    }()
+    
+    public init(service: LocationService? = nil) {
         super.init()
         self.service = service
-        self.delegate = delegate
-        service?.setDelegate(delegate: self)
-        
         setDelegate()
     }
     
     func setDelegate() {
-        // NMFMapVIewCameraDelegate 등록
-        naverMapView.mapView.addCameraDelegate(delegate: delegate ?? self)
+        service?.setDelegate(delegate: self)
+        naverMapView.mapView.addCameraDelegate(delegate: self)
     }
     
     public func search(place: String) {
@@ -51,7 +57,7 @@ public class NaverMapServiceProvider : NSObject , MapService {
     public func getLocation() -> CLLocationCoordinate2D {
         return self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
     }
-    
+
     public func setCurrentLocation() -> CLLocationCoordinate2D {
         let currentPosition =  self.service?.getLocation() ?? CLLocationCoordinate2D.init(latitude: 0, longitude: 0)
         self.setLocation(position: currentPosition)
@@ -59,7 +65,21 @@ public class NaverMapServiceProvider : NSObject , MapService {
     }
     
     public func setLocation(position: CLLocationCoordinate2D) {
-        naverMapView.mapView.moveCamera(NMFCameraUpdate(scrollTo: NMGLatLng(lat: position.latitude, lng: position.longitude)))
+        if moving {
+            naverMapView.mapView.cancelTransitions()
+        }else {
+            let nmgLatLng = NMGLatLng(lat: position.latitude, lng: position.longitude)
+            marker.position = nmgLatLng
+            marker.mapView = naverMapView.mapView
+            
+            DispatchQueue.main.async {
+                let update = NMFCameraUpdate(scrollTo: nmgLatLng)
+                update.animation = .easeIn
+                self.naverMapView.mapView.moveCamera(update)
+            }
+            moving = true
+        }
+        
     }
     
     public func setLocation(position: [CLLocationCoordinate2D]) {
@@ -69,20 +89,20 @@ public class NaverMapServiceProvider : NSObject , MapService {
     public func getMapView() -> NMFNaverMapView {
         return naverMapView
     }
+    
+    public func setMarker(_ pos : NMGLatLng) {
+        moving = false
+        let nmgLatLng = pos
+        marker.position = nmgLatLng
+        marker.mapView = naverMapView.mapView
+        print(#function , "Naver Lng: \(pos.lat) Lng: \(pos.lng)")
+    }
 }
 
 extension NaverMapServiceProvider: LocationServiceDelegate {
     public func setLocation(location: CLLocationCoordinate2D) {
-        if marker == nil {
-            marker = NMFMarker(position: NMGLatLng(lat: location.latitude, lng: location.longitude))
-            
-            marker.mapView = naverMapView.mapView
-            let cameraUpdate = NMFCameraUpdate(scrollTo: marker.position)
-            cameraUpdate.animation = .easeIn
-            naverMapView.mapView.moveCamera(cameraUpdate)
-        }
-        
-        marker.position = NMGLatLng(lat: location.latitude, lng: location.longitude)
+        //위치 정보 가져오기
+        setLocation(position: CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude))
     }
 }
 
@@ -92,15 +112,17 @@ extension NaverMapServiceProvider : NMFMapViewCameraDelegate {
         //-1: 사용자의 제스처로 화면 움직임
         //-2: 버튼 선택으로 카메라 움직였을 때
         //-3: 네이버 지도가 제공하는 위치 트래킹 기능으로 카메라가 움직였을때
-        let camPosition = mapView.cameraPosition.target
-        let cameraUpdate = NMFCameraUpdate(scrollTo: camPosition)
-
-        naverMapView.mapView.moveCamera(cameraUpdate)
+        print(#function)
+    }
+    public func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
+//        print(#function)
     }
     
     public func mapViewCameraIdle(_ mapView: NMFMapView) {
-        //카메라 이동 멈췄을 때
-//        print(#function)
+        print(#function)
+//        //카메라 이동 멈췄을 때
+//        viewModel.reqNaverMapAddress(Location(lat: mapView.latitude, lon: mapView.longitude))
+        setMarker(NMGLatLng(lat: mapView.latitude, lng: mapView.longitude))
     }
 
 }

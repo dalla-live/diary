@@ -424,13 +424,18 @@ public class CommonFormatController: UIViewController {
         
         storeButton.rx.tap
             .bind { [weak self] in
+                let date = DateFormatter()
+                    date.dateFormat = "yyyy.MM.d"
+
+                guard let map = self?.mapView else { return }
+                
                 self?.viewModel?.didTapStore(bookmark: Bookmark(id: 0,
-                                                                mood: Mood(mood: .amazed),
-                                                                weather: Weather(weather: .clear),
-                                                                date: "2022.09.30",
-                                                                location: Location(lat: 0, lon: 0, address: ""),
+                                                                mood: Mood(emoticon: self?.moodTooltip.text ?? ""),
+                                                                weather: Weather(emoticon: self?.weatherTooltip.text ?? ""),
+                                                                date: date.string(from: Date()),
+                                                                location: Location(lat: map.camera.target.latitude, lon: map.camera.target.longitude, address: ""),
                                                                 hasWritten: false,
-                                                                note: ""))
+                                                                note: self?.noteTextView.text ?? "메모 없음"))
             }
             .disposed(by: disposeBag)
         
@@ -473,6 +478,7 @@ extension CommonFormatController: GMSMapViewDelegate {
     //
     public func mapView(_ mapView: GMSMapView, willMove gesture: Bool) {
         print(gesture)
+        
     }
     
     
@@ -492,7 +498,18 @@ extension CommonFormatController: GMSMapViewDelegate {
     
     
     public func mapView(_ mapView: GMSMapView, idleAt position: GMSCameraPosition) {
-        service?.setLocation(position: position.target)
+        if self.viewModel?.location == nil {
+            service?.setLocation(position: position.target)
+        } else {
+            guard let target = viewModel?.location else {
+                service?.setLocation(position: position.target)
+                viewModel?.location = nil
+                return 
+            }
+            viewModel?.location = nil
+            service?.setLocation(position: .init(latitude: target.lat, longitude: target.lon))
+        }
+        
     }
     
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {

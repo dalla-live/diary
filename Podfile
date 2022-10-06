@@ -25,6 +25,7 @@ target 'App' do
 #  pod 'GoogleMaps'
   pod 'NMapsMap'
   pods
+  pod 'GoogleMLKit/Translate', '3.2.0'
 
 end
 
@@ -48,6 +49,7 @@ target 'Presantation' do
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
   pod "GooglePlaces", '7.1.0'
+  pod 'GoogleMLKit/Translate', '3.2.0'
   pods
 
 end
@@ -66,6 +68,7 @@ target 'Service' do
   pod 'Google-Maps-iOS-Utils'
   pod "GooglePlaces", '7.1.0'
   pod 'NMapsMap'
+  pod 'GoogleMLKit/Translate', '3.2.0'
 end
 
 target 'Util' do

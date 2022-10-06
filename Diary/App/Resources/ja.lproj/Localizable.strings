@@ -1,6 +1,6 @@
-// App
-
-// Weather
+//Description
+"Keys" = "일본어 (ja)";
+//Weather
 "Thunderstorm" = "暴風";
 "Drizzle" = "霧雨";
 "Rain" = "雨";
@@ -8,18 +8,17 @@
 "Atmosphere" = "霧";
 "Clear" = "晴れ";
 "Clouds" = "雲";
-
-// Menu
+//Menu
 "map" = "指導";
 "list" = "リスト";
 "bookmark" = "ブックマーク";
 "modify" = "修整";
 "translation" = "翻訳";
 "delete" = "削除する";
+"help" = "ang";
 "google" = "グーグル";
 "naver" = "ネイバー";
-
-// Button
+//Button
 "okBtn" = "確認";
 "cancelBtn" = "取り消す";
 "changeLanguageBtn" = "言葉を変える";

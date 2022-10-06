@@ -1,0 +1,26 @@
+//Description
+"Keys" = "영어 (en)";
+//Weather
+"Thunderstorm" = "Thunderstorm";
+"Drizzle" = "Drizzle";
+"Rain" = "Rain";
+"Snow" = "Snow";
+"Atmosphere" = "Mist";
+"Clear" = "Clear";
+"Clouds" = "Clouds";
+//Menu
+"map" = "Map";
+"list" = "List";
+"bookmark" = "Bookmark";
+"modify" = "Modify";
+"translation" = "Translation";
+"delete" = "Delete";
+"help" = "Help";
+"google" = "Google";
+"naver" = "Naver";
+//Button
+"okBtn" = "Done";
+"cancelBtn" = "Cancel";
+"chageLanguageBtn" = "Change";
+"Hello" = "hello";
+"Hello" = "hello";
