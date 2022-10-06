@@ -425,7 +425,7 @@ public class CommonFormatController: UIViewController {
         storeButton.rx.tap
             .bind { [weak self] in
                 let date = DateFormatter()
-                    date.dateFormat = "yyyy.MM.dd"
+                    date.dateFormat = "yyyy.MM.d"
 
                 guard let map = self?.mapView else { return }
                 

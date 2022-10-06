@@ -65,8 +65,6 @@ extension PlaceCoordinator: PlaceDelegate {
             }
             placeVC.reloadList()
         })
-        
-        
     }
     
     public func openMapViewEditWith(location: Location?) {
