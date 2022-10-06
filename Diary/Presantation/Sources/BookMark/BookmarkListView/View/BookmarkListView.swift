@@ -89,16 +89,16 @@ extension BookmarkListView: UITableViewDataSource {
             cell.contentsLabel.numberOfLines = 0
         case let translateRow where translateIndexPathList.contains(where: { $0.row == translateRow }):
             cell.contentsLabel.numberOfLines = 0
-//            let translationDTO = TranslationDTO(text: cell.contentsLabel.text ?? "", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue)
-//            
-//            TranslationAPI.requestTraslation(request: translationDTO) { [unowned self] result in
-//                switch result {
-//                case .success(let success):
-//                    cell.contentsLabel.text = success
-//                case .failure():
-//                    makeToast("쿼리 한도를 초과했습니다.")
-//                }
-//            }
+            let translationDTO = TranslationDTO(text: cell.contentsLabel.text ?? "", source: Papago.Code.ko.rawValue, target: Papago.Code.en.rawValue)
+
+            TranslationAPI.requestTraslation(request: translationDTO) { [unowned self] result in
+                switch result {
+                case .success(let success):
+                    cell.contentsLabel.text = success
+                case .failure(_):
+                    makeToast("쿼리 한도를 초과했습니다.")
+                }
+            }
         default: cell.contentsLabel.numberOfLines = 1
         }
 
