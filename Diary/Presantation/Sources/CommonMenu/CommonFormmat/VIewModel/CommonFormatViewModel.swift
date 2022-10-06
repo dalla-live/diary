@@ -13,7 +13,7 @@ import RxSwift
 import CoreLocation
 
 public struct CommonAction {
-    var didSuccess: () -> Void
+    var didSuccess: (() -> Void)?
     var defaultLocation: Location?
 }
 
@@ -83,7 +83,7 @@ public class CommonFormatViewModel: CommonFormatViewModelProtocol {
             switch result {
             case .success(let success):
                 print(success.id)
-                self.actions?.didSuccess()
+                self.actions?.didSuccess?()
             case .failure(let error):
                 print(error)
             }
