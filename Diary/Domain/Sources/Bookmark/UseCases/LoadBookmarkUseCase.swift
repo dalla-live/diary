@@ -8,19 +8,19 @@
 import Foundation
 import CoreLocation
 
-protocol LoadBookmarkUseCase {
+public protocol LoadBookmarkUseCase {
     func excute(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void)
     
 }
 
-final class DefaultLoadBookmarkUseCase: LoadBookmarkUseCase {
+public final class DefaultLoadBookmarkUseCase: LoadBookmarkUseCase {
     private let bookmarkRepository: BookmarkRepositoryProtocol
     
-    init(bookmarkRepository: BookmarkRepositoryProtocol) {
+    public init(bookmarkRepository: BookmarkRepositoryProtocol) {
         self.bookmarkRepository = bookmarkRepository
     }
     
-    func excute(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void) {
+    public func excute(query: BookmarkQuery, page: Int, completion: @escaping (BookmarkList) -> Void) {
         bookmarkRepository.fetchBookmarkList(query: query, page: page) { completion($0) }
     }
 }
