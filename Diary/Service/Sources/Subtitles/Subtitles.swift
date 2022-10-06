@@ -31,7 +31,7 @@ public class Subtitles {
     
     // JSON Subtitle
     public init(segments : [Segment]) throws {
-        parsedPayload = try? Subtitles.parseSubRip(segments)
+        parsedPayload = try? Subtitles.parseSubRip(segments, isTranslate: false)
     }
     
     /// Search subtitles at time
@@ -168,14 +168,23 @@ extension Subtitles {
     ///
     /// - Parameter payload: Input Subtitle
     /// - Returns: NSDictionary
-    static func parseSubRip(_ segments: [Segment]) throws -> NSDictionary? {
+    static func parseSubRip(_ segments: [Segment], isTranslate: Bool) throws -> NSDictionary? {
         let parsed = NSMutableDictionary()
         
         segments.enumerated().forEach({ (index, item) in
             let final = NSMutableDictionary()
             final["from"] = Double(item.start / 1000)
             final["to"] = Double(item.end / 1000)
-            final["text"] = item.text
+            
+            if isTranslate {
+                GoogleTranslater.shared.translateAfterDetect(item.text) { resultText, error in
+                    final["text"] = resultText
+                }
+            } else {
+                final["text"] = item.text
+            }
+            
+//            final["text"] = isTranslate ? translateSubtitle(item.text) : item.text
             parsed[index + 1] = final
         })
         

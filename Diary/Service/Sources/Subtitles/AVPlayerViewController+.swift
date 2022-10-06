@@ -74,8 +74,8 @@ public extension AVPlayerViewController {
         dataTask.resume()
     }
     
-    func show(subtitles data: [Segment]) {
-        parsedPayload = try? Subtitles.parseSubRip(data)
+    func show(subtitles data: [Segment], isTranslate: Bool) {
+        parsedPayload = try? Subtitles.parseSubRip(data, isTranslate: isTranslate)
         if let parsedPayload = parsedPayload {
             addPeriodicNotification(parsedPayload: parsedPayload)
         }
@@ -126,6 +126,7 @@ public extension AVPlayerViewController {
         
         // Label
         subtitleLabel = UILabel()
+        subtitleLabel?.textColor = .white
         subtitleLabel?.translatesAutoresizingMaskIntoConstraints = false
         subtitleLabel?.backgroundColor = UIColor.clear
         subtitleLabel?.textAlignment = .center
