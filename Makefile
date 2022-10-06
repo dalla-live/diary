@@ -3,6 +3,8 @@ project:
 	tuist fetch
 	tuist generate --no-open && pod install &&  open Diary.xcworkspace
 	
+open: 
+	tuist generate --no-open && pod install &&  open Diary.xcworkspace
 
 asset:
 	tuist generate
