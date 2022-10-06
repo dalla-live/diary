@@ -6,12 +6,32 @@
 //
 
 import Foundation
+import Util
 
 /// A helper class for using Google Translate API.
-public class GoogleTranslater {
+public class GoogleTranslator: Translatable {
     
+    // MARK: Translatable
+    var source: LaguageCode = .ko
+    
+    var target: LaguageCode = .en
+    
+    public func set(source: LaguageCode, target: LaguageCode) {
+        self.source = source
+        self.target = target
+    }
+    
+    func translate(text: String, _ completion: @escaping ((String)-> Void))  {
+        self.translate(text, source.rawValue, target.rawValue) { text, error in
+            guard let text = text else { return }
+            
+            completion(text)
+        }
+    }
+    
+    // ================================================================
     /// Shared instance.
-    public static let shared = GoogleTranslater()
+    public static let shared = GoogleTranslator()
 
     /// Language response structure.
     public struct Language {
@@ -32,19 +52,19 @@ public class GoogleTranslater {
         static let base = "https://translation.googleapis.com/language/translate/v2"
         
         /// A translate endpoint.
-        struct translate {
+        struct Translate {
             static let method = "POST"
             static let url = API.base
         }
         
         /// A detect endpoint.
-        struct detect {
+        struct Detect {
             static let method = "POST"
             static let url = API.base + "/detect"
         }
         
         /// A list of languages endpoint.
-        struct languages {
+        struct Languages {
             static let method = "GET"
             static let url = API.base + "/languages"
         }
@@ -83,7 +103,7 @@ public class GoogleTranslater {
         detect(text) {[weak self] detections, error in
             if let detections = detections {
                 for detection in detections {
-                    self?.translate(text, detection.language){ text, error in
+                    self?.translate(text, detection.language, detection.language){ text, error in
                         completion(text, error)
                     }
                 }
@@ -101,8 +121,8 @@ public class GoogleTranslater {
             - source: The language of the source text. If the source language is not specified, the API will attempt to detect the source language automatically and return it within the response.
             - model: The translation model. Can be either base to use the Phrase-Based Machine Translation (PBMT) model, or nmt to use the Neural Machine Translation (NMT) model. If omitted, then nmt is used. If the model is nmt, and the requested language translation pair is not supported for the NMT model, then the request is translated using the base model.
     */
-    public func translate(_ q: String, _ source: String, _ format: String = "text", _ model: String = "base", _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)) {
-        guard var urlComponents = URLComponents(string: API.translate.url) else {
+    public func translate(_ q: String, _ source: String, _ target: String,_ format: String = "text", _ model: String = "base", _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)) {
+        guard var urlComponents = URLComponents(string: API.Translate.url) else {
             completion(nil, nil)
             return
         }
@@ -110,8 +130,8 @@ public class GoogleTranslater {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "key", value: apiKey))
         queryItems.append(URLQueryItem(name: "q", value: q))
-        queryItems.append(URLQueryItem(name: "target", value: source))
-        queryItems.append(URLQueryItem(name: "source", value: targetLanguage))
+        queryItems.append(URLQueryItem(name: "target", value: target))
+        queryItems.append(URLQueryItem(name: "source", value: source))
         queryItems.append(URLQueryItem(name: "format", value: format))
         queryItems.append(URLQueryItem(name: "model", value: model))
         urlComponents.queryItems = queryItems
@@ -122,7 +142,7 @@ public class GoogleTranslater {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = API.translate.method
+        urlRequest.httpMethod = API.Translate.method
         
         let task = session.dataTask(with: urlRequest) { (data, response, error) in
             guard let data = data,                                // is there data
@@ -154,7 +174,7 @@ public class GoogleTranslater {
             - q: The input text upon which to perform language detection. Repeat this parameter to perform language detection on multiple text inputs.
     */
     public func detect(_ q: String, _ completion: @escaping ((_ languages: [Detection]?, _ error: Error?) -> Void)) {
-        guard var urlComponents = URLComponents(string: API.detect.url) else {
+        guard var urlComponents = URLComponents(string: API.Detect.url) else {
             completion(nil, nil)
             return
         }
@@ -170,7 +190,7 @@ public class GoogleTranslater {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = API.detect.method
+        urlRequest.httpMethod = API.Detect.method
         
         let task = session.dataTask(with: urlRequest) { (data, response, error) in
             guard let data = data,                                // is there data
@@ -208,7 +228,7 @@ public class GoogleTranslater {
             - completion: A completion closure with an array of Language structures and an error if there is.
     */
     public func languages(_ target: String = "en", _ model: String = "base", _ completion: @escaping ((_ languages: [Language]?, _ error: Error?) -> Void)) {
-        guard var urlComponents = URLComponents(string: API.languages.url) else {
+        guard var urlComponents = URLComponents(string: API.Languages.url) else {
             completion(nil, nil)
             return
         }
@@ -225,7 +245,7 @@ public class GoogleTranslater {
         }
         
         var urlRequest = URLRequest(url: url)
-        urlRequest.httpMethod = API.languages.method
+        urlRequest.httpMethod = API.Languages.method
         
         let task = session.dataTask(with: urlRequest) { (data, response, error) in
             guard let data = data,                                // is there data
