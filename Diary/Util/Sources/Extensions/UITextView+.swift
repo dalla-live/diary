@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnapKit
 
 extension UITextView {
     public func addPlacehoder(text: String, placeholderColor: UIColor? = UIColor(rgb: 102), font: UIFont? = nil) {
