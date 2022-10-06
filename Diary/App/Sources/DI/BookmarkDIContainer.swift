@@ -12,22 +12,22 @@ import Presantation
 import UIKit
 
 final class BookmarkDIContainer {
+    let bookmarkStorage = BookmarkStorage()
     
     init() {}
     
-    // MARK: Repository
-    func makeCurrentWeatherRepository()-> CurrentWeatherRepository {
-        return CurrentWeatherRepository()
+    // MARK: Usecases
+    func makeLoadBookmarkUseCase() -> LoadBookmarkUseCase {
+        return DefaultLoadBookmarkUseCase(bookmarkRepository: BookmarkRepository(storage: bookmarkStorage))
     }
     
-    // MARK: Usecases
-    func makeRequestCurrentWeatherUsecase()-> RequestCurrentWeatherUsecase {
-        return RequestCurrentWeatherService(currentWeatherRepository: makeCurrentWeatherRepository())
+    func makeBookmarkUseCase() -> BookmarkUseCase {
+        return BookmarkUseCase(loadBookmarkUseCase: makeLoadBookmarkUseCase())
     }
     
     // MARK: ViewModel
     func makeBookmarkViewModel()-> BookmarkViewModel {
-        return BookmarkViewModel(usecase: makeRequestCurrentWeatherUsecase())
+        return BookmarkViewModel(BookmarkBookmarkUseCase: makeBookmarkUseCase())
     }
     
     // MARK: Coordinator

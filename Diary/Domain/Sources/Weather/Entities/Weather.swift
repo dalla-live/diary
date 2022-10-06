@@ -60,19 +60,6 @@ public struct Weather {
         self.weather = weather
     }
     
-    public init(emoticon: String) {
-        switch emoticon {
-        case "☀️": self.weather = .clear
-        case "🌧": self.weather = .rain
-        case "☁️": self.weather = .clouds
-        case "❄️": self.weather = .snow
-        case "🌫": self.weather = .atmosphere
-        case "🌪": self.weather = .thunderstorm
-        case "☔️": self.weather = .drizzle
-        default: self.weather = .clear
-        }
-    }
-    
     public init(string weather: String) {
         print(weather)
         var weatherCase: WeatherCase {
@@ -91,22 +78,13 @@ public struct Weather {
         self.weather = weatherCase
     }
     
-    // 영문 날씨 문자열
-    public init(en weather: String) {
-
-        var weatherCase: WeatherCase {
-            switch weather.lowercased() {
-            case WeatherCase.clear.textEng: return .clear
-            case WeatherCase.rain.textEng: return .rain
-            case WeatherCase.clouds.textEng: return .clouds
-            case WeatherCase.snow.textEng: return .snow
-            case WeatherCase.atmosphere.textEng: return .atmosphere
-            case WeatherCase.thunderstorm.textEng: return .thunderstorm
-            case WeatherCase.drizzle.textEng: return .drizzle
-            default: return .clear
-            }
-        }
-
-        self.weather = weatherCase
+    public init?(english weather: String) {
+        guard let englishWeather = WeatherCase.allCases.filter({ $0.textEng == weather.lowercased() }).first else { return nil }
+        self.weather = englishWeather
+    }
+    
+    public init?(emoticon weather: String) {
+        guard let emoticonWeather = WeatherCase.allCases.filter({ $0.emoticon == weather }).first else { return nil }
+        self.weather = emoticonWeather
     }
 }

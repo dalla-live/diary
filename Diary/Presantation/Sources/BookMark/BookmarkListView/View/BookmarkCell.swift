@@ -55,17 +55,16 @@ class BookmarkCell: UITableViewCell {
         $0.titleLabel?.font = .systemFont(ofSize: 16)
     }
     
+    let translateButton = UIButton().then {
+        $0.setTitle(BookmarkListView.ContentButtonType.translate.title, for: .normal)
+        $0.setTitleColor(UIColor.darkGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         self.disposeBag = DisposeBag()
         dateLabel.numberOfLines = 1
-    }
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        
-        let title = contentsLabel.currentLineCount < 2 ? BookmarkListView.ContentButtonType.translate.title : BookmarkListView.ContentButtonType.readMore.title
-        readMoreButton.setTitle(title, for: .normal)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -91,6 +90,7 @@ class BookmarkCell: UITableViewCell {
          contentsLabel,
          lineView,
          readMoreButton,
+         translateButton,
          mapView
         ].forEach(contentView.addSubview)
     }
@@ -125,15 +125,20 @@ class BookmarkCell: UITableViewCell {
             $0.height.equalTo(2)
         }
         
-        contentsLabel.snp.makeConstraints {
-            $0.top.equalTo(mapView.snp.bottom).offset(defaultSpacing)
-            $0.leading.trailing.equalToSuperview().inset(defaultSpacing)
-            $0.bottom.equalTo(lineView.snp.top).offset(-defaultSpacing)
+        readMoreButton.snp.makeConstraints {
+            $0.top.equalTo(mapView.snp.bottom).offset(halfSapcing)
+            $0.leading.equalToSuperview().inset(defaultSpacing)
         }
         
-        readMoreButton.snp.makeConstraints {
-            $0.top.equalTo(contentsLabel.snp.bottom).offset(-7)
-            $0.leading.equalTo(contentsLabel)
+        translateButton.snp.makeConstraints {
+            $0.top.equalTo(readMoreButton)
+            $0.leading.equalTo(readMoreButton.snp.trailing).offset(defaultSpacing)
+        }
+        
+        contentsLabel.snp.makeConstraints {
+            $0.top.equalTo(readMoreButton.snp.bottom).offset(halfSapcing)
+            $0.leading.trailing.equalToSuperview().inset(defaultSpacing)
+            $0.bottom.equalTo(lineView.snp.top).offset(-defaultSpacing)
         }
     }
     

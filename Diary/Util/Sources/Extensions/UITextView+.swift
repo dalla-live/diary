@@ -24,4 +24,8 @@ extension UITextView {
             $0.leading.equalToSuperview().inset(self.textContainerInset.left + 4)
         }
     }
+    
+    public var placeholder: UILabel? {
+        return self.viewWithTag(100) as? UILabel
+    }
 }

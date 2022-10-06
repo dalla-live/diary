@@ -7,9 +7,9 @@
 
 import Foundation
 
-struct Papago {
+public struct Papago {
     
-    enum Code: String {
+    public enum Code: String {
         /// 한국어
         case ko
         /// 영어
