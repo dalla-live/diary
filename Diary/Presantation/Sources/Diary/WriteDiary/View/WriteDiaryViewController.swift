@@ -223,6 +223,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         translateButton.rx.tapGesture()
             .when(.recognized)
             .bind {[weak self] _ in
+                self?.speechRecognizer?.stopRecording()
                 self?.translate(self?.textView.text ?? "")
 //                self?.detect(self?.textView.text ?? "")
 //                self?.translateAfterDetect(self?.textView.text ?? "")
