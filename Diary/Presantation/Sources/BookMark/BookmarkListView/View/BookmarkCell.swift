@@ -39,7 +39,7 @@ class BookmarkCell: UITableViewCell {
     }
     
     let contentsLabel = UILabel().then {
-        $0.text = "이것은 일기입니다. 영문으로 번역할 수도 있고 수정도 할 수 있지요 촤하하"
+        $0.text = "이것은 일기입니다."
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 16)
         $0.lineBreakMode = .byTruncatingTail
