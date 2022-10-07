@@ -109,7 +109,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     let exampleRecogContainer = UIView().then {
-        $0.backgroundColor = UIColor(r:255, g: 105, b: 153)
+        $0.backgroundColor = .white//UIColor(r:255, g: 105, b: 153)
         $0.layer.cornerRadius = 18
     }
     
@@ -401,7 +401,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     func detect(_ text: String){
-        GoogleTranslater.shared.detect(text) { (detections, error) in
+        GoogleTranslator.shared.detect(text) { (detections, error) in
             if let detections = detections {
                 for detection in detections {
                     print(detection.language)
@@ -414,7 +414,8 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     func translate(_ text: String){
-        GoogleTranslater.shared.translate(text, "en") {[weak self] (text, error) in
+        // 한국어를 영어로 ko -> en
+        GoogleTranslator.shared.translate(text, "ko", "en") {[weak self] (text, error) in
             guard let self = self,
                   let text = text else { return }
             DispatchQueue.main.async {
@@ -424,7 +425,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     func translateAfterDetect(_ text: String){
-        GoogleTranslater.shared.translateAfterDetect(text){[weak self] (text, error) in
+        GoogleTranslator.shared.translateAfterDetect(text){[weak self] (text, error) in
             guard let self = self,
                   let text = text else { return }
             DispatchQueue.main.async {

@@ -177,7 +177,7 @@ extension Subtitles {
             final["to"] = Double(item.end / 1000)
             
             if isTranslate {
-                GoogleTranslater.shared.translateAfterDetect(item.text) { resultText, error in
+                GoogleTranslator.shared.translateAfterDetect(item.text) { resultText, error in
                     final["text"] = resultText
                 }
             } else {

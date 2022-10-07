@@ -180,11 +180,11 @@ public final class CalendarViewController : UIViewController, UITableViewDelegat
     private func addGesture() {
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureRecog(_ :)))
         swipeRight.direction = .right
-        self.view.addGestureRecognizer(swipeRight)
+        self.calendarView.addGestureRecognizer(swipeRight)
         
         let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipeGestureRecog(_ :)))
         swipeLeft.direction = .left
-        self.view.addGestureRecognizer(swipeLeft)
+        self.calendarView.addGestureRecognizer(swipeLeft)
     }
     
     @objc func swipeGestureRecog(_ sender : UISwipeGestureRecognizer) {

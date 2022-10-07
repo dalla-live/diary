@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import MLKitTranslate
 
 let CurrentLanguageKey = "currentLanguageKey"
 
@@ -27,6 +28,39 @@ public enum LaguageCode: String, CaseIterable {
             return "English".localized
         case .ja:
             return "Japanese".localized
+        }
+    }
+    
+    var mlKit: TranslateLanguage {
+        switch self {
+        case .ko:
+            return .korean
+        case .en:
+            return .english
+        case .ja:
+            return .japanese
+        }
+    }
+    
+    var papago: String {
+        switch self {
+        case .ko:
+            return "ko"
+        case .en:
+            return "en"
+        case .ja:
+            return "ja"
+        }
+    }
+    
+    public var tts: String {
+        switch self {
+        case .ko:
+            return "ko-KR"
+        case .en:
+            return "en-US"
+        case .ja:
+            return "jp-JP"
         }
     }
 }

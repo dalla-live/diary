@@ -11,6 +11,10 @@ import NMapsMap
 import CoreLocation
 
 public class NaverMapServiceProvider : NSObject , MapService {
+    public func getPlaceName() -> String {
+        return ""
+    }
+    
     public func getCameraLocation() -> CLLocationCoordinate2D {
         return CLLocationCoordinate2D(latitude: 0, longitude: 0)
     }

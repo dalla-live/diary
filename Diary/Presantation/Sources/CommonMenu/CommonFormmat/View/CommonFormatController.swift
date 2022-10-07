@@ -535,6 +535,10 @@ extension CommonFormatController: GMSMapViewDelegate {
             service?.setLocation(position: .init(latitude: target.lat, longitude: target.lon))
         }
         
+        viewModel?.viewDidload(location: Location(lat: position.target.latitude, lon: position.target.longitude)) {
+            self.selectItem(for: self.weatherStackView, index: $0)
+        }
+//        self.noteTextView.placeholder?.text = service?.getPlaceName()
     }
     
     public func mapView(_ mapView: GMSMapView, didChange position: GMSCameraPosition) {

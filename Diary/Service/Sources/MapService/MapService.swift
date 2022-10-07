@@ -22,6 +22,7 @@ public protocol MapService: AnyObject {
     func setCurrentLocation() -> CLLocationCoordinate2D
     func setLocation(position: CLLocationCoordinate2D)
     func setLocation(position: [CLLocationCoordinate2D])
+    func getPlaceName() -> String
 }
 
 public class GoogleMapServiceProvider : NSObject, MapService {
@@ -145,6 +146,22 @@ public class GoogleMapServiceProvider : NSObject, MapService {
     
     public func getMapView() -> GMSMapView {
         return self.mapView
+    }
+    
+    public func getPlaceName() -> String {
+        let placeFields: GMSPlaceField = [.name, .formattedAddress, .coordinate]
+        var placeName: String = ""
+        placesClient.findPlaceLikelihoodsFromCurrentLocation(withPlaceFields: placeFields) { [weak self] (placeLikelihoods, error) in
+            guard error == nil else {
+                print("Current place error: \(error?.localizedDescription ?? "")")
+                return
+            }
+            
+            guard let place = placeLikelihoods?.first?.place else { return }
+            placeName = place.name ?? ""
+            print("위치 == \(place.name)")
+        }
+        return placeName
     }
 }
 

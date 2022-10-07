@@ -35,6 +35,11 @@ public final class BookmarkViewController: UIViewController {
         $0.setImage(UIImage(systemName: "arrow.clockwise"), for: .normal)
     }
     
+    let deleteBookmarkButton = UIButton().then {
+        $0.roundCorners(.allCorners, radius: 25)
+        $0.setImage(UIImage(systemName: "trash"), for: .normal)
+    }
+    
     /// ViewController 의존성 주입을 위한 Create 함수
     public static func create(with viewModel: BookmarkViewModel)-> BookmarkViewController {
         let vc = BookmarkViewController()
@@ -68,6 +73,7 @@ public final class BookmarkViewController: UIViewController {
     
     private func addComponent() {
         [bookmarkListTitle,
+         deleteBookmarkButton,
          addBookmarkButton,
          updateBookmarkButton].forEach(view.addSubview)
     }
@@ -78,10 +84,15 @@ public final class BookmarkViewController: UIViewController {
             $0.leading.equalToSuperview().inset(16)
         }
         
-        addBookmarkButton.snp.makeConstraints {
+        deleteBookmarkButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(50)
+        }
+        
+        addBookmarkButton.snp.makeConstraints {
+            $0.top.height.equalTo(deleteBookmarkButton)
+            $0.trailing.equalTo(deleteBookmarkButton.snp.leading).offset(-16)
         }
         
         updateBookmarkButton.snp.makeConstraints {
@@ -100,6 +111,10 @@ public final class BookmarkViewController: UIViewController {
         
         updateBookmarkButton.rx.tap
             .bind(onNext: reloadTable)
+            .disposed(by: disposeBag)
+        
+        deleteBookmarkButton.rx.tap
+            .bind { [weak self] in self?.view.makeToast("기능 안 넣었습니다.") }
             .disposed(by: disposeBag)
     }
     
