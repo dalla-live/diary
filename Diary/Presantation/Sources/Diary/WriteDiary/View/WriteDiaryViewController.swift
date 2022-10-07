@@ -74,6 +74,10 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         $0.textAlignment = .center
     }
     
+    let textContainer = UIView().then{
+        $0.backgroundColor = .white
+    }
+    
     let recordButton = UIButton().then{
         $0.setTitle("음성인식", for: .normal)
         $0.setTitleColor(.black, for: .normal)
@@ -96,6 +100,51 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
         $0.setTitleColor(.black, for: .normal)
         $0.addBorder(width: 1, color: .black)
         $0.layer.cornerRadius = 8
+    }
+    
+     // 음성인식 뷰
+    let exampleRecogBgView = UIView().then {
+        $0.backgroundColor = UIColor(r: 0, g: 0, b: 0, a: 0.3)
+        $0.isHidden = true
+    }
+    
+    let exampleRecogContainer = UIView().then {
+        $0.backgroundColor = UIColor(r:255, g: 105, b: 153)
+        $0.layer.cornerRadius = 18
+    }
+    
+    let exampleTextView = UITextView().then{
+        $0.backgroundColor = .white
+        $0.textAlignment = .left
+        $0.textColor = .black
+        $0.textContainerInset = UIEdgeInsets(top: 10,left: 10,bottom: 10,right: 10)
+        $0.addBorder(width: 1, color: .black)
+        $0.layer.cornerRadius = 8
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
+        $0.isEditable = false
+    }
+    
+    let exampleButtonContainer = UIView().then {
+        $0.backgroundColor = .clear
+    }
+    
+    let exampleRecogButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        $0.contentHorizontalAlignment = .center
+        $0.tintColor = .blue
+        $0.isHidden = false
+    }
+    
+    let applyButton = UIButton().then{
+        $0.setTitle("적용", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.setTitleColor(.black, for: .normal)
+    }
+    
+    let cancelButton = UIButton().then{
+        $0.setTitle("취소", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.setTitleColor(.black, for: .normal)
     }
     
     // ViewController 의존성 주입을 위한 create
@@ -138,7 +187,15 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     public override func addComponent() {
         fileName = #file.fileName
         
-        [stackView , recordButton, textView, translateButton].forEach(view.addSubview)
+        [stackView , textContainer, exampleRecogBgView].forEach(view.addSubview)
+        
+        exampleRecogBgView.addSubview(exampleRecogContainer)
+        
+        [exampleTextView, exampleButtonContainer].forEach(exampleRecogContainer.addSubview)
+        
+        [exampleRecogButton, applyButton, cancelButton].forEach(exampleButtonContainer.addSubview)
+        
+        [recordButton, textView, translateButton].forEach(textContainer.addSubview)
         
         [dateTitle, weatherView, addressView, moodView].forEach{ stackView.addArrangedSubview($0) }
         
@@ -189,31 +246,94 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
             $0.leading.equalTo(moodLabel.snp.trailing)
             $0.top.bottom.trailing.equalToSuperview()
         }
-    
+        
+        textContainer.snp.makeConstraints{
+            $0.left.right.equalToSuperview()
+            $0.height.equalTo(180)
+            $0.top.equalTo(stackView.snp.bottom)
+        }
         
         recordButton.snp.makeConstraints {
             $0.width.equalTo(100)
             $0.height.equalTo(30)
-            $0.top.equalTo(stackView.snp.bottom).offset(20)
-            $0.left.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.top.equalToSuperview()
+            $0.left.equalToSuperview().inset(16)
         }
         
         textView.snp.makeConstraints {
             $0.left.right.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
             $0.top.equalTo(recordButton.snp.bottom).offset(10)
-            $0.height.equalTo(150)
         }
         
         translateButton.snp.makeConstraints {
             $0.width.equalTo(100)
             $0.height.equalTo(30)
-            $0.top.equalTo(stackView.snp.bottom).offset(20)
-            $0.right.equalTo(view.safeAreaLayoutGuide).inset(16)
+            $0.top.equalToSuperview()
+            $0.right.equalToSuperview().inset(16)
         }
+        
+        exampleRecogBgView.snp.makeConstraints{
+            $0.edges.equalToSuperview()
+        }
+        
+        exampleRecogContainer.snp.makeConstraints{
+            $0.left.right.bottom.equalToSuperview()
+            $0.height.equalTo(180)
+        }
+        
+        exampleTextView.snp.makeConstraints{
+            $0.left.bottom.right.equalToSuperview().inset(16)
+            $0.height.equalTo(120)
+        }
+        
+        exampleButtonContainer.snp.makeConstraints{
+            $0.left.right.top.equalToSuperview()
+            $0.bottom.equalTo(exampleTextView.snp.top)
+        }
+        
+        cancelButton.snp.makeConstraints{
+            $0.left.equalToSuperview().inset(16)
+            $0.width.equalTo(50)
+            $0.centerY.equalToSuperview()
+        }
+        
+        exampleRecogButton.snp.makeConstraints{
+            $0.center.equalToSuperview()
+            $0.size.equalTo(40)
+        }
+        
+        applyButton.snp.makeConstraints{
+            $0.right.equalToSuperview().inset(16)
+            $0.width.equalTo(50)
+            $0.centerY.equalToSuperview()
+        }
+        
     }
     
     public override func bind() {
+        // 음성인식 gogo
         recordButton.rx.tapGesture()
+            .when(.recognized)
+            .bind {[weak self] _ in
+                guard let self = self else { return }
+                self.exampleRecogBgView.isHidden = false
+            }
+            .disposed(by: disposeBag)
+        
+        // 번역
+        translateButton.rx.tapGesture()
+            .when(.recognized)
+            .bind {[weak self] _ in
+//                self?.speechRecognizer?.stopRecording()
+                self?.translate(self?.textView.text ?? "")
+//                self?.detect(self?.textView.text ?? "")
+//                self?.translateAfterDetect(self?.textView.text ?? "")
+            }
+            .disposed(by: disposeBag)
+        
+        // 음성인식 시작 or 종료
+        exampleRecogButton.rx.tapGesture()
             .when(.recognized)
             .bind {[weak self] _ in
                 guard let self = self else { return }
@@ -221,15 +341,28 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
             }
             .disposed(by: disposeBag)
         
-        translateButton.rx.tapGesture()
+        // 취소
+        cancelButton.rx.tapGesture()
             .when(.recognized)
             .bind {[weak self] _ in
-                self?.speechRecognizer?.stopRecording()
-                self?.translate(self?.textView.text ?? "")
-//                self?.detect(self?.textView.text ?? "")
-//                self?.translateAfterDetect(self?.textView.text ?? "")
+                guard let self = self else { return }
+                self.exampleRecogBgView.isHidden = true
+                self.speechRecognizer?.stopRecording()
             }
             .disposed(by: disposeBag)
+        
+        // 적용
+        applyButton.rx.tapGesture()
+            .when(.recognized)
+            .bind {[weak self] _ in
+                guard let self = self else { return }
+                self.exampleRecogBgView.isHidden = true
+                self.textView.text += self.exampleTextView.text
+                self.speechRecognizer?.stopRecording()
+            }
+            .disposed(by: disposeBag)
+        
+
         
         viewModel.bookmark.bind{ [weak self] data in
             guard let self = self else { return }
@@ -244,21 +377,26 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     public func recognizeStop() {
-        recordButton.isEnabled = false
-        recordButton.setTitle("음성인식", for: .normal)
+        exampleRecogButton.isEnabled = false
+        exampleRecogButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        exampleRecogButton.tintColor = .blue
+        
+        exampleTextView.text = ""
     }
     
     public func recognizeStart() {
-        recordButton.setTitle("멈추기", for: .normal)
+        exampleRecogButton.setImage(UIImage(systemName: "stop.fill"), for: .normal)
+        exampleRecogButton.tintColor = .red
     }
     
     public func recognizing(text: String?) {
         guard let text = text else { return }
-        textView.text = text
+        Log.d(text)
+        exampleTextView.text = text
     }
     
     public func recognizePause() {
-        recordButton.isEnabled = true
+        exampleRecogButton.isEnabled = true
     }
     
     func detect(_ text: String){
@@ -275,7 +413,6 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     func translate(_ text: String){
-        // 한국어를 영어로 ko -> en
         GoogleTranslater.shared.translate(text, "en") {[weak self] (text, error) in
             guard let self = self,
                   let text = text else { return }
