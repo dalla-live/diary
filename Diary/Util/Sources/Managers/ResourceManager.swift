@@ -40,10 +40,43 @@ public struct ResourceManager {
     
     public func getImage(imageNo: String) -> UIImage? {
         return UIImage(contentsOfFile: URL(fileURLWithPath: filePath.absoluteString).appendingPathComponent(imageNo).path)
+        
     }
     
-    public func test() {
-        print("hi")
+    public func writeJson(jsonDic: [String: String]) {
+        if let jsonData = try? JSONSerialization.data(withJSONObject: jsonDic, options: .prettyPrinted) {
+            let pathWithFileName = filePath.appendingPathComponent("jsonData")
+            do {
+                try jsonData.write(to: pathWithFileName)
+            } catch {
+                Log.e("do not write json")
+            }
+        }
     }
     
+    public func getJson() -> [String: String] {
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: filePath.absoluteString).appendingPathComponent("jsonData"), options: .mappedIfSafe),
+              let model = try? JSONDecoder().decode([String :String].self, from: data) else {
+            return [:]
+        }
+        return model
+    }
+    
+    public func readJson(key: Int, completion: ((Result<String, Error>) -> Void)? = nil) {
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: filePath.absoluteString).appendingPathComponent("jsonData"), options: .mappedIfSafe),
+           let model = try? JSONDecoder().decode([String :String].self, from: data),
+           let value = model[String(key)] {
+            
+            completion?(.success(value))
+        } else {
+            completion?(.failure(ResourceError.unknowned))
+        }
+    }
+}
+
+extension ResourceManager {
+    enum ResourceError: Error {
+        case unknowned
+        case canNotFindFile
+    }
 }
