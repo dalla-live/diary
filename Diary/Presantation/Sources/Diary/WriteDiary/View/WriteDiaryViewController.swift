@@ -347,6 +347,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
             .bind {[weak self] _ in
                 guard let self = self else { return }
                 self.exampleRecogBgView.isHidden = true
+                self.exampleTextView.text = ""
                 self.speechRecognizer?.stopRecording()
             }
             .disposed(by: disposeBag)
@@ -377,7 +378,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     public func recognizeStop() {
-        exampleRecogButton.isEnabled = false
+//        exampleRecogButton.isEnabled = false
         exampleRecogButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
         exampleRecogButton.tintColor = .blue
         
@@ -396,7 +397,7 @@ public final class WriteDiaryViewController: ProgrammaticallyViewController, Spe
     }
     
     public func recognizePause() {
-        exampleRecogButton.isEnabled = true
+//        exampleRecogButton.isEnabled = true
     }
     
     func detect(_ text: String){
