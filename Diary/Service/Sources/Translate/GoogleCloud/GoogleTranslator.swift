@@ -101,9 +101,10 @@ public class GoogleTranslator: Translatable {
     
     public func translateAfterDetect(_ text: String, _ completion: @escaping ((_ text: String?, _ error: Error?) -> Void)){
         detect(text) {[weak self] detections, error in
+            guard let self = self else { return }
             if let detections = detections {
                 for detection in detections {
-                    self?.translate(text, detection.language, detection.language){ text, error in
+                    self.translate(text, detection.language, self.targetLanguage){ text, error in
                         completion(text, error)
                     }
                 }
