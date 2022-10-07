@@ -52,6 +52,17 @@ public enum LaguageCode: String, CaseIterable {
             return "ja"
         }
     }
+    
+    public var tts: String {
+        switch self {
+        case .ko:
+            return "ko-KR"
+        case .en:
+            return "en-US"
+        case .ja:
+            return "jp-JP"
+        }
+    }
 }
 
 open class Localize: NSObject {

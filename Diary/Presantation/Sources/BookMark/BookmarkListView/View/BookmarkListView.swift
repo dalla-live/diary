@@ -136,6 +136,14 @@ extension BookmarkListView: UITableViewDataSource {
             .bind { [unowned self] in print(bookmakrList.bookmarks[indexPath.row].id) }
             .disposed(by: cell.disposeBag)
         
+        cell.ttsButton.rx.tap
+            .bind { cell.ttsContentText() }
+            .disposed(by: cell.disposeBag)
+        
+        cell.stopTtsButton.rx.tap
+            .bind { cell.stopTts() }
+            .disposed(by: disposeBag)
+        
         return cell
     }
 }
