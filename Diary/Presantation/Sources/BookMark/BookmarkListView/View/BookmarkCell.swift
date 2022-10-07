@@ -11,12 +11,17 @@ import SnapKit
 import Util
 import Design
 import RxSwift
+import AVFoundation
+import Service
 
 class BookmarkCell: UITableViewCell {
     static let identifier = description()
     
     var disposeBag = DisposeBag()
     var scale: (startScale: CGFloat, endScale: CGFloat) = (1.0 ,1.0)
+    var voice: AVSpeechSynthesisVoice!
+    var utterance: AVSpeechUtterance!
+    let speech = AVSpeechSynthesizer()
     
     let dateLabel = UILabel().then {
         $0.text = "2021-09-23"
@@ -61,6 +66,18 @@ class BookmarkCell: UITableViewCell {
         $0.titleLabel?.font = .systemFont(ofSize: 16)
     }
     
+    let ttsButton = UIButton().then {
+        $0.setTitle("읽어줘", for: .normal)
+        $0.setTitleColor(UIColor.darkGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16)
+    }
+    
+    let stopTtsButton = UIButton().then {
+        $0.setTitle("멈춰", for: .normal)
+        $0.setTitleColor(UIColor.darkGray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16)
+    }
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         self.disposeBag = DisposeBag()
@@ -91,6 +108,8 @@ class BookmarkCell: UITableViewCell {
          lineView,
          readMoreButton,
          translateButton,
+         ttsButton,
+         stopTtsButton,
          mapView
         ].forEach(contentView.addSubview)
     }
@@ -140,6 +159,16 @@ class BookmarkCell: UITableViewCell {
             $0.leading.trailing.equalToSuperview().inset(defaultSpacing)
             $0.bottom.equalTo(lineView.snp.top).offset(-defaultSpacing)
         }
+        
+        stopTtsButton.snp.makeConstraints {
+            $0.top.equalTo(readMoreButton)
+            $0.trailing.equalToSuperview().inset(defaultSpacing)
+        }
+        
+        ttsButton.snp.makeConstraints {
+            $0.top.equalTo(readMoreButton)
+            $0.trailing.equalTo(stopTtsButton.snp.leading).offset(-defaultSpacing)
+        }
     }
     
     func bind() {
@@ -165,3 +194,34 @@ class BookmarkCell: UITableViewCell {
         print("cellDeinit")
     }
 }
+
+extension BookmarkCell: AVSpeechSynthesizerDelegate {
+    func ttsContentText() {
+        guard let contents = contentsLabel.text else { return }
+        getLanguage(text: contents) { language in
+            self.utterance = AVSpeechUtterance(string: contents)
+            self.utterance.voice = AVSpeechSynthesisVoice(language: language)
+            self.speech.speak(self.utterance)
+            try? AVAudioSession.sharedInstance().setCategory(.playback, options: .allowBluetooth)
+        }
+    }
+    
+    func stopTts() {
+        speech.stopSpeaking(at: .immediate)
+    }
+    
+    private func getLanguage(text: String, completion: ((String) -> ())?) {
+        GoogleTranslator.shared.detect(text) { (detections, error) in
+            if let detections = detections {
+                for detection in detections {
+                    let language = LaguageCode.allCases.filter { $0.rawValue == detection.language }.first ?? .ko
+                    completion?(language.tts)
+                }
+            } else {
+                completion?(LaguageCode(rawValue: "ko")!.tts)
+            }
+        }
+    }
+}
+
+
